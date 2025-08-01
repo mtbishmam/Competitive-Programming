@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "name": "Mac",
+      "compilerPath": "/opt/homebrew/bin/g++-15",
+      "cStandard": "c17",
+      "cppStandard": "c++20",
+      "intelliSenseMode": "macos-gcc-arm64",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "/opt/homebrew/include",
+        "/opt/homebrew/Cellar/gcc/15.1.0/include/c++/15",
+        "/opt/homebrew/Cellar/gcc/15.1.0/include/c++/15/aarch64-apple-darwin24",
+        "/opt/homebrew/Cellar/gcc/15.1.0/include/c++/15/backward",
+        "/opt/homebrew/Cellar/gcc/15.1.0/lib/gcc/15/gcc/aarch64-apple-darwin24/15/include",
+        "/opt/homebrew/Cellar/gcc/15.1.0/lib/gcc/15/gcc/aarch64-apple-darwin24/15/include-fixed",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/System/Library/Frameworks"
+      ],
+      "defines": [],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/**",
+          "/opt/homebrew/include",
+          "/opt/homebrew/Cellar/gcc/15.1.0/include/c++/15"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    }
+  ],
+  "version": 4
+}
