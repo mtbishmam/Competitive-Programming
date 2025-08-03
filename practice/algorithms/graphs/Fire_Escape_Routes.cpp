@@ -94,19 +94,19 @@ int main()
 
         int stree = 1;
         vi vis(n + 1), subsz(n + 1);
-        function<void(int, int)> dfs = [&](int node, int sz) {
+        function<void(int)> dfs = [&](int node) {
             vis[node] = stree;
-            subsz[node] = sz;
+            subsz[node] = 1;
             for (auto& child : g[node]) {
                 if (!vis[child]) {
-                    dfs(child, 1);
+                    dfs(child);
                     subsz[node] += subsz[child];
                 }
             }
             };
         ll caps(1);
         for (int i = 1; i <= n; i++)
-            if (!vis[i]) dfs(i, 1), stree++;
+            if (!vis[i]) dfs(i), stree++;
         vb subvis(stree + 5);
         for (int i = 1; i <= n; i++) {
             if (!subvis[vis[i]]) {
