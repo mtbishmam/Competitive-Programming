@@ -81,10 +81,40 @@ int main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vvi g(n + 1);
+        for (int i = 1; i <= m; i++) {
+            int x, y; cin >> x >> y;
+            g[x].eb(y);
+            g[y].eb(x);
+        }
+
+        int stree = 1;
+        vi vis(n + 1), subsz(n + 1);
+        function<void(int, int)> dfs = [&](int node, int sz) {
+            vis[node] = stree;
+            subsz[node] = sz;
+            for (auto& child : g[node]) {
+                if (!vis[child]) {
+                    dfs(child, 1);
+                    subsz[node] += subsz[child];
+                }
+            }
+            };
+        ll caps(1);
+        for (int i = 1; i <= n; i++)
+            if (!vis[i]) dfs(i, 1), stree++;
+        vb subvis(stree + 5);
+        for (int i = 1; i <= n; i++) {
+            if (!subvis[vis[i]]) {
+                subvis[vis[i]] = 1;
+                caps = mul(caps, subsz[i]);
+            }
+        }
+        cout << stree - 1 << " " << caps << endl;
     }
     return 0;
 }

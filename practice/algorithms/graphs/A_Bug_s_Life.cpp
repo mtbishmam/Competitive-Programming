@@ -53,7 +53,6 @@ template <class A, class B> using umap = unordered_map<A, B>;
 #define rall(x) (x).rbegin(), (x).rend()
 #define bug cerr << "!Bugged..." << endl
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
-#define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
 
 const string cq[2] = { "NO", "YES" };
@@ -81,10 +80,34 @@ int main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vvi g(n + 1);
+        for (int i = 1; i <= m; i++) {
+            int x, y; cin >> x >> y;
+            g[x].eb(y);
+            g[y].eb(x);
+        }
+
+        bool bipar = true;
+        vb vis(n + 1);
+        vi col(n + 1);
+        function<void(int, int)> dfs = [&](int node, int c) {
+            vis[node] = 1;
+            col[node] = c;
+            for (auto& child : g[node])
+                if (!vis[child]) dfs(child, c ^ 1);
+                else if (col[node] == col[child]) bipar = false;
+            };
+        for (int i = 1; i <= n; i++)
+            if (!vis[i]) dfs(i, 0);
+
+        cout << "Scenario #" << Ti << ":" << endl;
+        if (bipar) cout << "No suspicious bugs found!";
+        else cout << "Suspicious bugs found!";
+        cout << endl;
     }
     return 0;
 }
