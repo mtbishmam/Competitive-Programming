@@ -96,7 +96,7 @@ int main()
         int aid = n + 5, mdist = n + 5;
         for (int girl = 1; girl <= n; girl++)
             if (countries[girl]) {
-                if (mdist > dist[countries[girl]]) {
+                if (mdist >= dist[countries[girl]]) {
                     mdist = dist[countries[girl]];
                     int id = countries[girl];;
                     if (aid > id) aid = id;
