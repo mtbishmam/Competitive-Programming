@@ -85,7 +85,7 @@ int main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vl dp(n + 1, -1);
+        vl dp(n, -1);
         function<int(int)> f = [&](int i) {
             if (i > n) return 0ll;
             if (i == n) return 1ll;
