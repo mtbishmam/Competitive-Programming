@@ -102,8 +102,8 @@ int main()
             if (i == n - 1 and j == m - 1) return a[n - 1][m - 1];
             if (i == n or j == m) return 1ll * INF;
             auto& ret = dp[i][j];
-            if (ret != INF) return ret;\
-                ret = min(ret, a[i][j] + f(i + 1, j));
+            if (ret != INF) return ret;
+            ret = min(ret, a[i][j] + f(i + 1, j));
             ret = min(ret, a[i][j] + f(i, j + 1));
             return ret;
             };
