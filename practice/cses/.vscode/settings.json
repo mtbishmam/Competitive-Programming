@@ -8,6 +8,8 @@
         "string": "cpp",
         "unordered_map": "cpp",
         "vector": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "iostream": "cpp",
+        "__tree": "cpp"
     }
 }

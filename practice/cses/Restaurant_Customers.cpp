@@ -27,6 +27,14 @@ using namespace std;
 #define em emplace
 #define int long long
 
+template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
+template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
+template <typename T> ostream& operator<<(ostream& os, set<T>& s) { for (auto i : s) os << i << " "; return os; }
+template <typename A, typename B> ostream& operator<<(ostream& os, pair<A, B>& i) { return os << i.ff << " " << i.ss; }
+void dbg_out() { cerr << endl; }
+template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
+#define debug(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
+
 using ll = long long;
 using ld = long double;
 using ull = unsigned ll;
@@ -37,14 +45,6 @@ using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
-
-template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
-template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
-template <typename T> ostream& operator<<(ostream& os, set<T>& s) { for (auto i : s) os << i << " "; return os; }
-template <typename A, typename B> ostream& operator<<(ostream& os, pair<A, B>& i) { return os << i.ff << " " << i.ss; }
-void dbg_out() { cerr << endl; }
-template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
-#define debug(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
 
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
@@ -80,23 +80,30 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        vi a(n), b(m); cin >> a >> b;
-        set<pii> sp;
-        for (int i = 0; i < n; i++) sp.insert({ a[i], i });
-        vi ans(m, -1);
-        for (int i = 0; i < m; i++) {
-            auto it = sp.upper_bound({ b[i], INF });
-            if (it == sp.begin()) cout << -1 << endl;
-            else {
-                it--;
-                auto [val, idx] = *it;
-                cout << val << endl;
-                sp.erase(it);
-            }
+        int n;
+        cin >> n;
+        set<int> s;
+        vpii ab;
+        for (int i = 0; i < n; i++) {
+            int x, y; cin >> x >> y;
+            ab.pb({ x, y });
+            s.insert(x);
+            s.insert(y);
         }
-        // for (auto& i : ans) cout << i << endl;
+        map<int, int> mp;
+        int total = 0;
+        for (auto si : s) mp[si] = total++;
+        vi b(total);
+        for (auto& [ll, rr] : ab) {
+            auto l = mp[ll];
+            auto r = mp[rr];
+            b[l]++;
+            b[r]--;
+        }
+        int ans = 0, cur = 0;
+        for (int i = 0; i < total; i++)
+            cur += b[i], ans = max(ans, cur);
+        cout << ans;
     }
     return 0;
 }
