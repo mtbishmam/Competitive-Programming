@@ -83,46 +83,33 @@ int main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s; cin >> s;
-        int n = s.size();
-
-        for (int i = 1; i < n; i++) {
-
-            // If we encounter a closing parenthesis
-            if (s[i] == ')') {
-
-                // Check if the previous character is an
-                // opening parenthesis '('
-                if (s[i - 1] == '(') {
-                    if (i >= 2) {
-                        dp[i] = dp[i - 2] + 2;
-                    }
-                    else {
-                        dp[i] = 2;
-                    }
-                }
-
-                // Check if the previous character is a
-                // closing parenthesis ')' and the matching opening
-                // parenthesis exists before the valid substring
-                else if (i - dp[i - 1] > 0 && s[i - dp[i - 1] - 1] == '(') {
-                    if (i - dp[i - 1] >= 2) {
-                        dp[i] = dp[i - 1] + dp[i - dp[i - 1] - 2] + 2;
-                    }
-                    else {
-                        dp[i] = dp[i - 1] + 2;
-                    }
-                }
-
-                // Update the maximum length
-                maxLen = max(maxLen, dp[i]);
+        ll n, m, k;
+        cin >> n >> m >> k;
+        vl a(n), b(m);
+        for (int i = 0; i < n; i++) {
+            cin >> a[i];
+        }
+        for (int i = 0; i < m; i++) {
+            cin >> b[i];
+        }
+        ll ans = 0;
+        sort(all(a));
+        sort(all(b));
+        for (int i = 0, j = 0; i < n and j < m; ) {
+            ll sz = b[j];
+            ll l = a[i] - k;
+            ll r = a[i] + k;
+            if (l <= sz and sz <= r) {
+                ans++;
+                i++;
+                j++;
+            }
+            else {
+                if (sz < l) j++;
+                else i++;
             }
         }
-
+        cout << ans << endl;
     }
     return 0;
 }
-
-/*
-    ( (()) ) ) ( ()() )
-*/

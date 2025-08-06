@@ -83,46 +83,27 @@ int main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s; cin >> s;
-        int n = s.size();
+        int n;
+        cin >> n;
+        vpii xc(n);
+        for (int i = 0; i < n; i++) cin >> xc[i].first >> xc[i].second;
+        sort(all(xc));
+        vl x, c;
+        for (auto& [xi, ci] : xc) x.pb(xi), c.pb(ci);
+        // cout << x << endl;
+        // cout << c << endl;
 
-        for (int i = 1; i < n; i++) {
-
-            // If we encounter a closing parenthesis
-            if (s[i] == ')') {
-
-                // Check if the previous character is an
-                // opening parenthesis '('
-                if (s[i - 1] == '(') {
-                    if (i >= 2) {
-                        dp[i] = dp[i - 2] + 2;
-                    }
-                    else {
-                        dp[i] = 2;
-                    }
-                }
-
-                // Check if the previous character is a
-                // closing parenthesis ')' and the matching opening
-                // parenthesis exists before the valid substring
-                else if (i - dp[i - 1] > 0 && s[i - dp[i - 1] - 1] == '(') {
-                    if (i - dp[i - 1] >= 2) {
-                        dp[i] = dp[i - 1] + dp[i - dp[i - 1] - 2] + 2;
-                    }
-                    else {
-                        dp[i] = dp[i - 1] + 2;
-                    }
-                }
-
-                // Update the maximum length
-                maxLen = max(maxLen, dp[i]);
-            }
-        }
-
+        vvl dp(n, vl(n, LINF));
+        function<ll(int, int)> f = [&](int i, int j) {
+            if (i == n) return 0ll;
+            if (j == n) return INF * 1ll;
+            auto& ret = dp[i][j];
+            if (ret != LINF) return ret;
+            ret = min(ret, c[i] + f(i + 1, i));
+            ret = min(ret, abs(x[i] - x[j]) + f(i + 1, j));
+            return ret;
+            };
+        cout << c[0] + f(1, 0) << endl;
     }
     return 0;
 }
-
-/*
-    ( (()) ) ) ( ()() )
-*/

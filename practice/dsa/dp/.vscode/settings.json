@@ -4,6 +4,7 @@
         "vector": "cpp",
         "map": "cpp",
         "__tree": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "iostream": "cpp"
     }
 }

@@ -69,6 +69,8 @@ const int N = 1e5 + 1;
 using namespace __gnu_pbds;
 template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
+ll dp[20][2][4];
+
 int main()
 {
 #ifndef ONLINE_JUDGE
@@ -80,49 +82,28 @@ int main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
-    int T(1);
-    // cin >> T;
-    for (int Ti = 1; Ti <= T; Ti++) {
-        string s; cin >> s;
+    auto solve = [&](ll x) {
+        string s = to_string(x);
         int n = s.size();
-
-        for (int i = 1; i < n; i++) {
-
-            // If we encounter a closing parenthesis
-            if (s[i] == ')') {
-
-                // Check if the previous character is an
-                // opening parenthesis '('
-                if (s[i - 1] == '(') {
-                    if (i >= 2) {
-                        dp[i] = dp[i - 2] + 2;
-                    }
-                    else {
-                        dp[i] = 2;
-                    }
-                }
-
-                // Check if the previous character is a
-                // closing parenthesis ')' and the matching opening
-                // parenthesis exists before the valid substring
-                else if (i - dp[i - 1] > 0 && s[i - dp[i - 1] - 1] == '(') {
-                    if (i - dp[i - 1] >= 2) {
-                        dp[i] = dp[i - 1] + dp[i - dp[i - 1] - 2] + 2;
-                    }
-                    else {
-                        dp[i] = dp[i - 1] + 2;
-                    }
-                }
-
-                // Update the maximum length
-                maxLen = max(maxLen, dp[i]);
-            }
-        }
-
+        memset(dp, -1, sizeof(dp));
+        function<ll(int, int, int)> f = [&](int i, int flag, int k) {
+            if (k < 0) return 0ll;
+            if (i == n) return 1ll;
+            auto& ret = dp[i][flag][k];
+            if (~ret) return ret;
+            ret = 0;
+            int lim = (flag ? s[i] - '0' : 9);
+            for (int d = 0; d <= lim; d++)
+                ret += f(i + 1, flag & (d == lim), k - (d != 0));
+            return ret;
+            };
+        return f(0, 1, 3);
+        };
+    int T(1);
+    cin >> T;
+    for (int Ti = 1; Ti <= T; Ti++) {
+        ll l, r; cin >> l >> r;
+        cout << solve(r) - solve(l - 1) << endl;
     }
     return 0;
 }
-
-/*
-    ( (()) ) ) ( ()() )
-*/

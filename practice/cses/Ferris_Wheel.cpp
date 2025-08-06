@@ -80,8 +80,35 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, x;
+        cin >> n >> x;
+        vi a(n);
+        for (int i = 0; i < n; i++) {
+            cin >> a[i];
+        }
+        int ans = 0;
+        vb vis(n);
+        sort(all(a));
+        for (int i = 0, j = n - 1; i <= j; ) {
+            if (i == j) {
+                ans++;
+                vis[i] = 1;
+                i++; j--;
+            }
+            else {
+                if (a[i] + a[j] <= x) {
+                    vis[i] = vis[j] = 1;
+                    i++, j--;
+                    ans++;
+                }
+                else {
+                    j--;
+                }
+            }
+        }
+        for (int i = 0; i < n; i++)
+            ans += !vis[i];
+        cout << ans;
     }
     return 0;
 }
