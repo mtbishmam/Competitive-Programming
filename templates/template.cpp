@@ -37,7 +37,7 @@ template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cer
 
 using ll = long long;
 using ld = long double;
-using ull = unsigned ll;
+using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
 using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
@@ -48,6 +48,7 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
+#define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
 #define bug cerr << "!Bugged..." << endl
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)

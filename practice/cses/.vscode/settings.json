@@ -10,6 +10,13 @@
         "vector": "cpp",
         "stack": "cpp",
         "iostream": "cpp",
-        "__tree": "cpp"
+        "__tree": "cpp",
+        "__bit_reference": "cpp",
+        "__hash_table": "cpp",
+        "__split_buffer": "cpp",
+        "array": "cpp",
+        "forward_list": "cpp",
+        "initializer_list": "cpp",
+        "string_view": "cpp"
     }
 }

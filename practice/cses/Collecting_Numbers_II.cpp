@@ -37,7 +37,7 @@ template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cer
 
 using ll = long long;
 using ld = long double;
-using ull = unsigned ll;
+using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
 using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
@@ -48,6 +48,7 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
+#define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
 #define bug cerr << "!Bugged..." << endl
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
@@ -80,8 +81,42 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vi a(n + 1), idx(n + 1);
+        for (int i = 1; i <= n; i++) {
+            cin >> a[i];
+            idx[a[i]] = i;
+        }
+        int ans = 1, pos = idx[1];
+        for (int i = 2; i <= n; i++) {
+            if (idx[i] > pos) pos = idx[i];
+            else ans++, pos = idx[i];
+        }
+
+        auto moves = [&](int i, int j) {
+            int x = a[i], y = a[j];
+            int ret = 0;
+            vi vals;
+            if (x - 1 >= 1) vals.eb(x - 1);
+            if (x + 1 <= n) vals.eb(x + 1);
+            if (y - 1 >= 1) vals.eb(y - 1);
+            if (y + 1 <= n) vals.eb(y + 1);
+            uniq(vals);
+            for (int i = 1; i < vals.size(); i++)
+                ret += (idx[vals[i - 1]] > idx[vals[i]]);
+            return ret;
+            };
+        while (m--) {
+            int i, j;
+            cin >> i >> j;
+            int prev = moves(i, j);
+            swap(idx[a[i]], idx[a[j]]);
+            swap(a[i], a[j]);
+            int now = moves(i, j);
+            ans += now - prev;
+            cout << ans << endl;
+        }
     }
     return 0;
 }

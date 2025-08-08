@@ -37,7 +37,7 @@ template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cer
 
 using ll = long long;
 using ld = long double;
-using ull = unsigned ll;
+using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
 using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
@@ -92,7 +92,8 @@ int32_t main()
             if (idx[i] > pos) pos = idx[i];
             else ans++, pos = idx[i];
         }
-        cout << ans;
+
+
     }
     return 0;
 }
