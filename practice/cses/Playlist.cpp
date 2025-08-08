@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+// #define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -48,6 +48,7 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
+#define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
 #define bug cerr << "!Bugged..." << endl
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
@@ -82,6 +83,27 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
+        vi a(n); cin >> a;
+        auto chk = [&](int sz) {
+            map<int, int> mp;
+            for (int i = 0; i < sz; i++) mp[a[i]]++;
+            int mx = mp.size();
+            for (int l = 1, r = sz; r < n; l++, r++) {
+                mp[a[l - 1]]--;
+                mp[a[r]]++;
+                if (!mp[a[l - 1]]) mp.erase(a[l - 1]);
+                mx = max(mx, (int)mp.size());
+            }
+            return mx >= sz;
+            };
+        int l = 1, r = n, ans(1);
+        while (l <= r) {
+            int mid = (l + r) >> 1;
+            if (chk(mid)) l = mid + 1, ans = mid;
+            else r = mid - 1;
+        }
+
+        cout << ans << endl;
     }
     return 0;
 }
