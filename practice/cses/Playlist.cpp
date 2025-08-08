@@ -96,13 +96,12 @@ int32_t main()
             }
             return mx >= sz;
             };
-        int l = 1, r = n, ans(1);
+        int l = 1, r = n, ans = 1;
         while (l <= r) {
             int mid = (l + r) >> 1;
             if (chk(mid)) l = mid + 1, ans = mid;
             else r = mid - 1;
         }
-
         cout << ans << endl;
     }
     return 0;
