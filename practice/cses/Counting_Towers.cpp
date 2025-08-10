@@ -83,20 +83,6 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vvc a(n, vc(n));
-        for (auto& ai : a) cin >> ai;
-        vvi dp(n, vi(n, -1));
-        function<int(int, int)> f = [&](int i, int j) {
-            if (i < 0 or j < 0 or i >= n or j >= n or a[i][j] == '*') return 0ll;
-            if (i == n - 1 and j == n - 1) return 1ll;
-            auto& ret = dp[i][j];
-            if (~ret) return ret;
-            ret = 0;
-            ret = add(ret, f(i + 1, j));
-            ret = add(ret, f(i, j + 1));
-            return ret;
-            };
-        cout << f(0, 0) << endl;
     }
     return 0;
 }

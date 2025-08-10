@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+// #define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -57,10 +57,11 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 const string cq[2] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 2147483647;
+const int INF = 2e8;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
 const int N = 1e5 + 1;
+int dp[1000][N];
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -81,22 +82,23 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vvc a(n, vc(n));
-        for (auto& ai : a) cin >> ai;
-        vvi dp(n, vi(n, -1));
-        function<int(int, int)> f = [&](int i, int j) {
-            if (i < 0 or j < 0 or i >= n or j >= n or a[i][j] == '*') return 0ll;
-            if (i == n - 1 and j == n - 1) return 1ll;
-            auto& ret = dp[i][j];
+        int n, X;
+        cin >> n >> X;
+        vi prices(n), pages(n);
+        cin >> prices >> pages;
+        memset(dp, -1, sizeof(dp));
+        function<int(int, int)> f = [&](int i, int x) {
+            if (x < 0) return (int)-INF;
+            if (i == n) return 0;
+            auto& ret = dp[i][x];
             if (~ret) return ret;
-            ret = 0;
-            ret = add(ret, f(i + 1, j));
-            ret = add(ret, f(i, j + 1));
+            ret = f(i + 1, x);
+            if (x >= prices[i])
+                ret = max(ret, pages[i] + f(i + 1, x - prices[i]));
             return ret;
             };
-        cout << f(0, 0) << endl;
+        cout << f(0, X) << endl;
     }
     return 0;
 }
+

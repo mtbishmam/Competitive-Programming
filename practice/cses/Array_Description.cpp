@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+// #define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -81,22 +81,30 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vvc a(n, vc(n));
-        for (auto& ai : a) cin >> ai;
-        vvi dp(n, vi(n, -1));
+        int n, m;
+        cin >> n >> m;
+        vi a(n); cin >> a;
+        vvi dp(n, vi(m + 1, -1));
         function<int(int, int)> f = [&](int i, int j) {
-            if (i < 0 or j < 0 or i >= n or j >= n or a[i][j] == '*') return 0ll;
-            if (i == n - 1 and j == n - 1) return 1ll;
+            if (i > n or j <= 0 or j > m) return 0;
+            if (i == n) return 1;
             auto& ret = dp[i][j];
             if (~ret) return ret;
             ret = 0;
-            ret = add(ret, f(i + 1, j));
-            ret = add(ret, f(i, j + 1));
+            if (a[i]) {
+                if (abs(a[i] - j) <= 1)
+                    ret = add(ret, f(i + 1, a[i]));
+            }
+            else for (int k = -1; k <= 1; k++) ret = add(ret, f(i + 1, j + k));
             return ret;
             };
-        cout << f(0, 0) << endl;
+        int ans = 0;
+        if (a[0]) ans = f(1, a[0]);
+        else {
+            for (int k = 1; k <= m; k++)
+                ans = add(ans, f(1, k));
+        }
+        cout << ans << endl;
     }
     return 0;
 }
