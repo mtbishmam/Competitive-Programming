@@ -25,7 +25,6 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -62,10 +61,10 @@ const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
 const int N = 1e5 + 1;
 
-// #include<ext/pb_ds/assoc_container.hpp>
-// #include<ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 int32_t main()
 {
@@ -81,8 +80,19 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, k;
+        cin >> n >> k;
+
+        ordered_set<int> os;
+        for (int i = 1; i <= n; i++)
+            os.insert(i);
+
+        for (int i = k; os.size(); i = (i + k) % os.size()) {
+            auto it = os.find_by_order(i);
+            cout << *it << " ";
+            os.erase(it);
+        }
+
     }
     return 0;
 }
