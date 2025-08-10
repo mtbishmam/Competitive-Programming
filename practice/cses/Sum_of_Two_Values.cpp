@@ -37,7 +37,7 @@ template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cer
 
 using ll = long long;
 using ld = long double;
-using ull = unsigned ll;
+using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
 using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
@@ -48,6 +48,7 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
+#define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
 #define bug cerr << "!Bugged..." << endl
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
@@ -82,29 +83,19 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, x;
         cin >> n >> x;
-        vi a(n);
-        map<int, vi> mp;
-        for (int i = 0; i < n; i++) {
-            cin >> a[i];
-            mp[a[i]].eb(i + 1);
-        }
+        vpii a(n);
+        for (int i = 0; i < n; i++) cin >> a[i].ff, a[i].ss = i + 1;
         sort(all(a));
-        for (int i = 0; i < n; i++) {
-            int y = x - a[i];
-            if (mp.find(y) != mp.end()) {
-                if (a[i] == y) {
-                    if (mp[a[i]].size() >= 2) {
-                        cout << mp[a[i]][0] << " " << mp[a[i]][1] << endl;
-                        return 0;
-                    }
-                }
-                else {
-                    cout << mp[a[i]].back() << " " << mp[y].back();
-                    return 0;
-                }
+        for (int l = 0, r = n - 1; l < r;) {
+            int cur = a[l].ff + a[r].ff;
+            if (cur == x) {
+                cout << a[l].ss << " " << a[r].ss << endl;
+                return 0;
             }
+            else if (cur < x) l++;
+            else r--;
         }
-        cout << "IMPOSSIBLE" << endl;
+        cout << "IMPOSSIBLE";
     }
     return 0;
 }

@@ -83,23 +83,19 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int x, n;
         cin >> x >> n;
-        set<int> lights;
-        multiset<int> mx;
-        lights.insert(0);
-        lights.insert(x);
-        mx.insert(x);
-        while (n--) {
-            int y; cin >> y;
-            auto it1 = lights.lb(y);
-            auto it2 = lights.ub(y);
-            it1--;
-            auto dit = mx.lb(*it2 - *it1);
-            mx.erase(dit);
-            mx.insert(y - *it1);
-            mx.insert(*it2 - y);
-            auto ans = mx.end();
-            cout << *(--ans) << " ";
-            lights.insert(y);
+        vi a(n); cin >> a;
+        multiset<int> points, longest;
+        points.insert(0);
+        points.insert(x);
+        longest.insert(x);
+        for (int i = 0; i < n; i++) {
+            auto it1 = points.ub(a[i]);
+            auto it2 = points.ub(a[i]); it2--;
+            longest.erase(longest.find(*it1 - *it2));
+            longest.insert(*it1 - a[i]);
+            longest.insert(a[i] - *it2);
+            points.insert(a[i]);
+            cout << *longest.rbegin() << " ";
         }
     }
     return 0;

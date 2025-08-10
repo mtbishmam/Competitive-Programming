@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+// #define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -60,7 +60,7 @@ const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 const int INF = 2147483647;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
-const int N = 1e5 + 1;
+const int N = 1e6 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -81,40 +81,22 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vtiii a(n);
-        for (int i = 0; i < n; i++) {
-            int x, y; cin >> x >> y;
-            a[i] = { y, x, i };
-        }
-        int k = 0;
-        vi ans(n);
+        int n, x;
+        cin >> n >> x;
+        vi a(n); cin >> a;
         sort(all(a));
-        multiset<pii> ms;
-        for (int i = 0; i < n; i++) {
-            auto& [end, start, idx] = a[i];
-            auto it = ms.lb({ start, -1 });
-            if (it == ms.begin()) {
-                ans[idx] = ++k;
-                ms.insert({ end, k });
-            }
-            else {
-                it--;
-                auto& [pend, pk] = *it;
-                if (pend < start) {
-                    ans[idx] = pk;
-                    ms.erase(it);
-                    ms.insert({ end, pk });
-                }
-                else {
-                    ans[idx] = ++k;
-                    ms.insert({ end, k });
-                }
-            }
-        }
-        cout << k << endl;
-        cout << ans;
+        vvi dp(x + 5, vi(n, -1));
+        function<int(int, int)> f = [&](int i, int j) {
+            if (i == 0) return 1;
+            if (i < 0 or j >= n) return 0;
+            auto& ret = dp[i][j];
+            if (~ret) return ret;
+            ret = 0;
+            ret = add(ret, f(i - a[j], j));
+            ret = add(ret, f(i, j + 1));
+            return ret;
+            };
+        cout << f(x, 0) << endl;
     }
     return 0;
 }

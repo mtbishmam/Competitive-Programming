@@ -81,40 +81,22 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vtiii a(n);
-        for (int i = 0; i < n; i++) {
-            int x, y; cin >> x >> y;
-            a[i] = { y, x, i };
-        }
-        int k = 0;
-        vi ans(n);
+        int n, x;
+        cin >> n >> x;
+        vi a(n); cin >> a;
         sort(all(a));
-        multiset<pii> ms;
-        for (int i = 0; i < n; i++) {
-            auto& [end, start, idx] = a[i];
-            auto it = ms.lb({ start, -1 });
-            if (it == ms.begin()) {
-                ans[idx] = ++k;
-                ms.insert({ end, k });
-            }
-            else {
-                it--;
-                auto& [pend, pk] = *it;
-                if (pend < start) {
-                    ans[idx] = pk;
-                    ms.erase(it);
-                    ms.insert({ end, pk });
-                }
-                else {
-                    ans[idx] = ++k;
-                    ms.insert({ end, k });
-                }
-            }
-        }
-        cout << k << endl;
-        cout << ans;
+        vl dp(x + 1, -1);
+        function<int(int)> f = [&](int i) {
+            if (i == 0) return 0ll;
+            if (i < 0) return INF * 100ll;
+            auto& ret = dp[i];
+            if (~ret) return ret;
+            ret = INF;
+            for (auto& c : a)
+                ret = min(ret, 1 + f(i - c));
+            return ret;
+            };
+        cout << (f(x) >= INF ? -1 : f(x)) << endl;
     }
     return 0;
 }

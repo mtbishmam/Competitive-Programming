@@ -27,17 +27,6 @@ using namespace std;
 #define em emplace
 #define int long long
 
-using ll = long long;
-using ld = long double;
-using ull = unsigned ll;
-using vi = vector<int>; using vvi = vector<vi>;
-using vl = vector<ll>; using vvl = vector<vl>;
-using vb = vector<bool>; using vvb = vector<vb>;
-using vc = vector<char>; using vvc = vector<vc>;
-using pii = pair<int, int>; using vpii = vector<pii>;
-using vs = vector<string>;
-using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
-
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
 template <typename T> ostream& operator<<(ostream& os, set<T>& s) { for (auto i : s) os << i << " "; return os; }
@@ -46,8 +35,20 @@ void dbg_out() { cerr << endl; }
 template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
 #define debug(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
 
+using ll = long long;
+using ld = long double;
+using ull = unsigned long long;
+using vi = vector<int>; using vvi = vector<vi>;
+using vl = vector<ll>; using vvl = vector<vl>;
+using vb = vector<bool>; using vvb = vector<vb>;
+using vc = vector<char>; using vvc = vector<vc>;
+using pii = pair<int, int>; using vpii = vector<pii>;
+using vs = vector<string>;
+using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
+
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
+#define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
 #define bug cerr << "!Bugged..." << endl
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
@@ -82,21 +83,21 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m;
         cin >> n >> m;
-        vi a(n), b(m); cin >> a >> b;
-        set<pii> sp;
-        for (int i = 0; i < n; i++) sp.insert({ a[i], i });
-        vi ans(m, -1);
+        vi a(n), b(m), ans(m, -1);
+        cin >> a >> b;
+        multiset<int> ms;
+        for (int i = 0; i < n; i++) ms.insert(a[i]);
         for (int i = 0; i < m; i++) {
-            auto it = sp.upper_bound({ b[i], INF });
-            if (it == sp.begin()) cout << -1 << endl;
+            int x = b[i];
+            auto it = ms.ub(x);
+            if (it == ms.begin()) {}
             else {
                 it--;
-                auto [val, idx] = *it;
-                cout << val << endl;
-                sp.erase(it);
+                ans[i] = *it;
+                ms.erase(it);
             }
         }
-        // for (auto& i : ans) cout << i << endl;
+        for (int i = 0; i < m; i++) cout << ans[i] << endl;
     }
     return 0;
 }

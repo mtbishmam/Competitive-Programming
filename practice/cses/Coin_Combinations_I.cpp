@@ -81,40 +81,39 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vtiii a(n);
-        for (int i = 0; i < n; i++) {
-            int x, y; cin >> x >> y;
-            a[i] = { y, x, i };
-        }
-        int k = 0;
-        vi ans(n);
+        int n, x;
+        cin >> n >> x;
+        vi a(n); cin >> a;
         sort(all(a));
-        multiset<pii> ms;
-        for (int i = 0; i < n; i++) {
-            auto& [end, start, idx] = a[i];
-            auto it = ms.lb({ start, -1 });
-            if (it == ms.begin()) {
-                ans[idx] = ++k;
-                ms.insert({ end, k });
+        vl dp(x + 1, -1);
+        // function<int(int)> f = [&](int i) {
+        //     if (i == 0) return 1ll;
+        //     if (i < 0) return 0ll;
+        //     auto& ret = dp[i];
+        //     if (~ret) return ret;
+        //     ret = 0;
+        //     for (auto& c : a)
+        //         ret = add(ret, f(i - c));
+        //     return ret;
+        //     };
+        // cout << f(x) << endl;
+        for (int i = 0; i <= x; i++) {
+            auto& ret = dp[i];
+            if (i == 0) {
+                ret = 1ll;
+                continue;
             }
-            else {
-                it--;
-                auto& [pend, pk] = *it;
-                if (pend < start) {
-                    ans[idx] = pk;
-                    ms.erase(it);
-                    ms.insert({ end, pk });
-                }
-                else {
-                    ans[idx] = ++k;
-                    ms.insert({ end, k });
-                }
+            if (i < 0) {
+                ret = 0ll;
+                continue;
             }
+            ret = 0;
+            for (auto& c : a)
+                if (i - c >= 0) {
+                    ret = add(ret, dp[i - c]);
+                }
         }
-        cout << k << endl;
-        cout << ans;
+        cout << dp[x] << endl;
     }
     return 0;
 }

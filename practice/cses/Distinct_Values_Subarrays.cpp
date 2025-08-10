@@ -83,15 +83,14 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vi a(n);
-        cin >> a;
-
+        vi a(n); cin >> a;
         int ans = 0;
         map<int, int> mp;
         for (int i = 0, j = 0; i < n; i++) {
-            while (j < n and !mp[a[j]]) mp[a[j++]]++;
-            mp[a[i]]--;
+            while (j < n and !mp.count(a[j])) mp[a[j++]]++;
             ans += (j - i);
+            mp[a[i]]--;
+            if (!mp[a[i]]) mp.erase(a[i]);
         }
         cout << ans << endl;
     }

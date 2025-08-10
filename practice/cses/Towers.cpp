@@ -85,23 +85,20 @@ int32_t main()
         cin >> n;
         vi a(n);
         cin >> a;
-        multiset<int> ms;
         int ans = 0;
-        reverse(all(a));
-        while (a.size()) {
-            int x = a.back();
-            a.pop_back();
-            auto it = ms.upper_bound(x);
-            if (it != ms.end()) {
-                ms.erase(it);
-                ms.insert(x);
+        multiset<int> ms;
+        for (int i = 0; i < n; i++) {
+            auto it = ms.ub(a[i]);
+            if (it == ms.end()) {
+                ans++;
+                ms.insert(a[i]);
             }
             else {
-                ans++;
-                ms.insert(x);
+                ms.erase(it);
+                ms.insert(a[i]);
             }
         }
-        cout << ans << endl;
+        cout << ans;
     }
     return 0;
 }
