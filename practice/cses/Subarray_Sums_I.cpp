@@ -81,8 +81,17 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, x;
+        cin >> n >> x;
+        vi a(n); cin >> a;
+
+        int ans = 0, cur = 0;
+        for (int i = 0, j = 0; i < n; i++) {
+            while (j < n and cur + a[j] <= x) cur += a[j++];
+            if (cur == x) ans++;
+            cur -= a[i];
+        }
+        cout << ans << endl;
     }
     return 0;
 }
