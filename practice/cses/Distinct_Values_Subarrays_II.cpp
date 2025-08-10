@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-// #define int long long
+#define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -37,7 +37,7 @@ template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cer
 
 using ll = long long;
 using ld = long double;
-using ull = unsigned ll;
+using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
 using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
@@ -67,25 +67,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-#include <chrono>
-struct custom_hash {
-    static uint64_t splitmix64(uint64_t x) {
-        // Source: Sebastiano Vigna's splitmix64
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
-
-// usage
-unordered_map<int, int, custom_hash> mp;
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -100,28 +81,17 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, k;
+        cin >> n >> k;
         vi a(n); cin >> a;
-        auto chk = [&](int sz) {
-            unordered_map<int, int, custom_hash> mp;
-            int mx = mp.size();
-            for (int i = 0; i < n; i++) {
-                if (i - sz >= 0) {
-                    mp[a[i - sz]]--;
-                    if (!mp[a[i - sz]])
-                        mp.erase(a[i - sz]);
-                }
-                mp[a[i]]++;
-                mx = max(mx, (int)mp.size());
-            }
-            return mx >= sz;
-            };
-        int l = 1, r = n, ans = 1;
-        while (l <= r) {
-            int mid = (l + r) >> 1;
-            if (chk(mid)) l = mid + 1, ans = mid;
-            else r = mid - 1;
+
+        int ans = 0;
+        map<int, int> mp;
+        for (int i = 0, j = 0; i < n; i++) {
+            while (j < n and (mp.size() < k or mp.count(a[j]))) mp[a[j++]]++;
+            ans += (j - i);
+            mp[a[i]]--;
+            if (!mp[a[i]]) mp.erase(a[i]);
         }
         cout << ans << endl;
     }
