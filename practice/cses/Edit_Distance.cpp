@@ -57,17 +57,15 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 const string cq[2] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 2147483647;
+const int INF = 1e4;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
-const int N = 1e4 + 1;
+const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
-int dp[2 + 1][2][N][2];
 
 int32_t main()
 {
@@ -80,32 +78,49 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
-    // flag = 0, not cut i, just move
-    // flag = 1, cut i and move
-    // flag = 2, not cut j, just move
-    // flag = 3 = cut j and move
-
-    // vector<vvi> dp(4, vvi(2 + 1, vi(N + 1, -1)));
-    memset(dp, -1, sizeof(dp));
-    function<int(int, int, int, int)> f = [&](int i, int ii, int j, int jj) {
-        if (i == 2 and !j) return 1;
-        if (i > 2 or j < 0) return 0;
-        auto& ret = dp[i][ii][j][jj];
-        if (~ret) return ret;
-        ret = 0;
-        ret = add(ret, f(i + 1, 0, j, 0));
-        ret = add(ret, f(i + 1, 1, j, 0));
-        ret = add(ret, f(i, 0, j - 1, 0));
-        ret = add(ret, f(i, 0, j - 1, 1));
-        return ret;
-        };
-
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        cout << f(0, 0, n, 0) << endl;
+        string s1, s2;
+        cin >> s1 >> s2;
+        int n = s1.size(), m = s2.size();
+        vvi dp(n + 1, vi(m + 1, -1));
+        function<int(int, int)> f = [&](int i, int j) {
+            if (i == n and j == m) return 0;
+            if (i > n or j > m) return INF;
+            auto& ret = dp[i][j];
+            if (~ret) return ret;
+            ret = INF;
+            if (s1[i] == s2[j]) ret = min(ret, f(i + 1, j + 1));
+            else {
+                ret = min(ret, 1 + f(i + 1, j + 1));
+                ret = min(ret, 1 + f(i + 1, j));
+                ret = min(ret, 1 + f(i, j + 1));
+            }
+            return ret;
+            };
+        cout << f(0, 0);
+        // vvi dp(n + 2, vi(m + 2, -1));
+        // for (int i = n + 1; i >= 0; i--)
+        //     for (int j = m + 1; j >= 0; j--) {
+        //         auto& ret = dp[i][j];
+        //         if (i == n and j == m) {
+        //             ret = 0;
+        //             continue;
+        //         }
+        //         if (i > n or j > m) {
+        //             ret = INF;
+        //             continue;
+        //         }
+        //         ret = INF;
+        //         if (s1[i] == s2[j]) ret = min(ret, dp[i + 1][j + 1]);
+        //         else {
+        //             ret = min(ret, 1 + dp[i + 1][j + 1]);
+        //             ret = min(ret, 1 + dp[i + 1][j]);
+        //             ret = min(ret, 1 + dp[i][j + 1]);
+        //         }
+        //     }
+        // cout << dp[0][0];
     }
     return 0;
 }

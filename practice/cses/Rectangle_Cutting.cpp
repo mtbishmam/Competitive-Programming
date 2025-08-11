@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-// #define int long long
+#define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -60,14 +60,12 @@ const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 const int INF = 2147483647;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
-const int N = 1e4 + 1;
+const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
-int dp[2 + 1][2][N][2];
 
 int32_t main()
 {
@@ -80,32 +78,11 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
-    // flag = 0, not cut i, just move
-    // flag = 1, cut i and move
-    // flag = 2, not cut j, just move
-    // flag = 3 = cut j and move
-
-    // vector<vvi> dp(4, vvi(2 + 1, vi(N + 1, -1)));
-    memset(dp, -1, sizeof(dp));
-    function<int(int, int, int, int)> f = [&](int i, int ii, int j, int jj) {
-        if (i == 2 and !j) return 1;
-        if (i > 2 or j < 0) return 0;
-        auto& ret = dp[i][ii][j][jj];
-        if (~ret) return ret;
-        ret = 0;
-        ret = add(ret, f(i + 1, 0, j, 0));
-        ret = add(ret, f(i + 1, 1, j, 0));
-        ret = add(ret, f(i, 0, j - 1, 0));
-        ret = add(ret, f(i, 0, j - 1, 1));
-        return ret;
-        };
-
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        cout << f(0, 0, n, 0) << endl;
     }
     return 0;
 }
