@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-// #define int long long
+#define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -81,40 +81,8 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, X;
-        cin >> n >> X;
-        vi a(n); cin >> a;
-        sort(all(a));
-        // vvi dp(n, vi(X + 1, -1));
-        // auto f = [&](auto&& f, int i, int x) -> int {
-        //     if (x == 0) return 1;
-        //     if (x < 0 or i >= n) return 0;
-        //     auto& ret = dp[i][x];
-        //     if (~ret) return ret;
-        //     ret = 0;
-        //     ret = add(ret, f(f, i, x - a[i]));
-        //     ret = add(ret, f(f, i + 1, x));
-        //     return ret;
-        //     };
-        // cout << f(f, 0, X);
-        vvi dp(n, vi(X + 1, -1));
-        for (int i = n - 1; i >= 0; i--) {
-            for (int x = 0; x <= X; x++) {
-                auto& ret = dp[i][x];
-                if (x == 0) {
-                    ret = 1;
-                    continue;
-                }
-                if (x < 0 or i >= n) {
-                    ret = 0;
-                    continue;
-                }
-                ret = 0;
-                if (x >= a[i]) ret = add(ret, dp[i][x - a[i]]);
-                if (i + 1 < n) ret = add(ret, dp[i + 1][x]);
-            }
-        }
-        cout << dp[0][X];
+        int n;
+        cin >> n;
     }
     return 0;
 }

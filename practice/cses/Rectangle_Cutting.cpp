@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+// #define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -57,7 +57,7 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 const string cq[2] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 2147483647;
+const int INF = 1e4;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
 const int N = 1e5 + 1;
@@ -81,8 +81,35 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vvi dp(n + 1, vi(m + 1, -1));
+        auto f = [&](auto&& f, int i, int j) -> int {
+            if (i == j) return 0;
+            auto& ret = dp[i][j];
+            if (~ret) return ret;
+            ret = INF;
+            for (int ii = 1; ii <= i - 1; ii++)
+                ret = min(ret, 1 + f(f, i - ii, j) + f(f, ii, j));
+            for (int jj = 1; jj <= j - 1; jj++)
+                ret = min(ret, 1 + f(f, i, j - jj) + f(f, i, jj));
+            return ret;
+            };
+        cout << f(f, n, m);
+        // for (int i = 0; i <= n; i++)
+        //     for (int j = 0; j <= m; j++) {
+        //         auto& ret = dp[i][j];
+        //         if (i == j) {
+        //             ret = 0;
+        //             continue;
+        //         }
+        //         ret = INF;
+        //         for (int ii = 1; ii <= i - 1; ii++)
+        //             ret = min(ret, 1 + dp[i - ii][j] + dp[ii][j]);
+        //         for (int jj = 1; jj <= j - 1; jj++)
+        //             ret = min(ret, 1 + dp[i][j - jj] + dp[i][jj]);
+        //     }
+        // cout << dp[n][m] << endl;
     }
     return 0;
 }

@@ -60,7 +60,22 @@ const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 const int INF = 1e4;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
-const int N = 1e5 + 1;
+const int N = 5000 + 1;
+
+int dp[N][N], n, m;
+string s1, s2;
+int f(int i, int j) {
+    if (i == n and j == m) return 0;
+    if (i > n or j > m) return INF;
+    auto& ret = dp[i][j];
+    if (~ret) return ret;
+    ret = INF;
+    if (s1[i] == s2[j]) ret = min(ret, f(i + 1, j + 1));
+    ret = min(ret, 1 + f(i + 1, j + 1));
+    ret = min(ret, 1 + f(i + 1, j));
+    ret = min(ret, 1 + f(i, j + 1));
+    return ret;
+}
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -81,24 +96,9 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s1, s2;
         cin >> s1 >> s2;
-        int n = s1.size(), m = s2.size();
-        vvi dp(n + 1, vi(m + 1, -1));
-        function<int(int, int)> f = [&](int i, int j) {
-            if (i == n and j == m) return 0;
-            if (i > n or j > m) return INF;
-            auto& ret = dp[i][j];
-            if (~ret) return ret;
-            ret = INF;
-            if (s1[i] == s2[j]) ret = min(ret, f(i + 1, j + 1));
-            else {
-                ret = min(ret, 1 + f(i + 1, j + 1));
-                ret = min(ret, 1 + f(i + 1, j));
-                ret = min(ret, 1 + f(i, j + 1));
-            }
-            return ret;
-            };
+        n = s1.size(), m = s2.size();
+        memset(dp, -1, sizeof(dp));
         cout << f(0, 0);
         // vvi dp(n + 2, vi(m + 2, -1));
         // for (int i = n + 1; i >= 0; i--)

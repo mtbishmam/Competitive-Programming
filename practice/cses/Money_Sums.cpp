@@ -60,7 +60,6 @@ const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 const int INF = 2147483647;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
-const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -81,40 +80,27 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, X;
-        cin >> n >> X;
+        int n;
+        cin >> n;
         vi a(n); cin >> a;
-        sort(all(a));
-        // vvi dp(n, vi(X + 1, -1));
-        // auto f = [&](auto&& f, int i, int x) -> int {
-        //     if (x == 0) return 1;
-        //     if (x < 0 or i >= n) return 0;
-        //     auto& ret = dp[i][x];
-        //     if (~ret) return ret;
-        //     ret = 0;
-        //     ret = add(ret, f(f, i, x - a[i]));
-        //     ret = add(ret, f(f, i + 1, x));
-        //     return ret;
-        //     };
-        // cout << f(f, 0, X);
-        vvi dp(n, vi(X + 1, -1));
-        for (int i = n - 1; i >= 0; i--) {
-            for (int x = 0; x <= X; x++) {
-                auto& ret = dp[i][x];
-                if (x == 0) {
-                    ret = 1;
-                    continue;
-                }
-                if (x < 0 or i >= n) {
-                    ret = 0;
-                    continue;
-                }
-                ret = 0;
-                if (x >= a[i]) ret = add(ret, dp[i][x - a[i]]);
-                if (i + 1 < n) ret = add(ret, dp[i + 1][x]);
-            }
-        }
-        cout << dp[0][X];
+        int N = accumulate(all(a), 0);
+        vvi dp(n, vi(N + 1, -1));
+        auto f = [&](auto&& f, int i, int x) -> int {
+            if (!x) return 1;
+            if (x < 0 or i >= n) return 0;
+            auto& ret = dp[i][x];
+            if (~ret) return ret;
+            ret = 0;
+            ret |= f(f, i + 1, x - a[i]);
+            ret |= f(f, i + 1, x);
+            return ret;
+            };
+
+        vi ans;
+        for (int x = 1; x <= N; x++) // make N
+            if (f(f, 0, x)) ans.eb(x);
+        cout << ans.size() << endl;
+        cout << ans;
     }
     return 0;
 }
