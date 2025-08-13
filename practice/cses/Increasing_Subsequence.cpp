@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+// #define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -61,11 +61,6 @@ const int INF = 2147483647;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
 const int N = 2e5 + 1;
-
-// #include<ext/pb_ds/assoc_container.hpp>
-// #include<ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 /* 1. Sum only (long long) */
 struct node_sum {
@@ -136,6 +131,14 @@ struct segment_tree {
     void update(int pos, int x) { setval(pos, T(x), 1, 0, n - 1); }
 };
 
+int n;
+vi a(N);
+segment_tree<node_max> tree(N);
+
+// #include<ext/pb_ds/assoc_container.hpp>
+// #include<ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+// template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 int32_t main()
 {
@@ -151,28 +154,29 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
         cin >> n;
-        vi a(n);
+        vi vals;
         map<int, vi> mp;
-        for (int i = 0; i < n; i++) cin >> a[i], mp[a[i]].eb(i);
-
-        stack<int> st;
-        vi L(n, -1), R(n, n);
-        for (int i = 0; i < n; i++) {
-            while (st.size() and a[st.top()] <= a[i]) st.pop();
-            if (st.size()) L[i] = st.top();
-            st.push(i);
+        for (int i = 0; i < n; i++) cin >> a[i], mp[a[i]].eb(i), vals.eb(a[i]);
+        uniq(vals); sort(rall(vals));
+        int ans = 1;
+        for (auto& val : vals) {
+            auto& idxs = mp[val];
+            vi dp(idxs.size(), 1);
+            for (int i = 0; i < idxs.size(); i++) {
+                auto& mx = dp[i];
+                int idx = idxs[i];
+                int prev_mx_sub = tree.query(idx + 1, n).val;
+                mx = max(mx, 1 + prev_mx_sub);
+                ans = max(ans, mx);
+            }
+            for (int i = 0; i < idxs.size(); i++) {
+                auto& mx = dp[i];
+                int idx = idxs[i];
+                tree.update(idx, mx);
+            }
         }
-        while (st.size()) st.pop();
-        for (int i = n - 1; i >= 0; i--) {
-            while (st.size() and a[st.top()] <= a[i]) st.pop();
-            if (st.size()) R[i] = st.top();
-            st.push(i);
-        }
-
-        segment_tree<node_max> tree(n);
-
+        cout << ans;
     }
     return 0;
 }
