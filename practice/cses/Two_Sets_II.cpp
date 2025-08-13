@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+// #define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -57,23 +57,43 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 const string cq[2] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 1e13;
+const int INF = 2147483647;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
-const int N = 1e5 + 1;
+const int N = 1.5e5 + 1;
+
+int n, S, dp[501][N];
+int f(int i, int s) {
+    if (s == 0) return 1;
+    if (s < 0 or i > n) return 0;
+    auto& ret = dp[i][s];
+    if (~ret) return ret;
+    ret = 0;
+    ret = add(ret, f(i + 1, s - i));
+    ret = add(ret, f(i + 1, s));
+    return ret;
+}
+ll binexpo(ll a, ll b) {
+    ll ret = 1;
+    while (b) {
+        if (b & 1) ret = mul(ret, a);
+        a = mul(a, a);
+        b >>= 1;
+    }
+    return ret;
+}
+
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-ll dp[2][5000][5000];
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
-    // freopen("input6.txt", "r", stdin);
-    // freopen("output6.txt", "w", stdout);
+    // freopen("input.txt", "r", stdin);
+    // freopen("output.txt", "w", stdout);
     // freopen("error.txt", "a", stderr);
 #endif
     ios_base::sync_with_stdio(0);
@@ -83,54 +103,17 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
         cin >> n;
-        vi a(n); cin >> a;
+        S = (n * (n + 1)) / 2;
         memset(dp, -1, sizeof(dp));
-        auto f = [&](auto&& f, int flag, int i, int j) -> int {
-            if (i == j) return (flag ? 0 : a[i]);
-            if (i > j) return 0;
-            auto& ret = dp[flag][i][j];
-            if (~ret) return ret;
-            if (flag) {
-                ret = INF;
-                if (i + 1 < n) ret = min(ret, f(f, flag ^ 1, i + 1, j));
-                if (j - 1 >= 0) ret = min(ret, f(f, flag ^ 1, i, j - 1));
-            }
-            else {
-                ret = -INF;
-                if (i + 1 < n) ret = max(ret, a[i] + f(f, flag ^ 1, i + 1, j));
-                if (j - 1 >= 0) ret = max(ret, a[j] + f(f, flag ^ 1, i, j - 1));
-            }
-            return ret;
-            };
-        cout << f(f, 0, 0, n - 1);
-
-        // for (int i = n - 1; i >= 0; i--)
-        //     for (int j = 0; j < n; j++) {
-        //         for (int flag = 0; flag < 2; flag++) {
-        //             auto& ret = dp[flag][i][j];
-        //             if (i == j) {
-        //                 ret = flag ? 0 : a[i];
-        //                 continue;
-        //             }
-        //             if (i > j) {
-        //                 ret = 0;
-        //                 continue;
-        //             }
-        //             if (flag) {
-        //                 ret = INF;
-        //                 if (i + 1 < n) ret = min(ret, dp[flag ^ 1][i + 1][j]);
-        //                 if (j - 1 >= 0) ret = min(ret, dp[flag ^ 1][i][j - 1]);
-        //             }
-        //             else {
-        //                 ret = -INF;
-        //                 if (i + 1 < n) ret = max(ret, a[i] + dp[flag ^ 1][i + 1][j]);
-        //                 if (j - 1 >= 0) ret = max(ret, a[j] + dp[flag ^ 1][i][j - 1]);
-        //             }
-        //         }
-        //     }
-        // cout << dp[0][0][n - 1];
+        if (S & 1) cout << 0;
+        else {
+            ll ans = f(1, S / 2);
+            // 1 ≡ B ^ (p - 1) (mod p).
+            // B^(-1) ≡ B ^ (p - 2) (mod p).
+            ans = ans * binexpo(2, MOD - 2);
+            cout << ans % MOD;
+        }
     }
     return 0;
 }
