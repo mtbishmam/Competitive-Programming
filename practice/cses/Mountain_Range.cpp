@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+// #define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -60,7 +60,6 @@ const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 const int INF = 2147483647;
 const ll LINF = 9223372036854775807;
 const int MOD = 1e9 + 7;
-const int N = 2e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -119,23 +118,24 @@ struct segment_tree {
         T right = query(L, R, i * 2 + 1, mid + 1, r);
         return left + right;
     }
-    void setval(int pos, T cur, int i, int l, int r) {
+    void update(int pos, T cur, int i, int l, int r) {
         if (l == r) {
             sg[i] = cur;
         }
         else {
             int mid = (l + r) >> 1;
-            if (pos <= mid) setval(pos, cur, i * 2, l, mid);
-            else setval(pos, cur, i * 2 + 1, mid + 1, r);
+            if (pos <= mid) update(pos, cur, i * 2, l, mid);
+            else update(pos, cur, i * 2 + 1, mid + 1, r);
             sg[i] = sg[i * 2] + sg[i * 2 + 1];
         }
     }
     // Wrappers
     void build(vector<int>& a) { build(1, 0, n - 1, a); }
     T query(int L, int R) { return query(L, R, 1, 0, n - 1); }
-    void update(int pos, int x) { setval(pos, T(x), 1, 0, n - 1); }
+    void update(int pos, int x) { update(pos, T(x), 1, 0, n - 1); }
 };
 
+const int N = 2e5 + 1;
 
 int32_t main()
 {
@@ -171,7 +171,23 @@ int32_t main()
             st.push(i);
         }
 
+        uniq(a);
+        int ans = 1;
         segment_tree<node_max> tree(n);
+        for (auto& ai : a) {
+            auto& idxs = mp[ai];
+            vector<int> dp(idxs.size(), 1);
+            for (int i = 0; i < idxs.size(); i++) {
+                int l = L[idxs[i]] + 1;
+                int r = R[idxs[i]] - 1;
+                int best = tree.query(l, r).val;
+                dp[i] = max(dp[i], 1 + best);
+                ans = max(ans, dp[i]);
+            }
+            for (int i = 0; i < idxs.size(); i++)
+                tree.update(idxs[i], dp[i]);
+        }
+        cout << ans;
 
     }
     return 0;
