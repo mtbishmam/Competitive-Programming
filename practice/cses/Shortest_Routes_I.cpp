@@ -25,7 +25,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-// #define int long long
+#define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -88,9 +88,9 @@ int32_t main()
             int a, b, c; cin >> a >> b >> c;
             g[a].eb(b, c);
         }
-        priority_queue<pll, vector<pll>, greater<pll>> pq;
+        priority_queue<pii, vector<pii>, greater<pii>> pq;
         pq.em(0, 1);
-        vi dis(n + 1, INF);
+        vi dis(n + 1, LINF / 3);
         dis[1] = 0;
         vb vis(n + 1);
         while (pq.size()) {
