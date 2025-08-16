@@ -81,8 +81,24 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vvc a(n, vc(m));
+        for (auto& ai : a) cin >> ai;
+        vvb vis(n, vb(m));
+        auto f = [&](auto&& f, int i, int j) -> void {
+            vis[i][j] = 1;
+            for (int k = 0; k < 4; k++) {
+                int ni = i + dx[k], nj = j + dy[k];
+                if (ni < 0 or ni >= n or nj < 0 or nj >= m or vis[ni][nj] or a[ni][nj] == '#');
+                else f(f, ni, nj);
+            }
+            };
+        int ans = 0;
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                if (!vis[i][j] and a[i][j] != '#') f(f, i, j), ans++;
+        cout << ans;
     }
     return 0;
 }
