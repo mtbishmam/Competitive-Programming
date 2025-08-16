@@ -15,6 +15,7 @@
 // #include <cassert>
 #include <functional>
 #include <chrono>
+#include <climits>
 using namespace std;
 
 #define endl "\n"
@@ -57,9 +58,14 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 const string cq[2] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 2147483647;
-const ll LINF = 9223372036854775807;
+// const int INF = 2147483647;
+// const ll LINF = 9223372036854775807;
+const int INF = 1e9;
+const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
+// const int MOD = 998244353;
+const double EPS = 1e-9;
+const double PI = acos(-1);
 const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
