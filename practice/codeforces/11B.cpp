@@ -87,8 +87,20 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int x;
+        cin >> x;
+        int i;
+        for (i = 0; (i * (i - 1)) <= x * 2; i++);
+        int val = abs(x - (i * (i - 1)) / 2);
     }
     return 0;
 }
+
+/*
+    1, 3, 6, 10
+    1, (1 + 2), (1 + 2 - 3), (1 + 2 - 3 + 4)
+
+    7 -> 1, 2, 3, -4 + 5 -> 5
+    9 -> 1, 2, 3, 4
+
+*/
