@@ -26,7 +26,6 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-// #define int ll
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -68,21 +67,22 @@ const double EPS = 1e-9;
 const double PI = acos(-1);
 const int N = 1e5 + 1;
 
+// #include<ext/pb_ds/assoc_container.hpp>
+// #include<ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+// template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+// Neal Wu
+// https://github.com/nealwu/competitive-programming/blob/master/mod/mod_int.cc
 template<const int& MOD>
 struct _m_int {
     int val;
-
     _m_int(int64_t v = 0) {
         if (v < 0) v = v % MOD + MOD;
         if (v >= MOD) v %= MOD;
         val = int(v);
     }
-
-    _m_int(uint64_t v) {
-        if (v >= MOD) v %= MOD;
-        val = int(v);
-    }
-
+    _m_int(uint64_t v) { if (v >= MOD) v %= MOD; val = int(v); }
     _m_int(int v) : _m_int(int64_t(v)) {}
     _m_int(unsigned v) : _m_int(uint64_t(v)) {}
 
@@ -93,17 +93,8 @@ struct _m_int {
     explicit operator double() const { return val; }
     explicit operator long double() const { return val; }
 
-    _m_int& operator+=(const _m_int& other) {
-        val -= MOD - other.val;
-        if (val < 0) val += MOD;
-        return *this;
-    }
-
-    _m_int& operator-=(const _m_int& other) {
-        val -= other.val;
-        if (val < 0) val += MOD;
-        return *this;
-    }
+    _m_int& operator+=(const _m_int& other) { val -= MOD - other.val; if (val < 0) val += MOD; return *this; }
+    _m_int& operator-=(const _m_int& other) { val -= other.val; if (val < 0) val += MOD; return *this; }
 
     static unsigned fast_mod(uint64_t x, unsigned m = MOD) {
 #if !defined(_WIN32) || defined(_WIN64)
@@ -119,36 +110,19 @@ struct _m_int {
         return rem;
     }
 
-    _m_int& operator*=(const _m_int& other) {
-        val = fast_mod(uint64_t(val) * other.val);
-        return *this;
-    }
-
-    _m_int& operator/=(const _m_int& other) {
-        return *this *= other.inv();
-    }
+    _m_int& operator*=(const _m_int& other) { val = fast_mod(uint64_t(val) * other.val); return *this; }
+    _m_int& operator/=(const _m_int& other) { return *this *= other.inv(); }
 
     friend _m_int operator+(const _m_int& a, const _m_int& b) { return _m_int(a) += b; }
     friend _m_int operator-(const _m_int& a, const _m_int& b) { return _m_int(a) -= b; }
     friend _m_int operator*(const _m_int& a, const _m_int& b) { return _m_int(a) *= b; }
     friend _m_int operator/(const _m_int& a, const _m_int& b) { return _m_int(a) /= b; }
 
-    _m_int& operator++() {
-        val = val == MOD - 1 ? 0 : val + 1;
-        return *this;
-    }
-
-    _m_int& operator--() {
-        val = val == 0 ? MOD - 1 : val - 1;
-        return *this;
-    }
-
+    _m_int& operator++() { val = val == MOD - 1 ? 0 : val + 1; return *this; }
+    _m_int& operator--() { val = val == 0 ? MOD - 1 : val - 1; return *this; }
     _m_int operator++(int) { _m_int before = *this; ++*this; return before; }
     _m_int operator--(int) { _m_int before = *this; --*this; return before; }
-
-    _m_int operator-() const {
-        return val == 0 ? 0 : MOD - val;
-    }
+    _m_int operator-() const { return val == 0 ? 0 : MOD - val; }
 
     friend bool operator==(const _m_int& a, const _m_int& b) { return a.val == b.val; }
     friend bool operator!=(const _m_int& a, const _m_int& b) { return a.val != b.val; }
@@ -167,56 +141,38 @@ struct _m_int {
 
         save_inv[0] = 0;
         save_inv[1] = 1;
-
         for (int i = 2; i < SAVE_INV; i++)
             save_inv[i] = save_inv[MOD % i] * (MOD - MOD / i);
     }
 
     _m_int inv() const {
-        if (save_inv[1] == 0)
-            prepare_inv();
-
-        if (val < SAVE_INV)
-            return save_inv[val];
-
+        if (save_inv[1] == 0) prepare_inv();
+        if (val < SAVE_INV) return save_inv[val];
         _m_int product = 1;
         int v = val;
-
         do {
             product *= MOD - MOD / v;
             v = MOD % v;
         } while (v >= SAVE_INV);
-
         return product * save_inv[v];
     }
 
     _m_int pow(int64_t p) const {
-        if (p < 0)
-            return inv().pow(-p);
-
+        if (p < 0) return inv().pow(-p);
         _m_int a = *this, result = 1;
-
         while (p > 0) {
-            if (p & 1)
-                result *= a;
-
+            if (p & 1) result *= a;
             p >>= 1;
-
-            if (p > 0)
-                a *= a;
+            if (p > 0) a *= a;
         }
-
         return result;
     }
-
-    friend ostream& operator<<(ostream& os, const _m_int& m) {
-        return os << m.val;
-    }
+    friend ostream& operator<<(ostream& os, const _m_int& m) { return os << m.val; }
 };
 
 template<const int& MOD> _m_int<MOD> _m_int<MOD>::save_inv[_m_int<MOD>::SAVE_INV];
-using mod_int = _m_int<MOD>;
 
+using mod_int = _m_int<MOD>;
 
 vector<mod_int> _factorial = { 1 }, _inv_factorial = { 1 };
 
@@ -278,10 +234,6 @@ mod_int inv_permute(int64_t n, int64_t r) {
     return _inv_factorial[n] * _factorial[n - r];
 }
 
-// #include<ext/pb_ds/assoc_container.hpp>
-// #include<ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 int32_t main()
 {
@@ -294,55 +246,11 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
-    auto inv = [&](vi& a) {
-        vi b = a;
-        for (int i = 0; i < a.size(); i++) {
-            b.eb(a[(int)a.size() - i - 1]);
-        }
-        debug(b);
-        int ret = 0;
-        for (int i = 0; i < b.size(); i++)
-            for (int j = i + 1; j < b.size(); j++)
-                if (b[i] > b[j]) ret++;
-        return ret;
-        };
-
-    auto get = [&](int n) {
-        vi a(n);
-        iota(all(a), 1);
-        int ans = 0, cnt = 0;
-        do {
-            cnt = inv(a);
-            ans += cnt;
-        } while (next_permutation(all(a)));
-        return ans;
-        };
-
-    auto pw = [&](int a, int b) {
-        int ret = 1;
-        while (b) {
-            if (b & 1) ret = mul(ret, a);
-            a = mul(a, a);
-            b >>= 1;
-        }
-        return ret;
-        };
-
-    auto modinv = [&](int x) {return pw(x, MOD - 2); };
-    vi ans(N);
-    ans[1] = 0;
-    ans[2] = 4;
-    for (int i = 3; i < N; i++) {
-        ans[i] = (ans[i - 1] * ((mul(i, i) * modinv(i - 2)) % MOD)) % MOD;
-    }
-
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        // cout << get(n) << endl;
-        cout << ans[n] << endl;
+        mod_int n; cin >> n.val;
+        cout << factorial(n.val) * n * (n - 1) << endl;
     }
     return 0;
 }

@@ -1,8 +1,5 @@
 // YouKn0wWho
 // https://github.com/ShahjalalShohag/code-library/blob/ce28ab1b579b8bc796a9a06c9baf2f8c4c5b1609/Number%20Theory/Combinatorics%20Basics.cpp#L31
-#include<bits/stdc++.h>
-using namespace std;
-
 template <const int32_t MOD>
 struct modint {
     int32_t value;
@@ -29,7 +26,8 @@ template <int32_t MOD> modint<MOD> operator * (int32_t value, modint<MOD> n) { r
 template <int32_t MOD> istream& operator >> (istream& in, modint<MOD>& n) { return in >> n.value; }
 template <int32_t MOD> ostream& operator << (ostream& out, modint<MOD> n) { return out << n.value; }
 
-const int MOD = int(1e9) + 7;
+// const int MOD = 998244353;
+// const int MOD = int(1e9) + 7;
 using mint = modint<MOD>;
 
 struct combi {

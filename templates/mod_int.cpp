@@ -98,6 +98,68 @@ struct _m_int {
 
 template<const int& MOD> _m_int<MOD> _m_int<MOD>::save_inv[_m_int<MOD>::SAVE_INV];
 
-const int MOD = 998244353;
-const int MOD = int(1e9) + 7;
+// const int MOD = 998244353;
+// const int MOD = int(1e9) + 7;
 using mod_int = _m_int<MOD>;
+
+
+
+vector<mod_int> _factorial = { 1 }, _inv_factorial = { 1 };
+
+void prepare_factorials(int64_t maximum) {
+    static int64_t prepared_maximum = 0;
+
+    if (maximum <= prepared_maximum)
+        return;
+
+    // Prevent increasing maximum by only 1 each time.
+    maximum += maximum / 100;
+    _factorial.resize(maximum + 1);
+    _inv_factorial.resize(maximum + 1);
+
+    for (int64_t i = prepared_maximum + 1; i <= maximum; i++)
+        _factorial[i] = i * _factorial[i - 1];
+
+    _inv_factorial[maximum] = _factorial[maximum].inv();
+
+    for (int64_t i = maximum - 1; i > prepared_maximum; i--)
+        _inv_factorial[i] = (i + 1) * _inv_factorial[i + 1];
+
+    prepared_maximum = maximum;
+}
+
+mod_int factorial(int64_t n) {
+    if (n < 0) return 0;
+    prepare_factorials(n);
+    return _factorial[n];
+}
+
+mod_int inv_factorial(int64_t n) {
+    if (n < 0) return 0;
+    prepare_factorials(n);
+    return _inv_factorial[n];
+}
+
+mod_int choose(int64_t n, int64_t r) {
+    if (r < 0 || r > n) return 0;
+    prepare_factorials(n);
+    return _factorial[n] * _inv_factorial[r] * _inv_factorial[n - r];
+}
+
+mod_int permute(int64_t n, int64_t r) {
+    if (r < 0 || r > n) return 0;
+    prepare_factorials(n);
+    return _factorial[n] * _inv_factorial[n - r];
+}
+
+mod_int inv_choose(int64_t n, int64_t r) {
+    assert(0 <= r && r <= n);
+    prepare_factorials(n);
+    return _inv_factorial[n] * _factorial[r] * _factorial[n - r];
+}
+
+mod_int inv_permute(int64_t n, int64_t r) {
+    assert(0 <= r && r <= n);
+    prepare_factorials(n);
+    return _inv_factorial[n] * _factorial[n - r];
+}
