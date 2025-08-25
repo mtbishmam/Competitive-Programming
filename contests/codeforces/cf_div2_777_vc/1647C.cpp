@@ -85,10 +85,49 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vvc a(n, vc(m));
+        for (auto& ai : a) cin >> ai;
+        vector<pair<pii, pii>> ans;
+        bool flag = true;
+        if (a[0][0] == '1') flag = false;
+        if (n == 1 && m == 1) {
+            cout << (a[0][0] == '1' ? -1 : 0) << endl;
+            continue;
+        }
+        else if (n == 1) {
+            for (int j = m - 1; j >= 1; j--) {
+                if (a[0][j] == '1') ans.pb({ {0, j - 1}, {0, j} });
+            }
+        }
+        else {
+            for (int i = n - 1; i >= 1; i--) {
+                for (int j = m - 1; j >= 0; j--) {
+                    if (a[i][j] == '1') ans.pb({ {i - 1, j}, {i, j} });
+                }
+            }
+            for (int j = m - 1; j >= 1; j--) {
+                if (a[0][j] == '1') ans.pb({ {0, j - 1}, {0, j} });
+            }
+        }
+        if (!flag) { cout << -1 << endl; continue; }
+        cout << ans.size() << endl;
+        // reverse(all(ans));
+        for (auto& [p1, p2] : ans) {
+            auto& [x1, y1] = p1;
+            auto& [x2, y2] = p2;
+            x1++, x2++, y1++, y2++;
+            cout << x1 << " " << y1 << " " << x2 << " " << y2 << endl;
+        }
     }
     return 0;
 }
+
+/*
+    the uppermost left cell has to be zero, it cannot be made into one
+    the lowermost right cell has to be one
+
+*/

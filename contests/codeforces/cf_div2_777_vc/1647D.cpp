@@ -85,60 +85,10 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        vvc a(n, vc(m));
-        for (auto& ai : a) cin >> ai;
-        vvb vis(n, vb(m));
-        int mx_col, mn_col, mx_row, mn_row, cnt;
-        auto isvalid = [&](int x, int y) { return (0 <= x && x < n) && (0 <= y && y < m); };
-        auto f = [&](auto&& f, int x, int y) -> void {
-            mx_row = max(mx_row, x);
-            mn_row = min(mn_row, x);
-            mx_col = max(mx_col, y);
-            mn_col = min(mn_col, y);
-            for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i];
-                int ny = y + dy[i];
-                if (isvalid(nx, ny) && a[nx][ny] == '1' and !vis[nx][ny]) {
-                    vis[nx][ny] = 1;
-                    cnt++;
-                    f(f, nx, ny);
-                }
-            }
-            };
-        bool flag = 1;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (!vis[i][j] && a[i][j] == '1') {
-                    cnt = 1;
-                    vis[i][j] = 1;
-                    mx_row = mn_row = i;
-                    mx_col = mn_col = j;
-                    f(f, i, j);
-                    flag &= ((mx_row - mn_row + 1) * (mx_col - mn_col + 1)) == cnt;
-                }
-            }
-        }
-        cout << (flag ? "YES" : "NO") << endl;
+        int n;
+        cin >> n;
     }
     return 0;
 }
-
-/*
-    would it be easier to just check for the intersections?
-
-    if it's nice, then it's black & not in another subrectangle
-    so all sqaure ones are counted as one big nice rectangle
-
-    if it's elegant, then no nice ones can intersect
-
-
-*/
-
-/* Gains
-    If it's a B, then it should be easy, keep on saying that to yourself
-    just chaning the order of for loops do do inverse traversal
-*/
