@@ -26,7 +26,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-// #define int long long
+#define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -89,8 +89,16 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, k;
+        cin >> n >> k;
+        vi a(n); cin >> a;
+        ll cur = 0, ans = 0;
+        for (int i = 0, j = 0; i < n; i++) {
+            while (j < n && cur + a[j] <= k) cur += a[j++];
+            ans = max(ans, j - i);
+            cur -= a[i];
+        }
+        cout << ans << endl;
     }
     return 0;
 }

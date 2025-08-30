@@ -57,6 +57,7 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 template<class T> bool ckmin(T& a, const T& b) { return b < a ? a = b, 1 : 0; }
 template<class T> bool ckmax(T& a, const T& b) { return a < b ? a = b, 1 : 0; }
 
+const string ny[] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 // const int INF = 2147483647;
@@ -85,11 +86,28 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
+    auto bs = [&](ll n) {
+        ll l = 0, r = 2e6, ans = 0;
+        while (l <= r) {
+            ll mid = l + r >> 1ll;
+            if (mid * (mid + 1) <= n * 2) l = mid + 1, ans = mid;
+            else r = mid - 1;
+        }
+        return ans;
+        };
+
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        ll n, k, x;
+        cin >> n >> k >> x;
+        ll extra = (k - 1) / 2 + x % (x / k);
+        ll min_n = x / k + extra;
+        ll max_k = bs(x);
+        debug(min_n, max_k);
+        if (min_n <= n and k <= max_k) cout << "YES";
+        else cout << "NO";
+        cout << endl;
     }
     return 0;
 }
@@ -99,24 +117,42 @@ int32_t main()
 
     5 3 10 -> YES
     for n integers the maximum sum will be n * (n + 1) / 2
-    40 -> 1 39 -> 1 2 37 -> 1 2 3 34 -> 
+    40 -> 1 39 -> 1 2 37 -> 1 2 3 34 ->
 
     What is the minimum number of k we need to take?
     x >= n -> n, n + 1
 
     so, n * (n + 1) / 2 is the maximum number of k for any integer
-    we can combine any of those to 
+    we can combine any of those to
 
     get_maximum_k(n) < k -> NO
     if x > (n * (n + 1)) / 2 -> NO
-    so, we're stating that if x <= n * (n + 1) / 2 and 
+    so, we're stating that if x <= n * (n + 1) / 2 and
 
     10 used -> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 -> 55
     9 used -> 2, 3, 4, 5, 6, 7, 8, 9, 11 -> 55
     8 used -> 3, 4, 5, 6, 7, 9, 10, 11 -> 55
     7 used -> 4, 6, 7, 8, 9, 10, 11 -> 55
     6 used -> 6, 7, 9, 10, 11, 12 -> 55
-    5 used -> 9, 10, 11, 13 -> 55
-    4 used -> 11,13,19
-    3 used -> 19, 24
+    5 used -> 9, 10, 11, 12, 13 -> 55
+    4 used -> 11, 12, 13, 19 -> 55
+    3 used -> 13, 19, 23 -> 55
+    2 used -> 23, 32 -> 55
+    2 used -> 27, 28 -> a better result
+*/
+
+/*
+    n 2 40 -> 19, 21, x / k + (k - 1) / 2 + x % k
+    n 3 40 -> 40/3 - 13.3333 & 40%3 - 1 -> 13 + 13 + 13 -> 12 + 13 + 15
+        13 + (3 - 1) / 2 + 1
+
+    n 2 20 -> 9, 11
+    n 3 20 ->
+
+    n 2 38 -> 19, 19 -> 18, 20
+    n 4 38 -> 9, 9, 9, 9, 2 -> 8, 9, 10, 11
+        add =
+    n 4 39 -> 9, 9, 9, 9, 3 -> 8, 9, 10, 12
+    n 4 40 -> 10, 10, 10, 10
+
 */

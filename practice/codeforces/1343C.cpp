@@ -87,10 +87,19 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n; cin >> n;
+        vi a(n); cin >> a;
+        int mx = 0; ll ans = 0;
+        auto sign = [&](int x) { return (x > 0 ? 1 : 0); };
+        for (int i = 0; i < n; i++) {
+            int j = i + 1, mx = a[i];
+            while (j < n && sign(a[j - 1]) == sign(a[j])) mx = max(mx, a[j++]);
+            ans += mx;
+            i = j - 1;
+        }
+        cout << ans << endl;
     }
     return 0;
 }
