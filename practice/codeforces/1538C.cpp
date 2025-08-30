@@ -70,10 +70,10 @@ const double EPS = 1e-9;
 const double PI = acos(-1);
 const int N = 1e5 + 1;
 
-// #include<ext/pb_ds/assoc_container.hpp>
-// #include<ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 int32_t main()
 {
@@ -87,10 +87,24 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, l, r;
+        cin >> n >> l >> r;
+        vi a(n); cin >> a;
+        ordered_set<pii> os;
+        for (int i = 0; i < n; i++) os.insert({ a[i], i });
+        ll ans = 0;
+        for (int i = 0; i < n; i++) {
+            os.erase(os.find({ a[i], i }));
+            int ll = l - a[i]; // int's greater than this
+            int rr = r - a[i]; // int's smaller than this
+            auto left = os.order_of_key({ ll, -1 });
+            auto right = os.order_of_key({ rr, INF });
+            if (right < left) continue;
+            ans += right - left;
+        }
+        cout << ans << endl;
     }
     return 0;
 }
