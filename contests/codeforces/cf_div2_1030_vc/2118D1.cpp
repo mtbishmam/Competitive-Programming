@@ -161,11 +161,8 @@ int32_t main()
 }
 // handle the first starting position
 
-/**/
-
-
 /*
     need to get faster in lower_bound/upper_bound calculations
-    like how to get the one before and how to get the one after
+    like how to get the one before and how to get the one after,
 
 */
