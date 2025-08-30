@@ -86,102 +86,37 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        ll n, d;
-        cin >> n >> d;
-        vl a; a.push_back(0);
-        for (int i = 0; i < n; i++) {
-            int x; cin >> x;
-            a.push_back(x);
-        }
-        sort(all(a));
-        auto get_min_diff = [&](vl a) {
-            ll mn = LINF;
-            for (int i = 1; i < sz(a); i++) {
-                ll dif = a[i] - a[i - 1] - 1;
-                mn = min(mn, dif);
-            }
-            return mn;
-            };
-        ll ans = get_min_diff(a);
-        multiset<ll> ms;
-        for (int i = 1; i <= n; i++) {
-            ll dif = a[i] - a[i - 1] - 1;
-            ms.insert(dif);
-        }
-        // ms.insert(d - a.back() + 1);
-        int last = a.back();
-        a.push_back(d + 1);
-        // debug(sz(a), n);
-        // for (auto c : ms) cerr << c << " "; cerr << endl;
-        auto erase = [&](int x) {
-            auto it = ms.find(x);
-            if (it != ms.end()) ms.erase(it);
-            };
-        for (int i = 1; i <= n; i++) {
-            int l_space = a[i] - a[i - 1] - 1;
-            int r_space = a[i + 1] - a[i] - 1;
-            erase(l_space);
-            erase(r_space);
-            // ms.erase(ms.find(l_space));
-            // ms.erase(ms.find(r_space));
-            int n_space = a[i + 1] - a[i - 1] - 1;
-            ms.insert(n_space);
-
-            auto it = ms.end(); it--;
-            ll mx_space = *it;
-            ll mn1 = *ms.begin();
-            ll mn2 = max((mx_space - 1) / 2, d - last - 1);
-            // for (auto c : ms) cerr << c << " "; cerr << endl;
-            // debug(l_space, r_space, n_space);
-            // debug(mn1, mn2);
-            ans = max(ans, min(mn1, mn2));
-
-            // ms.erase(ms.find(n_space));
-            erase(n_space);
-            ms.insert(l_space);
-            ms.insert(r_space);
-        }
-        cout << ans << endl;
+        int n;
+        cin >> n;
     }
     return 0;
 }
 
-// consider if he keeps it unchanged
-// check for the last space
-
 /*
-    Solution-
-    1. Binary search?
-        The problem is that we can only rearrage one exam
-        So, we should always go for the exams with the minimum difference?
-        But, there can be n exams with minimum difference...
-    2. think about the spaces?
-        Let's say we can move the maximum number of unused spaces to somwhere?
+    write a brute force dp to get a general answer
 
+    5 3 10 -> YES
+    for n integers the maximum sum will be n * (n + 1) / 2
+    40 -> 1 39 -> 1 2 37 -> 1 2 3 34 -> 
 
-    so binary search is the way it seems
-        set a minium arbitary space between exams
-        if there are three of exams with less than that, then that is impossible
-        let's say there is only one exam
-            then we'll try with both of those pairs?
-                and put it in the maximum available space?
-                    so if the maximum available space - 1 >= mid, then it's possible
+    What is the minimum number of k we need to take?
+    x >= n -> n, n + 1
 
+    so, n * (n + 1) / 2 is the maximum number of k for any integer
+    we can combine any of those to 
 
-                        so the maximum diff can be max of diffs of other exams
-                        orr the max diff excluding that exam and taking the
+    get_maximum_k(n) < k -> NO
+    if x > (n * (n + 1)) / 2 -> NO
+    so, we're stating that if x <= n * (n + 1) / 2 and 
 
-        let's say there are two such exams
-
-    3. Using a multiset keeping all the available spaces
-
-    The ending doesn't matter
-*/
-
-/* Gains
-I solved this one by inversing the problem
-
-
+    10 used -> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 -> 55
+    9 used -> 2, 3, 4, 5, 6, 7, 8, 9, 11 -> 55
+    8 used -> 3, 4, 5, 6, 7, 9, 10, 11 -> 55
+    7 used -> 4, 6, 7, 8, 9, 10, 11 -> 55
+    6 used -> 6, 7, 9, 10, 11, 12 -> 55
+    5 used -> 9, 10, 11, 13 -> 55
+    4 used -> 11,13,19
+    3 used -> 19, 24
 */

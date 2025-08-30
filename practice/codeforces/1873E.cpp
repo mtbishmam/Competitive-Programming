@@ -88,100 +88,32 @@ int32_t main()
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        ll n, d;
-        cin >> n >> d;
-        vl a; a.push_back(0);
-        for (int i = 0; i < n; i++) {
-            int x; cin >> x;
-            a.push_back(x);
-        }
-        sort(all(a));
-        auto get_min_diff = [&](vl a) {
-            ll mn = LINF;
-            for (int i = 1; i < sz(a); i++) {
-                ll dif = a[i] - a[i - 1] - 1;
-                mn = min(mn, dif);
-            }
-            return mn;
-            };
-        ll ans = get_min_diff(a);
-        multiset<ll> ms;
-        for (int i = 1; i <= n; i++) {
-            ll dif = a[i] - a[i - 1] - 1;
-            ms.insert(dif);
-        }
-        // ms.insert(d - a.back() + 1);
-        int last = a.back();
-        a.push_back(d + 1);
-        // debug(sz(a), n);
-        // for (auto c : ms) cerr << c << " "; cerr << endl;
-        auto erase = [&](int x) {
-            auto it = ms.find(x);
-            if (it != ms.end()) ms.erase(it);
-            };
-        for (int i = 1; i <= n; i++) {
-            int l_space = a[i] - a[i - 1] - 1;
-            int r_space = a[i + 1] - a[i] - 1;
-            erase(l_space);
-            erase(r_space);
-            // ms.erase(ms.find(l_space));
-            // ms.erase(ms.find(r_space));
-            int n_space = a[i + 1] - a[i - 1] - 1;
-            ms.insert(n_space);
+        int n; ll x;
+        cin >> n >> x;
+        vi a(n); cin >> a;
+        vi b = a;
+        sort(all(b));
+        vl pre(n + 1);
+        for (int i = 1; i <= n; i++) pre[i] = pre[i - 1] + b[i - 1];
 
-            auto it = ms.end(); it--;
-            ll mx_space = *it;
-            ll mn1 = *ms.begin();
-            ll mn2 = max((mx_space - 1) / 2, d - last - 1);
-            // for (auto c : ms) cerr << c << " "; cerr << endl;
-            // debug(l_space, r_space, n_space);
-            // debug(mn1, mn2);
-            ans = max(ans, min(mn1, mn2));
+        auto chk = [&](ll h) {
+            ll total = h * n;
+            int r = ub(all(b), h) - b.begin();
+            ll blocks = pre[r] + (n - r) * h;
+            return (total - blocks <= x);
+            };
 
-            // ms.erase(ms.find(n_space));
-            erase(n_space);
-            ms.insert(l_space);
-            ms.insert(r_space);
+        ll l = 0, r = 2e13, ans = 0;
+        while (l <= r) {
+            ll mid = l + r >> 1;
+            if (chk(mid)) l = mid + 1, ans = mid;
+            else r = mid - 1;
         }
         cout << ans << endl;
     }
     return 0;
 }
 
-// consider if he keeps it unchanged
-// check for the last space
-
-/*
-    Solution-
-    1. Binary search?
-        The problem is that we can only rearrage one exam
-        So, we should always go for the exams with the minimum difference?
-        But, there can be n exams with minimum difference...
-    2. think about the spaces?
-        Let's say we can move the maximum number of unused spaces to somwhere?
-
-
-    so binary search is the way it seems
-        set a minium arbitary space between exams
-        if there are three of exams with less than that, then that is impossible
-        let's say there is only one exam
-            then we'll try with both of those pairs?
-                and put it in the maximum available space?
-                    so if the maximum available space - 1 >= mid, then it's possible
-
-
-                        so the maximum diff can be max of diffs of other exams
-                        orr the max diff excluding that exam and taking the
-
-        let's say there are two such exams
-
-    3. Using a multiset keeping all the available spaces
-
-    The ending doesn't matter
-*/
-
-/* Gains
-I solved this one by inversing the problem
-
-
+/* Solution
+    The huge x, a[i] <= 10^9 is making it binary search
 */

@@ -86,10 +86,74 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vi a(n); cin >> a;
+        vector<pair<pii, int>> ops[n];
+        for (int i = 0; i < m; i++) {
+            int e, t, p;
+            cin >> e >> t >> p;
+            ops[e - 1].push_back({ {t, -p}, i + 1 });
+        }
+        for (int i = 0; i < n; i++) {
+            sort(all(ops[i]));
+            for (int j = 0; j < sz(ops[i]); j++) ops[i][j].ff.ss *= -1;
+        }
+
+        vi fans;
+        bool flag = true;
+        ll total_time = 0;
+        for (int task = 0; task < n; task++) {
+            auto& tp = ops[task];
+            int N = tp.size(), P = 100;
+            vvi dp(N, vi(P, -1)), next(N, vi(P, -1));
+            auto f = [&](auto&& f, int i, int p, ll ai) -> int {
+                if (p >= P) return ai;
+                if (i == N) return 0;
+                auto& ret = dp[i][p];
+                if (~ret) return ret;
+                ret = 0;
+                if (ai + tp[i].ff.ff <= a[task]) {
+                    int take = f(f, i + 1, p + tp[i].ff.ss, ai + tp[i].ff.ff);
+                    if (take > 0) {
+                        if (next[i][p] == -1) next[i][p] = take;
+                        else if (take < next[i][p]) next[i][p] = take;
+                        return ret = take;
+                    }
+                }
+                int skip = f(f, i + 1, p, ai);
+                if (skip > 0) {
+                    if (next[i][p] == -1) next[i][p] = 0;
+                    else if (skip < next[i][p]) next[i][p] = skip;
+                    return ret = skip;
+                }
+                return ret;
+                };
+            int possible = f(f, 0, 0, total_time);
+            if (possible > 0) {
+                int ii = 0, pp = 0;
+                ll time = 0;
+                while (ii < N && pp < P) {
+                    if (next[ii][pp]) {
+                        fans.eb(tp[ii].ss);
+                        pp += tp[ii].ff.ss;
+                        time += tp[ii].ff.ff;
+                        ii++;
+                    }
+                    else ii++;
+                }
+                total_time += time;
+            }
+            else flag = false;
+        }
+        if (flag) {
+            cout << fans.size() << endl;
+            for (auto& i : fans) cout << i << " ";
+            cout << endl;
+        }
+        else cout << -1 << endl;
     }
     return 0;
 }
@@ -119,6 +183,15 @@ int32_t main()
 /* Notes
     m < n always impossible
     100% or more
+
+
+*/
+
+/* Gains
+    Gonna use custom objects from now on
+    Sorting gonna be better that way as well
+    I shouldn't have given up before trying all my solution variations, that's a bad habit
+        implement super fast without any errors
 
 
 */

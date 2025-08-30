@@ -3,6 +3,7 @@
         "*.cpp": "cpp",
         "ios": "cpp",
         "vector": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "iostream": "cpp"
     }
 }
