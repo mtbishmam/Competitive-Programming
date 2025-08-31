@@ -68,7 +68,7 @@ const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 2e5 + 1;
+const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -86,35 +86,21 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
-    vi sq;
-    for (int i = 0; i * i <= N; i++) sq.eb(i * i);
-
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        set<int> s; vi ans(n);
-        for (int i = 0; i < n; i++) s.insert(i);
-        bool flag = true;
-        for (int i = n - 1; i >= 0; i--) {
-            bool impos = true;
-            for (int j = sz(sq) - 1; j >= 0; j--) {
-                if (sq[j] < i) continue;
-                int x = sq[j] - i;
-                auto it = s.find(x);
-                // debug(i, x, sq[j]);
-                if (it != s.end()) {
-                    ans[i] = x;
-                    s.erase(it);
-                    impos = false;
-                    break;
-                }
-            }
-            if (impos) flag = false;
-        }
-        if (!flag) cout << -1 << endl;
-        else cout << ans << endl;
+        ll n, m, k;
+        cin >> n >> m >> k;
+        vl a(n); cin >> a;
+        sort(all(a));
+        ll mx = a[n - 1], mx2 = a[n - 2];
+        ll times = m / (k + 1);
+        ll rem = m % (k + 1);
+        cout << times * k * mx + times * mx2 + rem * mx;
     }
     return 0;
 }
+
+/*
+    k * mx, mx2, k * mx
+*/
