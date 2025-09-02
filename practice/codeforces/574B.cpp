@@ -89,8 +89,34 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vvi g(n + 1);
+        for (int i = 0; i < m; i++) {
+            int x, y;
+            cin >> x >> y;
+            g[x].eb(y);
+            g[y].eb(x);
+        }
+        vb vis(n + 1);
+        int ans = INF;
+        auto f = [&](auto&& f, int node, int par) -> void {
+            vis[node] = 1;
+            for (auto& child : g[node]) {
+                if (!vis[child]) f(f, child, node);
+                else if (child != par) {
+                    if (par != -1) {
+                        int c1 = max(0, sz(g[node]) - 2);
+                        int c2 = max(0, sz(g[child]) - 2);
+                        int c3 = max(0, sz(g[par]) - 2);
+                        ans = min(ans, c1 + c2 + c3);
+                    }
+                }
+            }
+            };
+        for (int i = 1; i <= n; i++)
+            if (!vis[i]) f(f, i, -1);
+        cout << (ans == INF ? -1 : ans) << endl;
     }
     return 0;
 }

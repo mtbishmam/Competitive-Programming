@@ -12,7 +12,7 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
-#include <cassert>
+// #include <cassert>
 #include <functional>
 #include <chrono>
 #include <climits>
@@ -87,10 +87,23 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
+        vpii a;
+        int s, e;
+        for (int i = 0; i < n; i++) {
+            cin >> s >> e;
+            a.eb(s, e);
+        }
+        auto& [ps, pe] = a[0];
+        int w = ps; bool impos = false;
+        int mxw = 0;
+        for (int i = 1; i < n; i++) {
+            if (a[i].ff >= w and a[i].ss >= pe) impos = true;
+        }
+        cout << (impos ? -1 : w) << endl;
     }
     return 0;
 }

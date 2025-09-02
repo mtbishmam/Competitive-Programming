@@ -12,7 +12,7 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
-#include <cassert>
+// #include <cassert>
 #include <functional>
 #include <chrono>
 #include <climits>
@@ -54,10 +54,8 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
-template<class T> bool ckmin(T& a, const T& b) { return b < a ? a = b, 1 : 0; }
-template<class T> bool ckmax(T& a, const T& b) { return a < b ? a = b, 1 : 0; }
 
-const string ny[] = { "NO", "YES" };
+const string cq[2] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 // const int INF = 2147483647;
@@ -91,6 +89,31 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
+        vi a(n); cin >> a;
+        sort(all(a));
+        map<int, int> mp;
+        for (int i = 0; i < n; i++) mp[a[i]]++;
+        int ans = 0;
+        while (mp.size()) {
+            int x = mp.rbegin()->ff;
+            int k = 0; bool bf = 0;
+            while (x >= 0 and mp.count(x)) {
+                if (mp[x] >= 2) {
+                    int mxq = mp[x] / 2;
+                    mp[x] -= 2 * mxq;
+                    k = 0;
+                }
+                else {
+                    mp[x]--, k++;
+                    bf = 1;
+                }
+                if (!mp[x]) mp.erase(x);
+                x--;
+            }
+            if (bf) ans += k;
+            else ans++;
+        }
+        cout << ans;
     }
     return 0;
 }
