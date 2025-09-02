@@ -89,8 +89,19 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        ll T, S, q;
+        cin >> T >> S >> q;
+        ll l = 1, r = 2e9, ans = 0;
+        auto chk = [&](ll n) {
+            ll sum = (n + 1) * S + (q - 1) * (n * (n + 1)) / 2;
+            return sum >= T;
+            };
+        while (l <= r) {
+            ll mid = l + r >> 1;
+            if (chk(mid)) r = mid - 1, ans = mid;
+            else l = mid + 1;
+        }
+        cout << ans;
     }
     return 0;
 }
