@@ -62,7 +62,7 @@ const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 // const int INF = 2147483647;
 // const ll LINF = 9223372036854775807;
-const int INF = 1e9;
+const int INF = 1e6;
 const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
@@ -87,10 +87,22 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n; cin >> n;
+        vi a(n); cin >> a;
+        vi dp(n, -1);
+        auto f = [&](auto&& f, int i) -> int {
+            if (i == n) return 0;
+            if (i > n) return INF;
+            auto& ret = dp[i];
+            if (~ret) return ret;
+            ret = INF;
+            ret = min(ret, f(f, i + 1 + a[i]));
+            ret = min(ret, 1 + f(f, i + 1));
+            return ret;
+            };
+        cout << f(f, 0) << endl;
     }
     return 0;
 }

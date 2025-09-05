@@ -93,7 +93,17 @@ int32_t main()
         cin >> n >> m;
         vi a(n), b(m);
         cin >> a >> b;
-
+        uniq(a); n = sz(a);
+        uniq(b); m = sz(b);
+        int ans = 0;
+        auto dis = [&](int i, int j) { return abs(a[i] - b[j]); };
+        for (int i = 0; i < n; i++) {
+            int mn1, mn2; mn1 = mn2 = LINF;
+            auto j = lb(all(b), a[i]) - b.begin();
+            if (j < m) mn1 = dis(i, j);
+            if (j) mn2 = dis(i, j - 1);
+            ans = max(ans, min(mn1, mn2));
+        }
         cout << ans;
     }
     return 0;
