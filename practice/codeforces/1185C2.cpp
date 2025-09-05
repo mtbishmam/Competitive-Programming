@@ -89,31 +89,23 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        ll r; cin >> r;
-        for (ll x = 1; x <= min(r, (ll)1e6); x++) {
-            ll rx1 = r - x - 1;
-            if (rx1 % x == 0) {
-                ll rx1xx = rx1 / x - x;
-                if (rx1xx > 0 && rx1xx % 2 == 0) {
-                    cout << x << " " << rx1xx / 2;
-                    return 0;
-                }
-                else if (rx1 / x <= x) break;
+        ll n, m;
+        cin >> n >> m;
+        vl a(n), ans(n); cin >> a;
+        ll cur = 0, cnt = 0;
+        map<int, int> mp;
+        for (int i = 0; i < n; i++) {
+            ll cur = a[i]; ll kk = 0;
+            for (auto& [ai, cnt] : mp) {
+                ll k = min((m - cur) / ai, 1ll * cnt);
+                cur += ai * k;
+                kk += k;
+                if (k < cnt) break;
             }
-            else if (rx1 < x) break;
+            ans[i] = i - kk;
+            mp[a[i]]++;
         }
-        cout << "NO";
+        cout << ans;
     }
     return 0;
 }
-
-/*
-    r = x^2 + 2xy + x + 1
-    r = x^2 + 2xy + y ^2 - y^2 + x + 1
-    r = (x + y)^2 - y^2 + x + 1
-    r = (x + y + y)(x) + x + 1
-    r = x(x + 2y) + x + 1
-    r - x - 1 = x(x + 2y)
-    (r - x - 1) / x = x + 2y
-    ((r - x - 1) / x - x) / 2 = y ------
-*/
