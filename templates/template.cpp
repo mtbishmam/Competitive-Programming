@@ -26,7 +26,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-// #define int long long
+#define int long long
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -44,6 +44,7 @@ using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
+using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
@@ -54,8 +55,6 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
-template<class T> bool ckmin(T& a, const T& b) { return b < a ? a = b, 1 : 0; }
-template<class T> bool ckmax(T& a, const T& b) { return a < b ? a = b, 1 : 0; }
 
 const string ny[] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
