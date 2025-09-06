@@ -67,7 +67,7 @@ const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 1e5 + 1;
+const int N = 2e5 + 5;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -85,37 +85,100 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
-    int T(1);
-    // cin >> T;
-    for (int Ti = 1; Ti <= T; Ti++) {
-        int n, k;
-        cin >> n >> k;
-        vvi g(n + 1);
-        for (int i = 0; i < n - 1; i++) {
-            int x, y; cin >> x >> y;
-            g[x].eb(y);
-            g[y].eb(x);
-        }
-        vb vis(n + 1);
-        vi dep(n + 1), depnodes(n + 1);
-        auto f = [&](auto&& f, int node) -> void {
-            for (auto& child : g[node]) {
-                if (!vis[child]) {
-                    vis[child] = 1;
-                    dep[child] = dep[node] + 1;
-                    depnodes[dep[child]]++;
-                    f(f, child);
-                }
-            }
-            }; vis[1] = 1, f(f, 1);
-        ll ans = 0;
-        for (int dep = n; dep >= 1; dep--) {
-            int total = depnodes[dep];
-            int ck = min(k, total);
-            ans += 1ll * ck * dep;
-            k -= ck;
-        }
-        cout << ans;
+    vi primes, spf(N);
+    for (int i = 2; i < N; i++) {
+        if (!spf[i]) spf[i] = i, primes.eb(i);
+        for (int j = i + i; j < N; j += i)
+            if (!spf[j]) spf[j] = i;
     }
+    set<int> hasprimes;
+    auto f = [&](int x, map<int, int>& mp) {
+        while (x > 1) {
+            hasprimes.insert(spf[x]);
+            mp[spf[x]]++;
+            x /= spf[x];
+        }
+        };
+
+    int n;
+    cin >> n;
+    vi a(n); cin >> a;
+    map<int, int> mp[n];
+    for (int i = 0; i < n; i++) {
+        f(a[i], mp[i]);
+    }
+    ll ans = 1;
+    for (auto prime : hasprimes) {
+        int cnt = 0;
+        int mx, mn; mn = INF, mx = 0;
+        int miss = 0;
+        multiset<int> cnts;
+        for (int i = 0; i < n; i++) {
+            if (mp[i].count(prime)) {
+                cnt++;
+                int ccnt = mp[i][prime];
+                cnts.insert(ccnt);
+                mx = max(mx, ccnt);
+                mn = min(mn, ccnt);
+            }
+            else miss++;
+            if (miss >= 2) break;
+        }
+        if (cnt == n) {
+            auto it = cnts.begin();
+            it++;
+            if (it != cnts.end()) {
+                ans *= pow(prime, *it);
+            }
+            else {
+                it--;
+                ans *= pow(prime, *it);
+            }
+        }
+        else if (cnt == n - 1) {
+            auto it = cnts.begin();
+            ans *= pow(prime, *it);
+        }
+    }
+    cout << ans;
     return 0;
 }
+
+/* Sol 1
+    a * b = gcd(a, b) * lcm(a, b)
+    a * b / gcd(a, b)
+
+*/
+
+/* Sol 2
+    total_lcm = 2 * 2 * 2 * 2 * 3 * 5 -> 240
+    total_gcd = 2
+
+*/
+
+/* Sol 3
+    get all the prime factorization of all ai
+
+    10 -> 2 * 5
+    24 -> 2 * 2 * 2 * 3
+    40 -> 5 * 2 * 2 * 2
+    80 -> 5 * 2 * 2 * 2 * 2
+
+    mxcnt -> 2 = 3
+            5 = 1
+
+    lcm(10, 24) = 2 ^ 3 * 3 * 5 = 120
+    lcm(10, 40) = 2 ^ 3 * 5 = 40
+    lcm(10, 80) = 2 ^ 4 * 5 = 80
+
+    lcm(24, 40) = 2 ^ 3 * 3 * 5 = 120
+    lcm(24, 80) = 2 ^ 4 * 3 * 5 = 240
+
+    lcm(40, 80) = 2 ^ 4 * 5 = 80
+
+    so, if a prime number p is absent in atleast 2 ai, aj, then the gcd won't have that prime, other than that we'll just take the maximum cnt for each prime
+    if a prime is available in all ai, we'll take the maximum cnt of that prime
+    otherwise if a prime is not present in exactly one ai, then we'll take the minimum count of that prime
+    and else if that prime is not present in two ai then that prime will not be in the answer
+*/
+
