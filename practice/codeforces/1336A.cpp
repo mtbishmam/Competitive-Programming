@@ -88,106 +88,22 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m, k;
-        cin >> n >> m >> k;
-        vvc a(n, vc(m));
-        for (auto& ai : a) cin >> ai;
-        queue<pii> q;
-        vvb vis(n, vb(m));
-        vvi dis(n, vi(m));
-        vpii disnodes[n * m + 5];
-        auto isvalid = [&](int x, int y) { return (0 <= x and x < n) and (0 <= y and y < m) and !vis[x][y] and a[x][y] == '.'; };
+        int n, k;
+        cin >> n >> k;
+        vvi g(n + 1);
+        for (int i = 0; i < n - 1; i++) {
+            int x, y; cin >> x >> y;
+            g[x].eb(y);
+            g[y].eb(x);
+        }
+        vi dep(n + 1), depnodes(n + 1);
+        auto f = [&](auto&& f, int node) -> void {
+            for (auto& child : g[node]) {
+                if (!vis[node]) {
 
-        for (int i = 0; i < n; i++) {
-            bool f = 0;
-            for (int j = 0; j < m; j++) {
-                if (isvalid(i, j)) {
-                    q.push({ i, j });
-                    vis[i][j] = 1;
-                    dis[i][j] = 1;
-                    disnodes[dis[i][j]].eb(i, j);
-                    f = 1;
-                    break;
                 }
             }
-            if (f) break;
-        }
-
-        while (q.size()) {
-            auto [x, y] = q.front();
-            q.pop();
-
-            for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i];
-                int ny = y + dy[i];
-                if (isvalid(nx, ny)) {
-                    q.push({ nx, ny });
-                    vis[nx][ny] = 1;
-                    dis[nx][ny] = dis[x][y] + 1;
-                    disnodes[dis[nx][ny]].eb(nx, ny);
-                }
             }
-        }
-
-        for (int i = n * m + 4; i >= 1; i--) {
-            for (auto& [x, y] : disnodes[i]) {
-                a[x][y] = 'X';
-                k--;
-                if (!k) break;
-            }
-            if (!k) break;
-        }
-
-        // for (int i = 0; i < n; i++) {
-        //     for (int j = 0; j < m; j++) {
-        //         cout << dis[i][j] << " ";
-        //     }
-        //     cout << endl;
-        // }
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                cout << a[i][j];
-            }
-            cout << endl;
-        }
-
     }
     return 0;
 }
-
-/* Sols
-    1. Using bfs to get distance and mark only the ones at maximum distance to be walls
-        but, where should we start the bfs from? let's say we start it randomly
-        #12# -> works
-        32#6
-      #345
-
-      #123 -> works
-        #2#4
-        10#65
-        987#
-        10#8#
-
-
-    2. Run outer loop from the outer border to the inner ones filling
-        #..# -> if we mark (0, 2) it'll be bad
-        ##.#
-
-        #..#
-        #.##
-
-    3. Mark ones with maximum neighbours, and the only ones that'll be affected are the 6 cells in 6 other directions of it
-        #..#
-        ..#.
-        #...
-
-        #.##
-        ..#.
-        #...
-
-        #.## -> but if we do this, that's a problem
-        ..#.
-        ##..
-
-    4. Mark and check whether connected comps increase or not?
-*/
