@@ -67,14 +67,12 @@ const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 1e5 + 5;
+const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
-int dp[N][10][3];
 
 int32_t main()
 {
@@ -90,39 +88,23 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, k, z;
-        cin >> n >> k >> z;
-        vi a(n + 1), pre(n + 1);
+        int n;
+        cin >> n;
+        vi a(n + 1), b(n + 1), pos(n + 1);
         for (int i = 1; i <= n; i++) {
             cin >> a[i];
-            pre[i] = pre[i - 1] + a[i];
+            pos[a[i]] = i;
         }
-        memset(dp, -1, sizeof dp);
-        auto f = [&](auto&& f, int i, int ck, int flag) -> int {
-            if (!ck) return a[i];
-            auto& ret = dp[i][ck][flag];
-            if (~ret) return ret;
-            ret = 0;
-            if (flag == 2) {
-                int r = i + k;
-                ret = pre[r] - pre[i - 1];
-                return ret;
-            }
-            else {
-                if (flag == 1 && ck) { // we can only go right now
-                    if (i + 1 <= n) {
-                        ret = max(ret, a[i] + f(f, i + 1, ck - 1, 0)); // we go right and go left
-                    }
-                }
-                else {
-                    if (i - 1 >= 1 && ck) ret = max(ret, a[i] + f(f, i - 1, ck - 1, 1));
-                }
-            }
-            ret = max(ret, a[i] + f(f, i + 1, ck - 1, 1)); // we keep going right
-            ret += f(f, i, ck, 2);
-            return ret;
-            };
-        cout << f(f, 1, 5, 1) << endl;
+        for (int i = 1; i <= n; i++) cin >> b[i];
+        int lst = 0; vi ans(n + 1);
+        for (int i = 1; i <= n; i++) {
+            int p = pos[b[i]];
+            if (lst > p) continue;
+            else p -= lst;
+            ans[i] = p;
+            lst = pos[b[i]];
+        }
+        for (int i = 1; i <= n; i++) cout << ans[i] << " ";
     }
     return 0;
 }

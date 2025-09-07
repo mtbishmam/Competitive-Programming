@@ -67,14 +67,12 @@ const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 1e5 + 5;
+const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
-int dp[N][10][3];
 
 int32_t main()
 {
@@ -90,39 +88,28 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, k, z;
-        cin >> n >> k >> z;
-        vi a(n + 1), pre(n + 1);
-        for (int i = 1; i <= n; i++) {
-            cin >> a[i];
-            pre[i] = pre[i - 1] + a[i];
-        }
-        memset(dp, -1, sizeof dp);
-        auto f = [&](auto&& f, int i, int ck, int flag) -> int {
-            if (!ck) return a[i];
-            auto& ret = dp[i][ck][flag];
-            if (~ret) return ret;
-            ret = 0;
-            if (flag == 2) {
-                int r = i + k;
-                ret = pre[r] - pre[i - 1];
-                return ret;
+        int n, a, b;
+        cin >> n >> a >> b;
+        array<int, 2> cc = { a, b };
+        vi c(n); cin >> c; int ans = 0;
+        for (int i = 0; i < n / 2; i++) {
+            if (c[i] == 2 && c[n - i - 1] == 2) {
+                ans += 2 * min(a, b);
+            }
+            else if (c[i] == 2 || c[n - i - 1] == 2) {
+                if (c[i] == 2) ans += cc[c[n - i - 1]];
+                else ans += cc[c[i]];
             }
             else {
-                if (flag == 1 && ck) { // we can only go right now
-                    if (i + 1 <= n) {
-                        ret = max(ret, a[i] + f(f, i + 1, ck - 1, 0)); // we go right and go left
-                    }
-                }
-                else {
-                    if (i - 1 >= 1 && ck) ret = max(ret, a[i] + f(f, i - 1, ck - 1, 1));
+                if (c[i] != c[n - i - 1]) {
+                    cout << -1;
+                    return 0;
                 }
             }
-            ret = max(ret, a[i] + f(f, i + 1, ck - 1, 1)); // we keep going right
-            ret += f(f, i, ck, 2);
-            return ret;
-            };
-        cout << f(f, 1, 5, 1) << endl;
+        }
+        if (n & 1 && c[n / 2] == 2) ans += min(a, b);
+        cout << ans;
     }
     return 0;
 }
+// case for all to be bought

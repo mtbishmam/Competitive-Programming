@@ -67,14 +67,12 @@ const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 1e5 + 5;
+const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
-int dp[N][10][3];
 
 int32_t main()
 {
@@ -88,41 +86,87 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, k, z;
-        cin >> n >> k >> z;
-        vi a(n + 1), pre(n + 1);
-        for (int i = 1; i <= n; i++) {
-            cin >> a[i];
-            pre[i] = pre[i - 1] + a[i];
+        int n;
+        cin >> n;
+        vi a(n); cin >> a;
+        sort(all(a));
+        // debug(a);
+        int lc = 1;
+        multiset<int> s;
+        for (auto& i : a) lc = lcm(i, lc), s.insert(i);
+        // bool greater = 1;
+        // for (auto& i : a) greater &= lc > i;
+        // if (greater) cout << lc << endl;
+        // else {
+        //     cout << lc * lc << endl;
+        // }
+        if (n == 1) {
+            cout << a[0] * a[0] << endl;
+            continue;
         }
-        memset(dp, -1, sizeof dp);
-        auto f = [&](auto&& f, int i, int ck, int flag) -> int {
-            if (!ck) return a[i];
-            auto& ret = dp[i][ck][flag];
-            if (~ret) return ret;
-            ret = 0;
-            if (flag == 2) {
-                int r = i + k;
-                ret = pre[r] - pre[i - 1];
-                return ret;
-            }
-            else {
-                if (flag == 1 && ck) { // we can only go right now
-                    if (i + 1 <= n) {
-                        ret = max(ret, a[i] + f(f, i + 1, ck - 1, 0)); // we go right and go left
-                    }
-                }
-                else {
-                    if (i - 1 >= 1 && ck) ret = max(ret, a[i] + f(f, i - 1, ck - 1, 1));
-                }
-            }
-            ret = max(ret, a[i] + f(f, i + 1, ck - 1, 1)); // we keep going right
-            ret += f(f, i, ck, 2);
-            return ret;
-            };
-        cout << f(f, 1, 5, 1) << endl;
+
+        int ans = 0;
+        bool f = 1;
+        int lcm = a[0] * a[n - 1];
+        for (int i = 0; i < n / 2; i++) {
+            int x = a[i] * a[n - i - 1];
+            f &= x == lcm;
+        }
+        if ((n & 1) && a[n / 2] * a[n / 2] == lcm) {
+
+        }
+        else f = 0;
+        if (f) ans = lcm;
+        if (ans) cout << ans << endl;
+        else cout << -1 << endl;
     }
     return 0;
 }
+
+/* Analysis
+    t <= 25
+    n <= 300
+    di <= 1e6
+    only one x isn't given, how can we use that?
+
+    Time complexity (25 * n^2 * 1e6)
+
+    48
+    2 24
+    2 (2, 2, 2, 3)
+
+    3 16
+    3 (2, 2, 2, 2)
+
+    4 12
+    (2, 2) (2, 2, 3)
+
+    27
+    3 9
+
+    25
+    5
+
+    125
+    5 25
+
+    33
+    3 11
+
+    35
+    5 7
+
+    8
+    2 4
+
+    14
+    2 7
+
+    36
+    2 18
+    3 12
+    4 9
+    6 6
+*/
