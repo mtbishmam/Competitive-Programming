@@ -86,17 +86,28 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
+        using psi = pair<string, int>;
+        vector<psi> a(n);
+        for (int i = 0; i < n; i++) {
+            cin >> a[i].ff; a[i].ss = i;
+        }
+        sort(all(a), [&](psi& a, psi& b) { return (sz(a.ff) == sz(b.ff) ? a.ff < b.ff : sz(a.ff) < sz(b.ff)); });
+        vi ans(n);
+        map<string, int> mp;
+        for (auto& [s, i] : a) {
+            for (int mid = 1; mid < sz(s); mid++) {
+                string s1 = s.substr(0, mid);
+                string s2 = s.substr(mid);
+                if (mp.count(s1) && mp.count(s2)) ans[i] = 1;
+            }
+            mp[s] = 1;
+        }
+        for (int i = 0; i < n; i++) cout << ans[i];
+        cout << endl;
     }
     return 0;
 }
-
-/* Analysis
-    0 and 1 can never be adjacent
-    if total sum is equal to s, then impossible
-    if total sum is greater than s, then always possible
-    if total sum less than s
-*/

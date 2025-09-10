@@ -44,6 +44,7 @@ using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
+using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
@@ -54,8 +55,6 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
-template<class T> bool ckmin(T& a, const T& b) { return b < a ? a = b, 1 : 0; }
-template<class T> bool ckmax(T& a, const T& b) { return a < b ? a = b, 1 : 0; }
 
 const string ny[] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
@@ -89,18 +88,45 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s, tmp; cin >> s;
-        int n = sz(s);
+        string s; cin >> s;
+        int n = sz(s); s = '-' + s;
+        vvi pre(n + 2, vi(26)), suf(n + 2, vi(26));
         if (count(all(s), 'a') == n) {
-            cout << s; return 0;
+            for (int i = 1; i <= n; i++) cout << s[i];
+            return 0;
         }
-        for (int i = 0, j = n - 1; i < n; i++) {
-            if (s[i] == 'a');
-            else {
-
+        for (int i = 1; i <= n; i++) {
+            pre[i][s[i] - 'a']++;
+            for (int j = 0; j < 26; j++) pre[i][j] += pre[i - 1][j];
+        }
+        for (int i = n; i >= 1; i--) {
+            suf[i][s[i] - 'a']++;
+            for (int j = 0; j < 26; j++) suf[i][j] += suf[i + 1][j];
+        }
+        auto match = [&](int mid) {
+            bool ret = 1;
+            for (int i = 1; i < 26; i++)
+                ret &= pre[mid - 1][i] == suf[mid][i];
+            return ret && (!suf[mid][0]);
+            };
+        for (int i = 1; i <= n; i++) {
+            if (s[i] != 'a' && match(i)) {
+                string s1, s2;
+                for (int j = 1; j < i; j++) if (s[j] != 'a') s1 += s[j];
+                for (int j = i; j <= n; j++) s2 += s[j];
+                // debug(s1, s2);
+                if (s1 == s2) {
+                    for (int j = 1; j < i; j++) cout << s[j];
+                    return 0;
+                }
             }
         }
         cout << ":(";
     }
     return 0;
 }
+
+/* Anaysis
+    exist a midpoint where count of all letters except a equals count of all precvious letters
+        then we do our search?
+*/

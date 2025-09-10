@@ -90,13 +90,22 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
+        vpii a(n);
+        for (int i = 0; i < n; i++) {
+            cin >> a[i].ss >> a[i].ff;
+        }
+        sort(rall(a));
+        queue<pii> q;
+        for (int i = 0; i < n; i++) q.push({ a[i].ss, a[i].ff });
+        int cur = 1, ans = 0;
+        while (q.size()) {
+            auto [ai, bi] = q.front();
+            q.pop();
+            cur += bi - 1;
+            ans += ai;
+            if (!cur) break;
+        }
+        cout << ans;
     }
     return 0;
 }
-
-/* Analysis
-    0 and 1 can never be adjacent
-    if total sum is equal to s, then impossible
-    if total sum is greater than s, then always possible
-    if total sum less than s
-*/

@@ -86,17 +86,53 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
+        vpii a(n);
+        int xl, xr, yl, yr;
+        xl = yl = LINF;
+        xr = yr = -LINF;
+        vi xs, ys;
+        for (int i = 0; i < n; i++) {
+            int x, y;
+            cin >> x >> y;
+            a[i] = { x, y };
+            xs.eb(x), ys.eb(y);
+        }
+        uniq(xs); uniq(ys);
+        map<int, int> mpx, mpy;
+        int timer = 0;
+        for (auto& x : xs) mpx[x] = timer++;
+        timer = 0;
+        for (auto& y : ys) mpy[y] = timer++;
+        for (int i = 0; i < n; i++) {
+            auto& [x, y] = a[i];
+            x = mpx[x], y = mpy[y];
+            xl = min(xl, x);
+            yl = min(yl, y);
+            xr = max(xr, x);
+            yr = max(yr, y);
+        }
+        for (int i = xl; i <= xr; i++) {
+            for (int j = yl; j <= yr; j++) {
+
+            }
+        }
     }
     return 0;
 }
 
 /* Analysis
-    0 and 1 can never be adjacent
-    if total sum is equal to s, then impossible
-    if total sum is greater than s, then always possible
-    if total sum less than s
+    The minimum distance between any two points is the min di
+    after getting the min_dis, we'll just check how many pairs have that min_dis?
+
+*/
+
+/* Sols
+    1. get min distance between any pair of nodes
+    then, get the node with the maxmum number of
+
+    2. Compress all coordinates, then get the lower and upper bounds on both x & y and do a n^2 solution?
 */

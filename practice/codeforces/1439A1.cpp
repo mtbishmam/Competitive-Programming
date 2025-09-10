@@ -86,17 +86,46 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m;
+        cin >> n >> m;
+        vvc c(n, vc(m));
+        for (auto& ci : c) cin >> ci;
+        vvi a(n, vi(m));
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                a[i][j] = c[i][j] - '0';
+
+        for (int i = 0; i < n - 1; i++)
+            for (int j = 0; j < m - 1; j++) {
+                if (a[i][j] == 1) {
+                    a[i][j] ^= 1;
+                    a[i][j + 1] ^= 1;
+                    a[i + 1][j] ^= 1;
+                }
+            }
     }
     return 0;
 }
+/*
+    x 0
+    0 0
 
-/* Analysis
-    0 and 1 can never be adjacent
-    if total sum is equal to s, then impossible
-    if total sum is greater than s, then always possible
-    if total sum less than s
+    y 1
+    1 0
+
+    y 0
+    0 1
+
+    x 1
+    1 0
+
+    y 0
+    0 0
+
+    (n - 1)(m) + 4 * m <= 3 * n * m
+    nm - m + 4 * m <= 3 * n * m
+    nm + 3 * m <= 3 * n * m
+    n + 3 <= 3 * n
 */
