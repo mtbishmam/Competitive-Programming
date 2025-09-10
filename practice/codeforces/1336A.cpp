@@ -96,30 +96,50 @@ int32_t main()
             g[x].eb(y);
             g[y].eb(x);
         }
-        vb vis(n + 1);
-        vi dep(n + 1), depnodes(n + 1);
+        vb vis(n + 1); vvi depnodes_list(n + 1);
+        vi dep(n + 1), depnodes(n + 1), subtree_sz(n + 1);
         auto f = [&](auto&& f, int node) -> void {
             for (auto& child : g[node]) {
                 if (!vis[child]) {
                     vis[child] = 1;
                     dep[child] = dep[node] + 1;
+                    subtree_sz[child] = 1;
                     depnodes[dep[child]]++;
+                    depnodes_list[dep[child]].eb(child);
                     f(f, child);
+                    subtree_sz[node] += subtree_sz[child];
                 }
             }
-            }; vis[1] = 1, f(f, 1);
+            }; vis[1] = 1, subtree_sz[1] = 1, depnodes_list[0].eb(1), f(f, 1);
         ll ans = 0;
-        for (int dep = n; dep >= 1; dep--) {
-            int total = depnodes[dep];
-            int ck = min(k, total);
-            ans += 1ll * ck * dep;
-            k -= ck;
+        // for (int dep = n; dep >= 1; dep--) {
+        //     int total = depnodes[dep];
+        //     int ck = min(k, total);
+        //     ans += 1ll * ck * dep;
+        //     k -= ck;
+        // }
+        vl vals;
+        for (int d = n; d >= 0; d--) {
+            for (auto& node : depnodes_list[d]) {
+                vals.eb(dep[node] - (subtree_sz[node] - 1));
+            }
         }
+        sort(all(vals));
+        while (k-- && sz(vals)) ans += vals.back(), vals.pop_back();
+        ans = max(ans, 0ll);
         cout << ans;
     }
     return 0;
 }
 
-/*
+/* Analysis
+    We should go for all the nodes at the maximum depth
+
+
+*/
+
+/* Solutions
+    1. LCA + DSU, nodedepth[node] - dsu_sz[node]
+    2. Subtree..., nodedepth[node] - subtree[node]
 
 */
