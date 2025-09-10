@@ -22,6 +22,14 @@ struct node_min {
         return node_min(min(val, r.val));
     }
 };
+/* 4. Node or (int) */
+struct node_min {
+    int val;
+    node_min(int val = 0) : val(val) {}
+    node_min operator+(const node_min& r) const {
+        return node_min(val | r.val);
+    }
+};
 template<class T>
 struct segment_tree {
     int n;
@@ -42,7 +50,7 @@ struct segment_tree {
         }
     }
     T query(int L, int R, int i, int l, int r) {
-        if (L > R) return T();
+        if (R < L) return T();
         if (r < L || R < l) return T();
         if (L <= l && r <= R) return sg[i];
         int mid = (l + r) >> 1;
