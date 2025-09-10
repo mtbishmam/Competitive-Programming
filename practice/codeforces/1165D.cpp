@@ -133,7 +133,7 @@ int32_t main()
 
     Time complexity (25 * n^2 * 1e6)
 
-    48
+    48 (2, 2, 2, 2, 3)
     2 24
     2 (2, 2, 2, 3)
 
@@ -169,4 +169,16 @@ int32_t main()
     3 12
     4 9
     6 6
+*/
+
+/* Analysis 2
+
+
+
+
+*/
+
+/* Solutions 2
+    1. get the lcm and multiply the smallest divisor with the lcm?
+
 */
