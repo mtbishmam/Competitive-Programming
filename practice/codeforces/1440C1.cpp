@@ -88,25 +88,111 @@ int32_t main()
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vi a(n); cin >> a;
-        sort(all(a));
-        int ans = (n == 1 ? a[0] * a[0] : a[0] * a[n - 1]);
-        bool f = 1;
-        for (int l = 0, r = n - 1; l <= r; l++, r--) {
-            f &= (ans == a[l] * a[r]);
-        }
-        vi cd;
-        for (int i = 1; i * i <= ans; i++) {
-            if (ans % i == 0) {
-                cd.eb(i);
-                if (ans / i != i) cd.eb(ans / i);
+        int n, m;
+        cin >> n >> m;
+        vvi a(n, vi(m));
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++) {
+                char c; cin >> c; a[i][j] = c - '0';
+            }
+        vvi ans;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < m; j++) {
+                if (j == m - 1) {
+                    if (a[i][j]) {
+                        a[i][j] ^= 1;
+                        a[i + 1][j] ^= 1;
+                        a[i + 1][j - 1] ^= 1;
+                        ans.push_back({ i, j, i + 1, j, i + 1, j - 1 });
+                    }
+                }
+                else {
+                    if (a[i][j]) {
+                        a[i][j] ^= 1;
+                        a[i][j + 1] ^= 1;
+                        a[i + 1][j] ^= 1;
+                        ans.push_back({ i, j, i, j + 1, i + 1, j });
+                    }
+                }
             }
         }
-        if (f && sz(cd) - 2 == sz(a)) cout << ans;
-        else cout << -1;
-        cout << endl;
+        for (int i = n - 1, j = 0; j < m; j++)
+            if (a[i][j]) {
+                if (j == m - 1) {
+                    a[i][j] ^= 1;
+                    ans.push_back({ i, j, i, j - 1, i - 1, j });
+                    ans.push_back({ i, j, i - 1, j, i - 1, j - 1 });
+                    ans.push_back({ i, j - 1, i - 1, j, i - 1, j - 1 });
+                    ans.push_back({ i, j, i, j - 1, i - 1, j - 1 });
+                    ans.push_back({ i, j - 1, i - 1, j, i - 1, j - 1 });
+                }
+                else {
+                    a[i][j] ^= 1;
+                    ans.push_back({ i, j, i - 1, j, i, j + 1 });
+                    ans.push_back({ i, j, i, j + 1, i - 1, j + 1 });
+                    ans.push_back({ i, j + 1, i - 1, j + 1, i - 1, j });
+                    ans.push_back({ i, j, i - 1, j, i - 1, j + 1 });
+                    ans.push_back({ i - 1, j, i - 1, j + 1, i, j + 1 });
+                }
+            }
+        // for (int i = 0; i < n; i++) {
+        //     for (int j = 0; j < m; j++) {
+        //         cerr << a[i][j] << " ";
+        //     }
+        //     cerr << endl;
+        // }
+        cout << sz(ans) << endl;
+        for (auto& a : ans) {
+            for (int i : a) cout << i + 1 << " ";
+            cout << endl;
+        }
     }
     return 0;
 }
+
+/*
+
+    0 0
+    x 0
+
+    1 0
+    y 1 (i, j, i - 1, j, i, j + 1)
+
+    1 [1]
+    [x 0] (i, j, i, j + 1, i - 1, j + 1)
+
+    0 0
+    x 1 (i, j + 1, i - 1, j + 1, i - 1, j)
+
+    1 1
+    y 1 (i, j, i - 1, j, i - 1, j + 1)
+
+    0 0
+    y 0 (i - 1, j, i - 1, j + 1, i, j + 1)
+
+    ---
+    rightmost bottom cell
+    0 0
+    0 x
+
+    0 [1]
+    [1 y] (i, j, i, j - 1, i - 1, j)
+
+    [1 0]
+    1 [x] (i, j, i - 1, j, i - 1, j - 1)
+
+    [0 1]
+    [0] x (i, j - 1, i - 1, j, i - 1, j - 1)
+
+    [1] 1
+    [1 y] (i, j, i, j - 1, i - 1, j - 1)
+
+    [0 0]
+    [0] y (i, j - 1, i - 1, j, i - 1, j - 1)
+
+    (n - 1) * m + 5 * m <= 3 * n * m
+    nm - m + 5 * m <= 3 * n * m
+    nm + 4m <= 3 * n * m
+    n + 4 <= 3 * n
+    6 <= 6 (as, n >= 2)
+*/

@@ -90,23 +90,25 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vi a(n); cin >> a;
-        sort(all(a));
-        int ans = (n == 1 ? a[0] * a[0] : a[0] * a[n - 1]);
-        bool f = 1;
-        for (int l = 0, r = n - 1; l <= r; l++, r--) {
-            f &= (ans == a[l] * a[r]);
+        int ans = 0;
+        vi a(n + 1), pre(n + 1), npre(n + 1);
+        for (int i = 1; i <= n; i++) cin >> a[i];
+        for (int i = 1; i <= n; i += 2) pre[i] = -a[i], ans += a[i];
+        for (int i = 2; i <= n; i += 2) pre[i] = a[i];
+        for (int i = 1; i <= n; i++) pre[i] += pre[i - 1], npre[i] = a[i] + npre[i - 1];
+        int mx = 0, cur = 0, p = 2;
+        for (int i = 1; i <= n; i++) {
+            // int prev = pre[i];
+            // int cur = (i >= 2 ? pre[i] - pre[p - 2] : 0);
+            // if (cur > prev) p = p + 2;
+            // mx = max(mx, cur);
+            // mx = max(mx, prev);
+            // ans = max(ans, ans + mx);
+            // if (i % 2 == 0) prev =  // might be problem
+
+            mx = max()
         }
-        vi cd;
-        for (int i = 1; i * i <= ans; i++) {
-            if (ans % i == 0) {
-                cd.eb(i);
-                if (ans / i != i) cd.eb(ans / i);
-            }
-        }
-        if (f && sz(cd) - 2 == sz(a)) cout << ans;
-        else cout << -1;
-        cout << endl;
+        cout << ans << endl;
     }
     return 0;
 }

@@ -86,27 +86,45 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vi a(n); cin >> a;
-        sort(all(a));
-        int ans = (n == 1 ? a[0] * a[0] : a[0] * a[n - 1]);
-        bool f = 1;
-        for (int l = 0, r = n - 1; l <= r; l++, r--) {
-            f &= (ans == a[l] * a[r]);
-        }
-        vi cd;
-        for (int i = 1; i * i <= ans; i++) {
-            if (ans % i == 0) {
-                cd.eb(i);
-                if (ans / i != i) cd.eb(ans / i);
-            }
-        }
-        if (f && sz(cd) - 2 == sz(a)) cout << ans;
-        else cout << -1;
-        cout << endl;
     }
     return 0;
 }
+
+/* Analysis
+    L1. Do some sort of bruteforce
+
+    1 2 3 4 5
+    5 4 3 2 1
+
+    a b c d e
+    x y z p q
+
+    -(ax + by) + (bx + ay) = x(b - a) + y(b - a)
+    -(ax + by + cz) + (cx + by + az) = x(c - a) + y(b - b) + z(a - c)
+
+
+    -(ax + by + cz) + (cx + by + az) = x(c - a) + y(b - b) + z(a - c)
+    -(by + cz + dp) + (dy + cz + bp) = y(d - b) + z(c - c) + p(b - d)
+    -(cz + dp + eq) + (ez + dp + cq)
+
+    -(ax + by + cz + dp) + (dx + cy + bz + ap) = a(p - x) + b(z - y) + c(y - z) + d(x - p)
+                                                = (a - d)(p - x)
+
+    -(yb + cz + dp) + (dy + cz + bp)
+*/
+
+/* Solutions
+    1. Just try a bruteforce, if the next subarray sum after reversal is less, we break
+    2. Priority queue approach?
+
+*/
+
+/* Gains
+    The problems stems from reversals. I need some fast way to reverse and calculate the difference
+
+
+*/

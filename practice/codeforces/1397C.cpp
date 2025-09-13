@@ -86,27 +86,55 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vi a(n); cin >> a;
-        sort(all(a));
-        int ans = (n == 1 ? a[0] * a[0] : a[0] * a[n - 1]);
-        bool f = 1;
-        for (int l = 0, r = n - 1; l <= r; l++, r--) {
-            f &= (ans == a[l] * a[r]);
-        }
-        vi cd;
-        for (int i = 1; i * i <= ans; i++) {
-            if (ans % i == 0) {
-                cd.eb(i);
-                if (ans / i != i) cd.eb(ans / i);
-            }
-        }
-        if (f && sz(cd) - 2 == sz(a)) cout << ans;
-        else cout << -1;
-        cout << endl;
     }
     return 0;
 }
+
+/* Analysis
+    bi % len == 0
+    ai + bi = x
+    bi = x - ai
+    (x - ai) % len == 0
+    1 2 3 4 -> len = 4, gcd(ai, len) = 12
+    1 + (12) * bi
+    2 + (6) * bi
+    3 + (4) * bi
+    4 + (3) * bi
+
+    1 + (11) * 1
+    2 + (5) * 2
+    3 + (3) * 3
+    4 + (2) * 4
+
+
+    1 2 3 4 1 -> len = 5, gcd(ai, len) = 60
+*/
+
+/* Analysis 2
+    Why 3 moves? First move to make equal?
+    bi = x - ai
+    (x - ai) % len == 0
+    (x - ai) = k * len
+    x = k * len + ai
+    k = (x - ai) / len
+
+*/
+
+/* Analysis 3
+    since len = n, we can have atmost n distinct reminaders, if we do we can just pair em with each other
+
+
+*/
+
+/* Analysis 4
+    1 3 2 4
+    0 3 2 4
+    0 3 6 6
+    0 -3 -6 -6
+
+
+*/

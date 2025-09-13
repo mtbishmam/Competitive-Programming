@@ -61,13 +61,13 @@ const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 // const int INF = 2147483647;
 // const ll LINF = 9223372036854775807;
-const int INF = 1e9;
+const int INF = 2e9;
 const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 1e5 + 1;
+const int N = 1e3 + 10;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -85,28 +85,40 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
+    vi dis(N, INF); dis[1] = 0;
+    for (int i = 0; i < N; i++) {
+        for (int x = 1; x <= i; x++) {
+            if (i + i / x < N)
+                dis[i + i / x] = min(dis[i + i / x], 1 + dis[i]);
+        }
+    }
+
+    int mxK = 1.5e4;
+    vvi dp(N, vi(mxK));
+
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vi a(n); cin >> a;
-        sort(all(a));
-        int ans = (n == 1 ? a[0] * a[0] : a[0] * a[n - 1]);
-        bool f = 1;
-        for (int l = 0, r = n - 1; l <= r; l++, r--) {
-            f &= (ans == a[l] * a[r]);
-        }
-        vi cd;
-        for (int i = 1; i * i <= ans; i++) {
-            if (ans % i == 0) {
-                cd.eb(i);
-                if (ans / i != i) cd.eb(ans / i);
-            }
-        }
-        if (f && sz(cd) - 2 == sz(a)) cout << ans;
-        else cout << -1;
-        cout << endl;
+        int n, k;
+        cin >> n >> k;
+        vi b(n), c(n);
+        cin >> b >> c;
+        k = min(k, mxK - 1);
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j <= k; j++)
+                dp[i][j] = -1;
+        auto f = [&](auto&& f, int i, int k) -> int {
+            if (k < 0) return -INF;
+            if (i == n) return 0;
+            auto& ret = dp[i][k];
+            if (~ret) return ret;
+            ret = 0;
+            ret = max(ret, c[i] + f(f, i + 1, k - dis[b[i]]));
+            ret = max(ret, f(f, i + 1, k));
+            return ret;
+            };
+        cout << f(f, 0, k) << endl;
     }
     return 0;
 }
+// look out for k = 0
