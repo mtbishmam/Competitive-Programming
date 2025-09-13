@@ -138,3 +138,25 @@ int32_t main()
 
 
 */
+
+
+/* Analysis 5
+    k * len = bi
+    => k * len % bi == 0
+
+    ai + k * len = x
+    k * len = x - ai
+
+    get all multiples of len? and then add ai?
+
+*/
+
+/* Analysis 6
+    in 3 moves
+    2 to n - 1, add -> (n - 1) * ai
+                ai = ai + ai(n - 1)
+                ai = ai (n)
+    1 to n, add -> - ai * n
+                ai = ai (n) - ai * n
+                ai = 0
+*/
