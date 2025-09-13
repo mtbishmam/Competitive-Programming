@@ -90,12 +90,16 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vi a(n); cin >> a;
-        multiset<int> ms;
+        vi a(n); cin >> a; vb vis(n);
         for (int i = 0; i < n; i++) {
-            int nxt = i + a[i % n];
+            int nxt = (i + a[i]) % n;
+            if (nxt < 0) nxt += n;
+            vis[nxt] = 1;
         }
-        cout << ny[] << endl;
+        bool ans = 1;
+        for (int i = 0; i < n; i++)
+            if (!vis[i]) ans = 0;
+        cout << ny[ans] << endl;
     }
     return 0;
 }
@@ -113,6 +117,5 @@ int32_t main()
 /* Analysis
     k is any positive integer
     k + a[k % n], array starts from index 0
-
     if k1 + a[k1 % n] == k2 + a[k2 % n]
 */
