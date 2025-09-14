@@ -86,30 +86,10 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vpii a(n);
-        map<int, int> mp;
-        bool f = 1;
-        for (int i = 0; i < n; i++) {
-            int x, y; cin >> x >> y;
-            if (x > y) swap(x, y);
-            else if (x == y) f = 0;
-            a[i] = { x, y };
-            mp[x]++, mp[y]++;
-        }
-        sort(all(a));
-        for (auto& i : mp) f &= i.ss <= 2;
-        map<int, int> mp1, mp2;
-        for (int i = 0; i < n; i++) {
-            auto& [x, y] = a[i];
-            if (!mp1[x] && !mp1[y]) mp1[x]++, mp1[y]++, debug(1, x, y);
-            else if (!mp2[x] && !mp2[y]) mp2[x]++, mp2[y]++, debug(2, x, y);
-            else f = 0;
-        }
-        cout << ny[f] << endl;
     }
     return 0;
 }
@@ -117,8 +97,7 @@ int32_t main()
 //
 
 /* Lemmas
-    1. No pair can have same x & y
-    2. If any value appears more than 2 times, it's impossible
+
 */
 
 /* Solutions
@@ -126,56 +105,5 @@ int32_t main()
 */
 
 /* Analysis
-
-    T2
-    1 2
-    4 5
-    1 3
-    4 6
-    2 3
-    5 6
-
-    1 2
-    4 5
-
-    1 3
-    4 6
-
-
-    TC1
-    1 2, 1
-    2 3, 2
-    3 4, 1
-    4 5, 2
-    5 6, 1
-
-    2 3
-
-    1 2
-
-    3 4
-    5 6
-
-    TC2
-    1 3
-    2 4
-    3 4
-
-    --3
-    1 2
-    3 4
-    3 4
-
-    --4
-    1 100
-    2 40
-    2 50
-    3 50
-
-    --5
-    1 100
-    1 50
-    2 40
-    4 50
 
 */

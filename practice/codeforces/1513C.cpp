@@ -67,7 +67,7 @@ const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 1e5 + 1;
+const int N = 2e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -85,40 +85,36 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
+    vvi dp(10, vi(N, -1));
+    auto f = [&](auto&& f, int i, int k) -> int {
+        if (!k) return 1;
+        auto& ret = dp[i][k];
+        if (~ret) return ret;
+        ret = 0;
+        if (i < 9) ret = add(ret, f(f, i + 1, k - 1));
+        else ret = add(ret, add(f(f, 0, k - 1), f(f, 1, k - 1)));
+        return ret;
+        };
+
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vpii a(n);
-        map<int, int> mp;
-        bool f = 1;
-        for (int i = 0; i < n; i++) {
-            int x, y; cin >> x >> y;
-            if (x > y) swap(x, y);
-            else if (x == y) f = 0;
-            a[i] = { x, y };
-            mp[x]++, mp[y]++;
+        int n, k;
+        cin >> n >> k;
+        int x = n, ans = 0;
+        while (x) {
+            ans = add(ans, f(f, x % 10, k));
+            x /= 10;
         }
-        sort(all(a));
-        for (auto& i : mp) f &= i.ss <= 2;
-        map<int, int> mp1, mp2;
-        for (int i = 0; i < n; i++) {
-            auto& [x, y] = a[i];
-            if (!mp1[x] && !mp1[y]) mp1[x]++, mp1[y]++, debug(1, x, y);
-            else if (!mp2[x] && !mp2[y]) mp2[x]++, mp2[y]++, debug(2, x, y);
-            else f = 0;
-        }
-        cout << ny[f] << endl;
+        cout << ans << endl;
     }
     return 0;
 }
 
-//
+// THEY ONLY WANT THE LENGTH
 
 /* Lemmas
-    1. No pair can have same x & y
-    2. If any value appears more than 2 times, it's impossible
+
 */
 
 /* Solutions
@@ -126,56 +122,32 @@ int32_t main()
 */
 
 /* Analysis
+    1912 3
+    2 10 2 3
+    3 2 1 3 4
 
-    T2
+    Contribution of a single digit
+    1,
+    .
+    .
+    .
+    9, k = 8
+    10, k = 9
+
+    12
     1 2
-    4 5
-    1 3
-    4 6
-    2 3
-    5 6
+    9 1 0, k = 8
+    1 0 2 1, k = 9
+    9 8 1 0 9, k = 17
+*/
 
-    1 2
-    4 5
-
-    1 3
-    4 6
-
-
-    TC1
-    1 2, 1
-    2 3, 2
-    3 4, 1
-    4 5, 2
-    5 6, 1
-
-    2 3
-
-    1 2
-
-    3 4
-    5 6
-
-    TC2
-    1 3
-    2 4
-    3 4
-
-    --3
-    1 2
-    3 4
-    3 4
-
-    --4
-    1 100
-    2 40
-    2 50
-    3 50
-
-    --5
-    1 100
-    1 50
-    2 40
-    4 50
+/* Analysis 2
+    0
+    .
+    [0][9] = 1 -> 9, k = 9
+    [0][10] = 2 -> 1 0, k = 10
+    [0][19] = 3 -> 1 0 9, k = 19
+    [0][20] = 4 -> 2 1 1 0, k = 20
+    [0][28] = 5 -> 1 0 9 9 8, k = 28
 
 */
