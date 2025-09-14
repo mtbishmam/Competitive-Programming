@@ -86,10 +86,37 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
+        vvi g(n + 1);
+        for (int i = 1; i <= n; i++) {
+            int x, y = i; cin >> x;
+            g[x].eb(y), g[y].eb(x);
+        }
+
+        vb vis(n + 1);
+        vi subsz(n + 1, 1);
+        auto f = [&](auto&& f, int node) -> void {
+            for (auto& child : g[node])
+                if (!vis[child]) {
+                    vis[child] = 1;
+                    f(f, child);
+                    // subsz[node] += subsz[child];
+                }
+            };
+        int mn, mx; mn = mx = 0;
+        int even, other; even = other = 0;
+        for (int i = 1; i <= n; i++) {
+            if (!vis[i]) {
+                vis[i] = 1;
+                f(f, i);
+                if (subsz[i] == 2) even++;
+                else other++;
+            }
+        }
+        cout << other + (other ? 0 : min(1ll, even)) << " " << other + even << endl;
     }
     return 0;
 }
