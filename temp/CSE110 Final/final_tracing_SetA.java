@@ -22,3 +22,15 @@ public class final_tracing_SetA {
         return x - x * y;
     }
 }
+
+/*
+ * 
+ * Output
+ * 0
+ * -1
+ * -2
+ * -7
+ * -88
+ * -92
+ * 
+ */
