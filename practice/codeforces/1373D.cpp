@@ -67,7 +67,8 @@ const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 1e5 + 1;
+const int N = 2e5 + 1;
+ll dp[N][3][2];
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -90,25 +91,53 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        int ans = 0;
-        vi a(n + 1), pre(n + 1), npre(n + 1);
-        for (int i = 1; i <= n; i++) cin >> a[i];
-        for (int i = 1; i <= n; i += 2) pre[i] = -a[i], ans += a[i];
-        for (int i = 2; i <= n; i += 2) pre[i] = a[i];
-        for (int i = 1; i <= n; i++) pre[i] += pre[i - 1], npre[i] = a[i] + npre[i - 1];
-        int mx = 0, cur = 0, p = 2;
-        for (int i = 1; i <= n; i++) {
-            // int prev = pre[i];
-            // int cur = (i >= 2 ? pre[i] - pre[p - 2] : 0);
-            // if (cur > prev) p = p + 2;
-            // mx = max(mx, cur);
-            // mx = max(mx, prev);
-            // ans = max(ans, ans + mx);
-            // if (i % 2 == 0) prev =  // might be problem
-
-            mx = max()
-        }
-        cout << ans << endl;
+        vi a(n); cin >> a;
+        for (int j = 0; j < 3; j++)
+            for (int k = 0; k < 2; k++)
+                for (int i = 0; i < n; i++)
+                    dp[i][j][k] = -LINF;
+        auto f = [&](auto&& f, int i, int j, int k) -> int {
+            if (i == n) {
+                if (j == 1) return -LINF;
+                return 0;
+            }
+            auto& ret = dp[i][j][k];
+            if (ret != -LINF) return ret;
+            if (j == 0) { // reversals haven't started
+                ret = max(ret, (i % 2 == 0 ? a[i] : 0) + f(f, i + 1, 0, 0));
+                ret = max(ret, (i % 2 == 1 ? a[i] : 0) + f(f, i + 1, 1, i % 2));
+            }
+            else if (j == 1) { // reversals have started
+                ret = max(ret, (i % 2 == 1 ? a[i] : 0) + f(f, i + 1, 1, k));
+                if (i % 2 != k)
+                    ret = max(ret, (i % 2 == 1 ? a[i] : 0) + f(f, i + 1, 2, k));
+            }
+            else if (j == 2) { // reversals have ended
+                ret = max(ret, (i % 2 == 0 ? a[i] : 0) + f(f, i + 1, 2, k));
+            }
+            return ret;
+            }; cout << f(f, 0, 0, 0) << endl;
     }
     return 0;
 }
+
+//
+
+/* Lemmas
+
+*/
+
+/* Solutions
+
+*/
+
+/* Analysis
+    // if we start at partity x and end at parity x then there's no benefit
+    // so if we start reversals at parity x, we'll have to end it at the other parity
+    dp[N][3][2]
+    [3] -> 0 -> reversals haven't started
+         1 -> reversals have started
+         2 -> reversals have ended
+    [2] -> 0 -> reversals started at even position
+           1 -> reversals started at odd position
+*/
