@@ -107,7 +107,7 @@ int32_t main()
                     f(f, child);
                     subsz[node] += subsz[child];
                 }
-                else mxdep = max(mxdep, dep[child] - dep[node] + 1);
+                else mxdep = max(mxdep, dep[node] - dep[child] + 1);
             }
             };
         int complete = 0;
