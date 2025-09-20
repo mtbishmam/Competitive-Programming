@@ -91,22 +91,31 @@ int32_t main()
         int n;
         cin >> n;
         vi a(n); cin >> a;
-        sort(all(a));
-        int ans = (n == 1 ? a[0] * a[0] : a[0] * a[n - 1]);
-        bool f = 1;
-        for (int l = 0, r = n - 1; l <= r; l++, r--) {
-            f &= (ans == a[l] * a[r]);
-        }
-        vi cd;
-        for (int i = 1; i * i <= ans; i++) {
-            if (ans % i == 0) {
-                cd.eb(i);
-                if (ans / i != i) cd.eb(ans / i);
+        sort(all(a)); vi b;
+        int x = a[0] * a[n - 1];
+        for (int i = 2; i * i <= x; i++)
+            if (x % i == 0) {
+                b.eb(i);
+                if (i != x / i) b.eb(x / i);
             }
-        }
-        if (f && sz(cd) - 2 == sz(a)) cout << ans;
+        sort(all(b));
+        if (b == a) cout << x;
         else cout << -1;
         cout << endl;
     }
     return 0;
 }
+
+//
+
+/* Lemmas
+
+*/
+
+/* Solutions
+
+*/
+
+/* Analysis
+
+*/

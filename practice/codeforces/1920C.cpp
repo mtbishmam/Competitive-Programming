@@ -91,21 +91,11 @@ int32_t main()
         int n;
         cin >> n;
         vi a(n); cin >> a; int ans = 0;
-        for (int i = 1; i * i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             if (n % i == 0) {
-                int k1 = i, k2 = n / i;
-                vi rem1[k1], rem2[k2];
-                int g1, g2; g1 = g2 = 0;
-                for (int j = 0; j < n; j++) {
-                    if (sz(rem1[j % k1])) g1 = gcd(g1, abs(rem1[j % k1].back() - a[j]));
-                    rem1[j % k1].eb(a[j]);
-
-                    if (sz(rem2[j % k2])) g2 = gcd(g2, abs(rem2[j % k2].back() - a[j]));
-                    rem2[j % k2].eb(a[j]);
-                }
-                int add = (g1 != 1) + (g2 != 1);
-                if (add && k1 == k2) add--;
-                ans += add;
+                int g = 0;
+                for (int j = 0; j + i < n; j++) g = gcd(g, abs(a[j + i] - a[j]));
+                ans += (g != 1);
             }
         }
         cout << ans << endl;
