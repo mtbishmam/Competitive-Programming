@@ -90,41 +90,38 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
+        vi a(n + 1), b(n + 1), pre(n + 1), suf(n + 2);
+        for (int i = 1; i <= n; i++) cin >> a[i];
+        for (int i = 1; i <= n; i++) cin >> b[i], pre[i] = pre[i - 1] + a[i] * b[i];
+        for (int i = n; i >= 0; i--) suf[i] = suf[i + 1] + a[i] * b[i];
+        int ans = pre[n];
+        for (int mid = 1; mid <= n; mid++) {
+            int x = 0;
+            for (int i = mid, j = mid + 1; i >= 1 && j <= n; i--, j++) {
+                x = x + a[i] * b[j] + a[j] * b[i];
+                ans = max(ans, pre[i - 1] + x + suf[j + 1]);
+            }
+            x = a[mid] * b[mid];
+            for (int i = mid - 1, j = mid + 1; i >= 1 && j <= n; i--, j++) {
+                x = x + a[i] * b[j] + a[j] * b[i];
+                ans = max(ans, pre[i - 1] + x + suf[j + 1]);
+            }
+        }
+        cout << ans;
     }
     return 0;
 }
 
-/* Analysis
-    L1. Do some sort of bruteforce
+//
 
-    1 2 3 4 5
-    5 4 3 2 1
+/* Lemmas
 
-    a b c d e
-    x y z p q
-
-    -(ax + by) + (bx + ay) = x(b - a) + y(b - a)
-    -(ax + by + cz) + (cx + by + az) = x(c - a) + y(b - b) + z(a - c)
-
-
-    -(ax + by + cz) + (cx + by + az) = x(c - a) + y(b - b) + z(a - c)
-    -(by + cz + dp) + (dy + cz + bp) = y(d - b) + z(c - c) + p(b - d)
-    -(cz + dp + eq) + (ez + dp + cq)
-
-    -(ax + by + cz + dp) + (dx + cy + bz + ap) = a(p - x) + b(z - y) + c(y - z) + d(x - p)
-                                                = (a - d)(p - x)
-
-    -(yb + cz + dp) + (dy + cz + bp)
 */
 
 /* Solutions
-    1. Just try a bruteforce, if the next subarray sum after reversal is less, we break
-    2. Priority queue approach?
 
 */
 
-/* Gains
-    The problems stems from reversals. I need some fast way to reverse and calculate the difference
-
+/* Analysis
 
 */
