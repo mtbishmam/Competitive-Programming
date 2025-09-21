@@ -86,37 +86,10 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, k;
-        cin >> n >> k;
-        int mnK = min(N, k);
-        k -= mnK;
-        map<int, int> mp;
-        for (int i = 0; i < n; i++) {
-            int x; cin >> x;
-            mp[x]++;
-        }
-        auto getmex = [&](int mx) -> int {
-            for (int i = 0; i <= mx + 1; i++)
-                if (!mp.count(i)) return i;
-            return -1;
-            };
-        int same = 0, mx = mp.rbegin()->ff, mex = getmex(mx);
-        while (mnK) {
-            mx = mp.rbegin()->ff;
-            int x = (mx + mex + 1) / 2;
-            if (x == mex) mex++;
-            int prev = mp[x];
-            mp[x]++;
-            mnK--;
-            if (prev == sz(mp)) {
-                same = 1;
-                break;
-            }
-        }
-        if (same) cout << sz(mp) << endl;
-        else cout << sz(mp) + k << endl;
+        int n;
+        cin >> n;
     }
     return 0;
 }
