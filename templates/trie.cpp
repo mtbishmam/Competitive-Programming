@@ -1,7 +1,6 @@
 class Trie {
 public:
-    int n; // alphabet size
-
+    int n;
     struct node {
         int end;      // how many words end here
         int prefix;   // how many words pass through this node
@@ -18,7 +17,6 @@ public:
     Trie() { n = 26; root = new node(n); }
     Trie(int _n) { n = _n; root = new node(n); }
 
-    // Insert word
     void insert(const string& s) {
         node* cur = root;
         for (auto& c : s) {
@@ -31,8 +29,7 @@ public:
         cur->end++;
     }
 
-    // Count exact word occurrences
-    int countWordsEqualTo(const string& s) {
+    int count(const string& s) {
         node* cur = root;
         for (auto& c : s) {
             int idx = c - 'a';
@@ -43,7 +40,7 @@ public:
     }
 
     // Count words with given prefix
-    int countWordsStartingWith(const string& s) {
+    int count_prefix(const string& s) {
         node* cur = root;
         for (auto& c : s) {
             int idx = c - 'a';
@@ -55,12 +52,12 @@ public:
 
     // Check existence
     bool search(const string& s) {
-        return countWordsEqualTo(s) > 0;
+        return count(s) > 0;
     }
 
     // Check prefix existence
-    bool startsWith(const string& s) {
-        return countWordsStartingWith(s) > 0;
+    bool search_prefix(const string& s) {
+        return count_prefix(s) > 0;
     }
 
     // Erase one occurrence of a word
@@ -77,7 +74,7 @@ public:
     }
 
     // Longest prefix of given word present in trie
-    string longestPrefix(const string& s) {
+    string longest_prefix(const string& s) {
         node* cur = root;
         string res = "";
         for (auto& c : s) {
@@ -90,21 +87,21 @@ public:
     }
 
     // DFS to collect all words
-    void collectWords(node* cur, string& path, vector<string>& res) {
+    void all_words(node* cur, string& path, vector<string>& res) {
         if (cur->end > 0) res.push_back(path);
         for (int i = 0; i < n; i++) {
             if (cur->child[i]) {
                 path.push_back('a' + i);
-                collectWords(cur->child[i], path, res);
+                all_words(cur->child[i], path, res);
                 path.pop_back();
             }
         }
     }
 
-    vector<string> getAllWords() {
+    vector<string> get_all_words() {
         vector<string> res;
         string path;
-        collectWords(root, path, res);
+        all_words(root, path, res);
         return res;
     }
 
@@ -116,7 +113,5 @@ public:
         delete cur;
     }
 
-    ~Trie() {
-        clear(root);
-    }
+    ~Trie() { clear(root); }
 };
