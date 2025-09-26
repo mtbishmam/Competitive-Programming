@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-const ull = unsigned ll;
+const ull = unsigned long long;
 
 const ll MOD1 = 1000000007;
 const ll MOD2 = 1000000009;
@@ -31,34 +31,29 @@ struct Hash {
     }
 };
 
-bool hasCommon(const string& a, const string& b, int len) {
+bool check(const string& a, const string& b, int len) {
     if (len == 0) return true;
     Hash ha(a), hb(b);
     unordered_set<ull> seen;
     for (int i = 0; i + len <= (int)a.size(); i++) {
         auto h = ha.get(i, i + len);
-        ull key = ((ull)h.first << 32) ^ h.second;
+        ull key = ((ull)h.ff << 32) ^ h.ss;
         seen.insert(key);
     }
     for (int j = 0; j + len <= (int)b.size(); j++) {
         auto h = hb.get(j, j + len);
-        ull key = ((ull)h.first << 32) ^ h.second;
+        ull key = ((ull)h.ff << 32) ^ h.ss;
         if (seen.count(key)) return true;
     }
     return false;
 }
 
-int longestCommonSubstring(const string& a, const string& b) {
-    int lo = 0, hi = min(a.size(), b.size()), ans = 0;
-    while (lo <= hi) {
-        int mid = (lo + hi) / 2;
-        if (hasCommon(a, b, mid)) {
-            ans = mid;
-            lo = mid + 1;
-        }
-        else {
-            hi = mid - 1;
-        }
+int longest_common_substring(const string& a, const string& b) {
+    int l = 0, r = min(a.size(), b.size()), ans = 0;
+    while (l <= r) {
+        int mid = l + r >> 1;
+        if (check(a, b, mid)) ans = mid, l = mid + 1;
+        else r = mid - 1;
     }
     return ans;
 }
@@ -69,6 +64,5 @@ int main() {
 
     string A, B;
     cin >> A >> B;
-
-    cout << longestCommonSubstring(A, B) << "\n";
+    cout << longest_common_substring(A, B) << "\n";
 }
