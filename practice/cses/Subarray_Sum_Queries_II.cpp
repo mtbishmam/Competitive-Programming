@@ -178,7 +178,7 @@ int32_t main()
         tree.build(a);
         while (q--) {
             int l, r;
-            cin >> l >> r;
+            cin >> l >> r; l--, r--;
             cout << max({ tree.query(l, r).pre, tree.query(l, r).suf, tree.query(l, r).sum }) << endl;
         }
     }
