@@ -74,6 +74,89 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
+/* 1. Sum only (long long) */
+struct node_sum {
+    ll val;
+    node_sum(ll val = 0) : val(val) {}
+    node_sum operator+(const node_sum& r) const {
+        return node_sum(val + r.val);
+    }
+};
+/* 2. Max only (int) */
+struct node_max {
+    int val;
+    node_max(int val = -INF) : val(val) {}
+    node_max operator+(const node_max& r) const {
+        return node_max(max(val, r.val));
+    }
+};
+/* 3. Min only (int) */
+struct node_min {
+    int val;
+    node_min(int val = INF) : val(val) {}
+    node_min operator+(const node_min& r) const {
+        return node_min(min(val, r.val));
+    }
+};
+
+struct node {
+    int pre, suf, sum;
+    node(int pre = 0, int suf = 0, int sum = 0) : pre(pre), suf(suf), sum(sum) {}
+    node operator+ (const node& r) const {
+        node ret;
+        ret.sum = sum + r.sum;
+        ret.pre = max(pre, sum + r.pre);
+        ret.suf = max(r.suf, r.sum + suf);
+        return ret;
+    }
+};
+
+template<class T>
+struct segment_tree {
+    int n;
+    vector<T> sg;
+    segment_tree(int _n) {
+        n = _n;
+        sg.assign(4 * _n, T());
+    }
+    void build(int i, int l, int r, vector<int>& a) {
+        if (l == r) {
+            sg[i] = T(a[l]);
+        }
+        else {
+            int mid = (l + r) >> 1;
+            build(i * 2, l, mid, a);
+            build(i * 2 + 1, mid + 1, r, a);
+            sg[i] = sg[i * 2] + sg[i * 2 + 1];
+        }
+    }
+    T query(int L, int R, int i, int l, int r) {
+        if (R < L) return T();
+        if (r < L || R < l) return T();
+        if (L <= l && r <= R) return sg[i];
+        int mid = (l + r) >> 1;
+        T left = query(L, R, i * 2, l, mid);
+        T right = query(L, R, i * 2 + 1, mid + 1, r);
+        return left + right;
+    }
+    void update(int pos, T cur, int i, int l, int r) {
+        if (l == r) {
+            sg[i] = cur;
+        }
+        else {
+            int mid = (l + r) >> 1;
+            if (pos <= mid) update(pos, cur, i * 2, l, mid);
+            else update(pos, cur, i * 2 + 1, mid + 1, r);
+            sg[i] = sg[i * 2] + sg[i * 2 + 1];
+        }
+    }
+    // Wrappers
+    void build(vector<int>& a) { build(1, 0, n - 1, a); }
+    T query(int L, int R) { return query(L, R, 1, 0, n - 1); }
+    void update(int pos, int x) { update(pos, T(x), 1, 0, n - 1); }
+};
+
+
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -85,43 +168,24 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
-    struct P {
-        int x, y;
-        void read() { cin >> x >> y; }
-        P operator- (const P& b) const { return P{ x - b.x, y - b.y }; }
-        int operator* (const P& b) const { return x * b.y - y * b.x; }
-    };
-
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        P p1, p2, p3, p4;
-        p1.read();
-        p2.read();
-        p3.read();
-        p4.read();
-
-        // if they're linear
-
-        // let's say line segment A is p1 to p2, so the vector is p1p2
-        if ((p2 - p1) * (p3 - p1) < 0 && (p2 - p1) * (p4 - p1) < 0) cout << "NO";
-        else if ((p2 - p1) * (p3 - p1) > 0 && (p2 - p1) * (p4 - p1) > 0) cout << "NO";
-        // now both signs might be different but still not intersect, because segment A, might not intersect with segment B)
-        else {
-            swap(p1, p3);
-            swap(p2, p4);
-            // copy the above code
-            if ((p2 - p1) * (p3 - p1) < 0 && (p2 - p1) * (p4 - p1) < 0) cout << "NO";
-            else if ((p2 - p1) * (p3 - p1) > 0 && (p2 - p1) * (p4 - p1) > 0) cout << "NO";
-            else cout << "YES";
+        int n, q;
+        cin >> n >> q;
+        vi a(n); cin >> a;
+        segment_tree<node> tree(n);
+        tree.build(a);
+        while (q--) {
+            int l, r;
+            cin >> l >> r;
+            cout << max({ tree.query(l, r).pre, tree.query(l, r).suf, tree.query(l, r).sum }) << endl;
         }
-        cout << endl;
     }
     return 0;
 }
 
-
-//
+// subarrays with sum 0 is possible
 
 /* Lemmas
 

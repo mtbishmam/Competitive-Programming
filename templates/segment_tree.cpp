@@ -23,11 +23,11 @@ struct node_min {
     }
 };
 /* 4. Node or (int) */
-struct node_min {
+struct node_or {
     int val;
-    node_min(int val = 0) : val(val) {}
-    node_min operator+(const node_min& r) const {
-        return node_min(val | r.val);
+    node_or(int val = 0) : val(val) {}
+    node_or operator+(const node_or& r) const {
+        return node_or(val | r.val);
     }
 };
 template<class T>
