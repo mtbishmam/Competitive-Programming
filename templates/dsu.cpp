@@ -1,17 +1,17 @@
 struct dsu {
     int n;
-    vi sz, par, mx, mn;
-    dsu(int _n) : n(_n), sz(n, 1), par(n, -1), mx(n, -1), mn(n, INF) {}
-    int find(int x) { return (par[x] == -1 ? x : par[x] = find(par[x])); }
+    vi _sz, _par, _mx, _mn;
+    dsu(int _n) : n(_n), _sz(n, 1), _par(n, -1), _mx(n, -1), _mn(n, INF) {}
+    int find(int x) { return (_par[x] == -1 ? x : _par[x] = find(_par[x])); }
     int unite(int a, int b) {
         int oa = a, ob = b;
         a = find(a), b = find(b);
         if (a != b) {
-            if (sz[a] < sz[b]) swap(a, b);
-            par[b] = a;
-            mx[a] = max({ mx[a], ob, oa, mx[b] });
-            mn[a] = min({ mn[a], ob, oa, mn[b] });
-            sz[a] += sz[b];
+            if (_sz[a] < _sz[b]) swap(a, b);
+            _par[b] = a;
+            _mx[a] = max({ _mx[a], ob, oa, _mx[b] });
+            _mn[a] = min({ _mn[a], ob, oa, _mn[b] });
+            _sz[a] += _sz[b];
             return 1;
         }
         return 0;
