@@ -115,23 +115,49 @@ int32_t main()
         int n, k;
         cin >> n >> k;
         vi a(n); cin >> a;
-
-        cout << brute(a, k) << endl;
+        // cout << brute(a, k) << endl;
+        int ans = -LINF;
+        for (int i = max(0, ))
     }
     return 0;
 }
 
 // why is k so small?
+// a[i] <= n?
 
 /* Lemmas
-
+    1. We'll have to do an exhaustive search
 */
 
 /* Solutions
     1. per bit by bit operation?
     2. brute force to deduce pattern
+    3. binary search?
 */
 
 /* Analysis
     i * j - k * (ai | aj)
+*/
+
+/* Problems
+    I don't know how to do i * j fast for all pairs yet
+    I don't know how to do (ai | aj) for all pairs yet
+    I can't figure out what small k implies yet
+    Does a[i] <= n imply something?
+*/
+
+/* Gains
+    The fact that a[i] <= n && k <= 100 both combined the critical factor
+    a[i] <= n, means that the maximum value of any (a[i] | a[j]) can be atmost 2 * n
+    i * j / a[i] | a[j] for all pairs cannot be calculated fast enough anyhow
+
+    i * j >= k * (a[i] | a[j])
+    i * j >= 100 * (2n)
+    i * j >= 200 * 1e5
+    i * j >= 2e7
+
+    n * (n - 1) >= 200n
+    n ^ 2 - n >= 200n
+    n ^ 2 >= 201n
+    n >= sqrt(201n)
 */

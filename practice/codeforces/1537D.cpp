@@ -56,7 +56,7 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
 
-const string ny[] = { "NO", "YES" };
+const string ny[] = { "Bob", "Alice" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 // const int INF = 2147483647;
@@ -85,52 +85,66 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
+    auto getdiv = [&](int x) {
+        vi ret;
+        for (int i = 2; i * i <= x; i++) {
+            if (x % i == 0) {
+                ret.eb(i);
+                if (i != x / i) ret.eb(x / i);
+            }
+        }
+        return ret;
+        };
+
+    vvi dp(201, vi(2, -1));
+    auto f = [&](auto&& f, int i, int j) -> int {
+        if (!sz(getdiv(i))) {
+            if (!j) return 0; // alice's turn & she loses
+            else return 1;
+        }
+        auto& ret = dp[i][j];
+        if (~ret) return ret;
+        if (!j) ret = 0;
+        else ret = 1;
+        auto divs = getdiv(i);
+        for (auto& d : divs) {
+            auto cur = f(f, i - d, j ^ 1);
+            if (!j) { // alice's turn
+                if (cur) return ret = 1;
+            }
+            else { // bob's turn
+                if (!cur) return ret = 0;
+            }
+        }
+        return ret;
+        };
+    auto sol = [&](int n) {
+        if (n % 2 == 1) {
+            return 0; // bob
+        }
+        int cnt = 0;
+        while ((n % 2) == 0) {
+            n /= 2;
+            ++cnt;
+        }
+        if (n > 1) { // was even and had an odd factor -> Alice
+            return 1; // alice
+        }
+        else { // was a pure power of two: 2^cnt
+            if (cnt % 2 == 0) return 1; // alice
+            else return 0; // bob
+        }
+        };
+    for (int i = 1; i <= 200; i++)
+        if (f(f, i, 0) != sol(i))
+            cout << i << " " << ny[f(f, i, 0)] << endl;
+
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, k;
-        cin >> n >> k;
-        vi a(n); cin >> a;
-        vi sums_gk, sums_lk;
-        map<int, int> mp1, mp2; int lk, gk; lk = gk = 0;
-        for (int i = 0; i < n / 2; i++) {
-            int sum = (a[i] + a[n - i - 1]);
-            if (sum <= k) {
-                mp1[sum]++;
-                sums_lk.eb(sum);
-                lk++;
-            }
-            else {
-                mp2[sum]++;
-                sums_gk.eb(sum);
-                gk++;
-            }
-        }
-        int ans = INF; sort(all(sums_gk)); sort(all(sums_lk));
-        for (auto& [sum, cnt] : mp1) {
-            ans = min(ans, (lk - cnt) + 2 * gk);
-        }
-        for (auto& [sum, cnt] : mp2) {
-            // int less = lb(all(sums_gk), sum) - sums_gk.begin();
-            int big = sz(sums_gk) - (ub(all(sums_gk), sum) - sums_gk.begin());
-            int lbb = sum - (k - 1);
-            // int less = (n / 2 - (ub(all(sums_gk), lbb) - sums_gk.begin()));
-            int idx = ((ub(all(sums_lk), lbb) - sums_lk.begin()));
-            int one_move = sz(sums_lk) - idx;
-            int two_move = idx;
-            ans = min(ans, big + 2 * two_move + one_move);
-            /*
-            k = 8
-            3 2 9 9 10 10 10 16 16
-
-            k + 1 <= k + k
-            k + 1 <= k + k - (k - 1)
-            k + 1 <= k + 1
-
-            */
-            // ans = min(ans, (big - cnt) / 2 + 2 * less);
-        }
-        cout << ans << endl;
+        int n;
+        cin >> n;
+        cout << ny[f(f, n, 0)] << endl;
     }
     return 0;
 }
@@ -138,12 +152,7 @@ int32_t main()
 //
 
 /* Lemmas
-    1. If k wasn't a factor, we'd count the sum of all a[i] + a[j] and go with the maximum
-        but, because k is a factor, some pair of a[i] & a[j] which isn't the maximum might require 2 replacements as opposed to one
-    2. Maybe we'll have two answers?
-        Maybe need to check for two things?
-            For the values where a[i] + a[j] <= k
-            & for the values where a[i] + a[j] > k
+
 */
 
 /* Solutions
@@ -151,19 +160,11 @@ int32_t main()
 */
 
 /* Analysis
-    mx(a[i] + a[j]) = 2 * k
-    mn(a[i] + a[j]) = 2
-    k = 7,
-        111 7777 111,   ak = 7, ans = 6
-                        ak = 2, ans = 4
+    NO
+        1, primes, primes^K (8, 9)
+        15?? 21?? 27??
 
-    k = 7,
-        777 1111 777,   ak = 7, ans = 4
-                        ak = 2, ans = 6
+        any odd and primes? -> 8 doesn't match
+    YES
 
-    k = 6,
-        5 2 6 1 3 4,
-        (2 + 3) = 5     ak = 5, ans = 2
-        (5 + 4) = 9
-        (6 + 1) = 7
 */
