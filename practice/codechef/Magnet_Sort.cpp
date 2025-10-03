@@ -90,25 +90,55 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vi a(n); cin >> a;
-        vi b = a, d(4); int s = 0;
-        for (auto& i : b) i %= 4, d[i]++, s = (s + i) % 4;
-        if (s % 4 == 0) {
-            int ans = (d[2] / 2);
-            d[2] %= 2;
-            int mn = min(d[1], d[3]);
-            ans += mn, d[1] -= mn, d[3] -= mn;
-            if (d[1] > 1 && d[2]) ans += 2, d[1] -= 2, d[2]--;
-            if (d[3] > 1 && d[2]) ans += 2, d[3] -= 2, d[2]--;
-            assert(d[2] == 0);
-            assert(d[1] % 4 == 0);
-            assert(d[3] % 4 == 0);
-            if (d[1]) ans += 3 * (d[1] / 4);
-            if (d[3]) ans += 3 * (d[3] / 4);
-            cout << ans << endl;
-        }
-        else cout << -1 << endl;
+        vi a(n), inv(n); cin >> a;
+        string s; cin >> s;
 
+        for (int i = 1; i < n; i++) {
+            if (a[i - 1] > a[i]) inv[i] = 1;
+            inv[i] += inv[i - 1];
+        }
+        vi b = a; sort(all(b));
+        if (a == b) cout << 0;
+        else if (count(all(s), 'N') == n or count(all(s), 'S') == n) {
+            if (inv[n - 1]) cout << -1;
+            else cout << 0;
+        }
+        else {
+            int fs, ls, fn, ln;
+            fs = ls = fn = ln = -1;
+            for (int i = 0; i < n; i++) {
+                if (s[i] == 'S') {
+                    if (fs < 0) fs = i;
+                    ls = i;
+                }
+                else {
+                    if (fn < 0) fn = i;
+                    ln = i;
+                }
+            }
+            auto chk = [&](int l, int mid, int r) {
+                int ret = 2;
+                if (mid >= r) {
+                    ret = 1;
+                }
+                else {
+                    int pi = inv[mid];
+                    int si = inv[r];
+                    if (pi == si) ret = 1;
+                    else if (!pi && si) ret = 1;
+                    debug(pi, si);
+                }
+                debug(l, mid, r);
+                return ret;
+                };
+            if (fs != ls && fs < ln) cout << chk(fs, ln, ls);
+            else if (fn != ln && fn < ls) cout << chk(fn, ls, ln);
+            // if (chk(fs, ln, ls) or chk(fn, ls, ln)) {
+            //     cout << 1;
+            // }
+            else cout << 1;
+        }
+        cout << endl;
     }
     return 0;
 }
@@ -116,8 +146,10 @@ int32_t main()
 //
 
 /* Lemmas
-    1. Regardless of whehter two of them added are divisible by 4, we can always just remove them
-    2. The crux of the problem will be finding whether any subset of numbers are modulo 4
+    1. 2 movies is the maximum we'll ever need if there is atleast 1 N and 1 S
+    2. We only need the first N & last S or first S & last N
+        if the inversion exists within the range of N....S, then one move
+        if two inversions exist within the range of N....S.....N, then two moves
 */
 
 /* Solutions
@@ -125,5 +157,14 @@ int32_t main()
 */
 
 /* Analysis
+    r = upb on a[i] - 1
+    l = 0
 
+    1 6 4 2 1 5
+
+
+    NNNNNNNSNNNNNNNSNNNNNS
+    NNNNNSSSSS
+    SSSSSSSNSSSSSSSSSS
+    NNNNNNSNNNNNNNNNN
 */

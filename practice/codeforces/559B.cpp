@@ -74,6 +74,23 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
+struct Hash {
+    int n;
+    string s;
+    int mod1 = 1e9 + 7;
+    int mod2 = 1e9 + 9;
+    vi h1, h2, p1, p2;
+    Hash(string& s) : s(s), n(sz(s)) {
+        h1 = h2 = p1 = p2 = vi(n + 1);
+        for (int i = 1; i <= n; i++) {
+            h1[i] =
+        }
+    }
+    ull get(int l, int r) {
+        return
+    }
+};
+
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -86,29 +103,14 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
-        vi a(n); cin >> a;
-        vi b = a, d(4); int s = 0;
-        for (auto& i : b) i %= 4, d[i]++, s = (s + i) % 4;
-        if (s % 4 == 0) {
-            int ans = (d[2] / 2);
-            d[2] %= 2;
-            int mn = min(d[1], d[3]);
-            ans += mn, d[1] -= mn, d[3] -= mn;
-            if (d[1] > 1 && d[2]) ans += 2, d[1] -= 2, d[2]--;
-            if (d[3] > 1 && d[2]) ans += 2, d[3] -= 2, d[2]--;
-            assert(d[2] == 0);
-            assert(d[1] % 4 == 0);
-            assert(d[3] % 4 == 0);
-            if (d[1]) ans += 3 * (d[1] / 4);
-            if (d[3]) ans += 3 * (d[3] / 4);
-            cout << ans << endl;
-        }
-        else cout << -1 << endl;
-
+        string s, t;
+        cin >> s >> t;
+        int n = sz(s);
+        s = '-' + s;
+        t = '-' + t;
+        Hash h1(s);
     }
     return 0;
 }
@@ -116,8 +118,7 @@ int32_t main()
 //
 
 /* Lemmas
-    1. Regardless of whehter two of them added are divisible by 4, we can always just remove them
-    2. The crux of the problem will be finding whether any subset of numbers are modulo 4
+
 */
 
 /* Solutions

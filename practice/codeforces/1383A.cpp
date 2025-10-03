@@ -90,38 +90,57 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n;
         cin >> n;
-        vi a(n); cin >> a;
-        vi b = a, d(4); int s = 0;
-        for (auto& i : b) i %= 4, d[i]++, s = (s + i) % 4;
-        if (s % 4 == 0) {
-            int ans = (d[2] / 2);
-            d[2] %= 2;
-            int mn = min(d[1], d[3]);
-            ans += mn, d[1] -= mn, d[3] -= mn;
-            if (d[1] > 1 && d[2]) ans += 2, d[1] -= 2, d[2]--;
-            if (d[3] > 1 && d[2]) ans += 2, d[3] -= 2, d[2]--;
-            assert(d[2] == 0);
-            assert(d[1] % 4 == 0);
-            assert(d[3] % 4 == 0);
-            if (d[1]) ans += 3 * (d[1] / 4);
-            if (d[3]) ans += 3 * (d[3] / 4);
-            cout << ans << endl;
+        string s, t;
+        cin >> s >> t;
+        bool f = 1; vpii p;
+        for (int i = 0; i < n; i++) {
+            if (t[i] < s[i]) f = 0;
+            p.eb(s[i] - 'a', t[i] - 'a');
         }
-        else cout << -1 << endl;
-
+        if (f) {
+            sort(all(p));
+            vvi dp(n, vi(20, -1));
+            auto f = [&](auto&& f, int i, int lst) -> int {
+                if (i == n) return 0;
+                auto& ret = dp[i][lst];
+                if (~ret) return ret;
+                ret = INF;
+                if (lst >= p[i].ss) ret = f(f, i + 1, lst);
+                else {
+                    for (int c = lst; c <= p[i].ss; c++)
+                        ret = min(ret, 1 + f(f, i + 1, c));
+                }
+                return ret;
+                };
+            int mn = INF;
+            for (int i = 0; i < n; i++) mn = min(mn, 0ll + s[i] - 'a');
+            cout << f(f, 0, mn);
+        }
+        else cout << -1;
+        cout << endl;
     }
     return 0;
 }
 
-//
+// remember s[i] <= t
+// why is the char_set from a to t?
+    // possibilities - i. bitmask solution? ii. bruteforce solution?
+    // find out what this 20 could mean. like 20^2 or something?
 
 /* Lemmas
-    1. Regardless of whehter two of them added are divisible by 4, we can always just remove them
-    2. The crux of the problem will be finding whether any subset of numbers are modulo 4
+    1. This is probably dp
 */
 
 /* Solutions
+    1. 26 * n, make char i to char i + 1?, but we can skip multiple chars at once
+    2. get the difference array and then get all the unique values?
+        a -> e (5)
+        b -> c (1)
+        moves -> a -> b -> c -> e
 
+        cumulative moves like this
+        direct moves
+    3. dp[i][20] -> i-th position, last character
 */
 
 /* Analysis
