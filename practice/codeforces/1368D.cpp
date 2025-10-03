@@ -74,31 +74,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-// Static hashing for 0-indexed string. Intervals are [l,r]. 
-template<const ll M, const ll B>
-struct Hashing {
-    int n; vi h, pw;
-    Hashing(const string& s) : n(sz(s)), h(n + 1), pw(n + 1) {
-        pw[0] = 1; //^^ s i s 0 indexed
-        for (int i = 1; i <= n; ++i)
-            pw[i] = (pw[i - 1] * B) % M,
-            h[i] = (h[i - 1] * B + s[i - 1]) % M;
-    }
-    ll eval(int l, int r) {
-        // assert(l <= r);
-        return (h[r + 1] - ((h[l] * pw[r - l + 1]) % M) + M) % M;
-    }
-};
-struct Double_Hash {
-    using H1 = Hashing<916969619, 101>;
-    using H2 = Hashing<285646799, 103>;
-    H1 h1; H2 h2;
-    Double_Hash(const string& s) :h1(s), h2(s) {}
-    pii eval(int l, int r) {
-        return { h1.eval(l,r), h2.eval(l,r) };
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -113,37 +88,8 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s, t;
-        cin >> s >> t;
-        int n = sz(s);
-        // Double_Hash sh(s), th(t);
-        // auto f = [&](auto&& f, pii& a, pii& b) -> bool {
-        //     auto& [l1, r1] = a;
-        //     auto& [l2, r2] = b;
-        //     int len = r1 - l1 + 1;
-        //     if (len % 2) return sh.eval(l1, r1) == th.eval(l2, r2);
-        //     if (sh.eval(l1, r1) == th.eval(l2, r2)) return 1;
-        //     else {
-        //         pii a1 = { l1, l1 + len / 2 - 1 };
-        //         pii a2 = { l1 + len / 2, r1 };
-        //         pii b1 = { l2, l2 + len / 2 - 1 };
-        //         pii b2 = { l2 + len / 2, r2 };
-        //         return (f(f, a1, b1) && f(f, a2, b2)) || (f(f, a1, b2) && f(f, a2, b1));
-        //     }
-        //     };
-        // pii a = { 0, n - 1 };
-        // pii b = { 0, n - 1 };
-        // cout << ny[f(f, a, b)];
-
-        auto f = [&](auto&& f, string s) {
-            int n = sz(s);
-            if (n & 1) return s;
-            string s1 = f(f, s.substr(0, n / 2));
-            string s2 = f(f, s.substr(n / 2));
-            if (s1 > s2) swap(s1, s2);
-            return s1 + s2;
-            };
-        cout << ny[f(f, s) == f(f, t)];
+        int n;
+        cin >> n;
     }
     return 0;
 }
@@ -155,7 +101,9 @@ int32_t main()
 */
 
 /* Solutions
-
+    1. We'll always just work with the largest bit first of all, if it can be set, we'll set it
+    2. & and | all with the largest one? and their addition will be answer?
+    3. Maybe it's xor?
 */
 
 /* Analysis
