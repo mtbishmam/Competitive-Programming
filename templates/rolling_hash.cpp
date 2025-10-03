@@ -3,9 +3,9 @@ using namespace std;
 using ll = long long;
 const ull = unsigned long long;
 
-const ll MOD1 = 1000000007;
-const ll MOD2 = 1000000009;
-const ll BASE = 911382323;
+const ll MOD1 = 1e9 + 7;
+const ll MOD2 = 1e9 + 9;
+const ll BASE = 1e6 + 3;
 
 struct Hash {
     vector<ll> h1, h2, p1, p2;
