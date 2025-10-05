@@ -12,9 +12,10 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
-// #include <cassert>
+#include <cassert>
 #include <functional>
 #include <chrono>
+#include <climits>
 using namespace std;
 
 #define endl "\n"
@@ -43,6 +44,7 @@ using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
+using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
@@ -54,12 +56,17 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
 
-const string cq[2] = { "NO", "YES" };
+const string ny[] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 2147483647;
-const ll LINF = 9223372036854775807;
+// const int INF = 2147483647;
+// const ll LINF = 9223372036854775807;
+const int INF = 1e9;
+const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
+// const int MOD = 998244353;
+const double EPS = 1e-9;
+const double PI = acos(-1);
 const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
@@ -83,27 +90,40 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, k;
         cin >> n >> k;
-        vi a(n);
-        cin >> a;
-
-        auto chk = [&](int sum) {
-            int ck = 0;
-            for (int i = 0, j = 0; i < n; i++) {
-                int csum = 0;
-                while (j < n and csum + a[j] <= sum) csum += a[j++];
-                ck++;
-                i = j - 1;
+        vi a(n); cin >> a;
+        int l = 0, r = 1e16, ans = 0;
+        auto chk = [&](int mx) {
+            int s = 0, ck = 1;
+            for (int i = 0; i < n; i++) {
+                if (s + a[i] <= mx) s += a[i];
+                else {
+                    s = a[i];
+                    ck++;
+                }
+                if (s > mx) return false;
             }
             return ck <= k;
             };
-
-        int l = *max_element(all(a)), r = 1e18, ans;
         while (l <= r) {
-            int mid = (l + r) >> 1;
+            int mid = l + r >> 1;
             if (chk(mid)) r = mid - 1, ans = mid;
             else l = mid + 1;
         }
-        cout << ans << endl;
+        cout << ans;
     }
     return 0;
 }
+
+//
+
+/* Lemmas
+
+*/
+
+/* Solutions
+
+*/
+
+/* Analysis
+
+*/

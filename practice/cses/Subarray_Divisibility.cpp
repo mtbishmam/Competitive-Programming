@@ -12,9 +12,10 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
-// #include <cassert>
+#include <cassert>
 #include <functional>
 #include <chrono>
+#include <climits>
 using namespace std;
 
 #define endl "\n"
@@ -43,6 +44,7 @@ using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
+using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
@@ -54,12 +56,17 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
 
-const string cq[2] = { "NO", "YES" };
+const string ny[] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 2147483647;
-const ll LINF = 9223372036854775807;
+// const int INF = 2147483647;
+// const ll LINF = 9223372036854775807;
+const int INF = 1e9;
+const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
+// const int MOD = 998244353;
+const double EPS = 1e-9;
+const double PI = acos(-1);
 const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
@@ -84,16 +91,28 @@ int32_t main()
         int n;
         cin >> n;
         vi a(n); cin >> a;
+        int s, ans; s = ans = 0;
         map<int, int> mp; mp[0] = 1;
-        int cur, ans; cur = ans = 0;
         for (int i = 0; i < n; i++) {
-            cur += a[i];
-            if (cur >= n) cur %= n;
-            if (cur < 0) cur = (cur % n + n) % n;
-            if (mp.count(cur)) ans += mp[cur];
-            mp[cur]++;
+            s = ((s + a[i]) % n + n) % n;
+            if (mp.count(s)) ans += mp[s];
+            mp[s]++;
         }
-        cout << ans << endl;
+        cout << ans;
     }
     return 0;
 }
+
+//
+
+/* Lemmas
+
+*/
+
+/* Solutions
+
+*/
+
+/* Analysis
+
+*/
