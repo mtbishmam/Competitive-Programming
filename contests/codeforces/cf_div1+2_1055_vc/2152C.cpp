@@ -86,10 +86,17 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, q;
+        cin >> n >> q;
+        vi a(n); cin >> a;
+        vi pre[2];
+        for (int i = 0; i < 2; i++) pre[i] = vi(n + 1);
+        for (int i = 1; i <= n; i++)
+            for (int j = 0; j < 2; j++)
+                pre[j][i] = pre[j][i - 1] + (a[i - 1] == j);
+
     }
     return 0;
 }
