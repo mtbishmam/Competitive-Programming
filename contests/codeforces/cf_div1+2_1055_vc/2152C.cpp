@@ -107,7 +107,8 @@ int32_t main()
             if (z % 3 or o % 3) cout << -1;
             else {
                 if (diffsum[r] - diffsum[l] == r - l) { // alternating
-                    // cout << o / 3 + z / 3 + 1;
+                    // if (diffsum[r] - diffsum[l - 1] == r - l + 1) { // doing this gives wa
+                        // cout << o / 3 + z / 3 + 1;
                     cout << 2 + (r - l + 1 - 3) / 3;
                 }
                 else {
@@ -135,4 +136,9 @@ int32_t main()
 /* Analysis
     The segment tree should contain the absolute minimum distances between it's indices
         be careful about a[i] = 0 or a[i] = 1
+*/
+
+/* Gains
+Learned a really awesome way to calculate alternating subsequences
+
 */
