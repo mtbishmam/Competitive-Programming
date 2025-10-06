@@ -93,12 +93,7 @@ int32_t main()
         vi a(n);
         cin >> a;
         uniq(a);
-        if (sz(a) == 1) cout << 1;
-        else if (sz(a) == 2) cout << 3;
-        else {
-            cout << 3 + 2 * (sz(a) - 2);
-        }
-        cout << endl;
+        cout << 2 * sz(a) - 1 << endl;
     }
     return 0;
 }
