@@ -90,13 +90,33 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, q;
         cin >> n >> q;
-        vi a(n); cin >> a;
-        vi pre[2];
-        for (int i = 0; i < 2; i++) pre[i] = vi(n + 1);
-        for (int i = 1; i <= n; i++)
+        vi a, pre[2], diff, diffsum;
+        a = pre[0] = pre[1] = diff = diffsum = vi(n + 1);
+        for (int i = 1; i <= n; i++) {
+            cin >> a[i];
+            diff[i] = a[i - 1] != a[i];
+            diffsum[i] = diffsum[i - 1] + diff[i];
             for (int j = 0; j < 2; j++)
-                pre[j][i] = pre[j][i - 1] + (a[i - 1] == j);
-
+                pre[j][i] = pre[j][i - 1] + (a[i] == j);
+        }
+        while (q--) {
+            int l, r;
+            cin >> l >> r;
+            int z = pre[0][r] - pre[0][l - 1];
+            int o = pre[1][r] - pre[1][l - 1];
+            if (z % 3 or o % 3) cout << -1;
+            else {
+                if (diffsum[r] - diffsum[l] == r - l) { // alternating
+                    // cout << o / 3 + z / 3 + 1;
+                    cout << 2 + (r - l + 1 - 3) / 3;
+                }
+                else {
+                    cout << (r - l + 1) / 3;
+                    // cout << o / 3 + z / 3;
+                }
+            }
+            cout << endl;
+        }
     }
     return 0;
 }
