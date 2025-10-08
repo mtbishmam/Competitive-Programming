@@ -90,33 +90,67 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m;
         cin >> n >> m;
-        int sx, sy;
+        int sx, sy, ex, ey;
         vvc a(n, vc(m));
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 cin >> a[i][j];
-            }
-        }
-        vvb vis(n, vb(m));
-        auto isvalid = [&](int x, int y) { return (0 <= x and x < n and 0 <= y and y < m and a[x][y] != '#' and !vis[x][y]); };
-        auto f = [&](auto&& f, int x, int y) -> void {
-            vis[x][y] = 1;
-            for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i];
-                int ny = y + dy[i];
-                if (isvalid(nx, ny)) f(f, nx, ny);
-            }
-            };
-        int ans = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (a[i][j] == '.' and !vis[i][j]) {
-                    f(f, i, j);
-                    ans++;
+                if (a[i][j] == 'A') {
+                    sx = i, sy = j;
+                }
+                else if (a[i][j] == 'B') {
+                    ex = i, ey = j;
                 }
             }
         }
-        cout << ans << endl;
+        vvi dis(n, vi(m, INF));
+        vvi path(n, vi(m));
+        vvb vis(n, vb(m));
+        auto isvalid = [&](int x, int y) { return (0 <= x and x < n and 0 <= y and y < m and a[x][y] != '#' and !vis[x][y]); };
+
+        queue<pii> q;
+        q.push({ sx, sy });
+        dis[sx][sy] = 0;
+        vis[sx][sy] = 1;
+        while (sz(q)) {
+            auto [x, y] = q.front();
+            q.pop();
+            for (int i = 0; i < 4; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+                if (isvalid(nx, ny)) {
+                    vis[nx][ny] = 1;
+                    dis[nx][ny] = dis[x][y] + 1;
+                    q.push({ nx, ny });
+                }
+            }
+        }
+        if (dis[ex][ey] == INF) cout << "NO";
+        else {
+            cout << "YES" << endl;
+            string ans;
+            int cur = dis[ex][ey];
+            vis = vvb(n, vb(m));
+            while (1) {
+                for (int i = 0; i < 4; i++) {
+                    int nx = ex + dx[i];
+                    int ny = ey + dy[i];
+                    if (isvalid(nx, ny) and dis[nx][ny] + 1 == cur) {
+                        if (nx + 1 == ex) ans += 'D';
+                        else if (nx - 1 == ex) ans += 'U';
+                        else if (ny + 1 == ey) ans += 'R';
+                        else ans += 'L';
+                        ex = nx, ey = ny;
+                        cur--;
+                        break;
+                    }
+                }
+                if (!cur) break;
+            }
+            reverse(all(ans));
+            cout << sz(ans) << endl;
+            cout << ans;
+        }
     }
     return 0;
 }
