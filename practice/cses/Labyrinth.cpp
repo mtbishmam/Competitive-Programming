@@ -12,9 +12,10 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
-// #include <cassert>
+#include <cassert>
 #include <functional>
 #include <chrono>
+#include <climits>
 using namespace std;
 
 #define endl "\n"
@@ -25,7 +26,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+#define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -43,6 +44,7 @@ using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
+using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
@@ -54,12 +56,17 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
 
-const string cq[2] = { "NO", "YES" };
+const string ny[] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
+// const int INF = 2147483647;
+// const ll LINF = 9223372036854775807;
 const int INF = 1e9;
-const ll LINF = 9223372036854775807;
+const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
+// const int MOD = 998244353;
+const double EPS = 1e-9;
+const double PI = acos(-1);
 const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
@@ -83,58 +90,47 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m;
         cin >> n >> m;
+        int sx, sy;
         vvc a(n, vc(m));
-        int sx, sy, ex, ey;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 cin >> a[i][j];
-                if (a[i][j] == 'A') sx = i, sy = j;
-                if (a[i][j] == 'B') ex = i, ey = j;
             }
+        }
         vvb vis(n, vb(m));
-        int flag = 0;
-        queue<pii> q;
-        vvi dis(n, vi(m, INF));
-        q.push({ sx, sy });
-        dis[sx][sy] = 0;
-        vis[sx][sy] = 1;
-        while (q.size()) {
-            auto& [x, y] = q.front();
-            q.pop();
+        auto isvalid = [&](int x, int y) { return (0 <= x and x < n and 0 <= y and y < m and a[x][y] != '#' and !vis[x][y]); };
+        auto f = [&](auto&& f, int x, int y) -> void {
+            vis[x][y] = 1;
             for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i], ny = y + dy[i];
-                if (nx < 0 or nx >= n or ny < 0 or ny >= m or vis[nx][ny] or a[nx][ny] == '#');
-                else {
-                    vis[nx][ny] = 1;
-                    dis[nx][ny] = 1 + dis[x][y];
-                    q.push({ nx, ny });
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+                if (isvalid(nx, ny)) f(f, nx, ny);
+            }
+            };
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (a[i][j] == '.' and !vis[i][j]) {
+                    f(f, i, j);
+                    ans++;
                 }
             }
         }
-        if (dis[ex][ey] != INF) {
-            string ans; int dc = dis[ex][ey];
-            while (!(ex == sx and ey == sy)) {
-                for (int i = 0; i < 4; i++) {
-                    int nx = ex + dx[i], ny = ey + dy[i];
-                    if (nx < 0 or nx >= n or ny < 0 or ny >= m or a[nx][ny] == '#' or dc - 1 != dis[nx][ny]);
-                    else {
-                        if (i == 0) ans += 'D';
-                        else if (i == 1) ans += 'R';
-                        else if (i == 2) ans += 'L';
-                        else ans += 'U';
-                        ex = nx, ey = ny;
-                        dc--;
-                        break;
-                    }
-                }
-            }
-            reverse(all(ans));
-            cout << "YES" << endl;
-            cout << ans.size() << endl;
-            cout << ans;
-        }
-        else cout << "NO";
-
+        cout << ans << endl;
     }
     return 0;
 }
+
+//
+
+/* Lemmas
+
+*/
+
+/* Solutions
+
+*/
+
+/* Analysis
+
+*/
