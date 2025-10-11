@@ -75,27 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-using pll = pair<ll, ll>;
-using vpll = vector<pll>;
-vl dijkstra(vector<vpll>& g, int start) {
-    int n = sz(g);
-    set<pii> s; s.insert({ 0, start }); // w, u
-    vi dis(n, LINF); dis[start] = 0;
-    vb vis(n);
-    while (sz(s)) {
-        auto [w1, u] = *s.begin();
-        s.erase(s.begin());
-        if (vis[u]) continue;
-        vis[u] = 1;
-        for (auto& [w2, v] : g[u])
-            if (w1 + w2 < dis[v]) {
-                dis[v] = w1 + w2;
-                s.insert({ dis[v], v });
-            }
-    }
-    return dis;
-}
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -108,30 +87,25 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        vector<vector<pii>> g1(n), g2(n);
-        for (int i = 0; i < m; i++) {
-            int a, b, c; cin >> a >> b >> c;
-            a--, b--;
-            g1[a].eb(c, b);
-            g2[b].eb(c, a);
-        }
-
-        auto dis1 = dijkstra(g1, 0);
-        auto dis2 = dijkstra(g2, n - 1);
-        int ans = dis1[n - 1];
+        int n;
+        cin >> n;
+        vvi a(n, vi(n));
+        for (auto& ai : a) for (auto& i : ai) cin >> i;
+        vi ans(n + n);
+        set<int> s;
+        for (int i = 1; i <= 2 * n; i++) s.insert(i);
         for (int i = 0; i < n; i++) {
-            if (dis1[i] != LINF and dis2[i] != LINF) {
-                for (auto& [w, b] : g1[i]) {
-                    int cur = dis1[i] + dis2[b] + w / 2;
-                    ans = min(ans, cur);
-                }
+            for (int j = 0; j < n; j++) {
+                ans[i + j] = a[i][j];
+                s.erase(ans[i + j]);
             }
         }
-        cout << ans;
+        cout << *s.begin() << " ";
+        for (int i = 0; i < 2 * n - 1; i++)
+            cout << ans[i] << " ";
+        cout << endl;
     }
     return 0;
 }

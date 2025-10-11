@@ -75,27 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-using pll = pair<ll, ll>;
-using vpll = vector<pll>;
-vl dijkstra(vector<vpll>& g, int start) {
-    int n = sz(g);
-    set<pii> s; s.insert({ 0, start }); // w, u
-    vi dis(n, LINF); dis[start] = 0;
-    vb vis(n);
-    while (sz(s)) {
-        auto [w1, u] = *s.begin();
-        s.erase(s.begin());
-        if (vis[u]) continue;
-        vis[u] = 1;
-        for (auto& [w2, v] : g[u])
-            if (w1 + w2 < dis[v]) {
-                dis[v] = w1 + w2;
-                s.insert({ dis[v], v });
-            }
-    }
-    return dis;
-}
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -110,28 +89,17 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        vector<vector<pii>> g1(n), g2(n);
-        for (int i = 0; i < m; i++) {
-            int a, b, c; cin >> a >> b >> c;
-            a--, b--;
-            g1[a].eb(c, b);
-            g2[b].eb(c, a);
+        int n, d;
+        cin >> n >> d;
+        vi a(n); cin >> a;
+        int m; cin >> m;
+        int ans = 0;
+        sort(all(a));
+        for (int i = 0; i < min(n, m); i++) {
+            ans += a[i];
         }
-
-        auto dis1 = dijkstra(g1, 0);
-        auto dis2 = dijkstra(g2, n - 1);
-        int ans = dis1[n - 1];
-        for (int i = 0; i < n; i++) {
-            if (dis1[i] != LINF and dis2[i] != LINF) {
-                for (auto& [w, b] : g1[i]) {
-                    int cur = dis1[i] + dis2[b] + w / 2;
-                    ans = min(ans, cur);
-                }
-            }
-        }
-        cout << ans;
+        int rem = max(0ll, m - n);
+        cout << ans - rem * d << endl;
     }
     return 0;
 }
