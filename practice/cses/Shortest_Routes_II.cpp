@@ -78,7 +78,7 @@ const int N = 1e5 + 1;
 const ll inf = LINF;
 void floydWarshall(vector<vector<ll>>& m) {
     int n = sz(m);
-    rep(i, 0, n) m[i][i] = min(m[i][i], (int)0);
+    rep(i, 0, n) m[i][i] = min(m[i][i], (ll)0);
     rep(k, 0, n) rep(i, 0, n) rep(j, 0, n)
         if (m[i][k] != inf && m[k][j] != inf) {
             auto newDist = max(m[i][k] + m[k][j], -inf);
