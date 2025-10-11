@@ -1,10 +1,10 @@
 using ll = long long;
 using pll = pair<ll, ll>;
 using vpll = vector<pll>;
-vl dijkstra(vector<vpll>& g) {
+vl dijkstra(vector<vpll>& g, int start) {
     int n = sz(g);
-    set<pii> s; s.insert({ 0, 0 }); // u, w
-    vi dis(n, LINF); dis[0] = 0;
+    set<pii> s; s.insert({ 0, start }); // w, u
+    vi dis(n, LINF); dis[start] = 0;
     vb vis(n);
     while (sz(s)) {
         auto [w1, u] = *s.begin();
