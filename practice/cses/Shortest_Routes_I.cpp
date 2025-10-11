@@ -74,20 +74,26 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-const ll inf = 1LL << 62;
-void floydWarshall(vector<vector<ll>>& m) {
-    int n = sz(m);
-    rep(i, 0, n) m[i][i] = min(m[i][i], 0LL);
-    rep(k, 0, n) rep(i, 0, n) rep(j, 0, n)
-        if (m[i][k] != inf && m[k][j] != inf) {
-            auto newDist = max(m[i][k] + m[k][j], -
-                inf);
-            m[i][j] = min(m[i][j], newDist);
-        }
-    rep(k, 0, n) if (m[k][k] < 0) rep(i, 0, n) rep(j
-        , 0, n)
-        if (m[i][k] != inf && m[k][j] != inf) m[i
-        ][j] = -inf;
+using ll = long long;
+using pll = pair<ll, ll>;
+using vpll = vector<pll>;
+vl dijkstra(vector<vpll>& g) {
+    int n = sz(g);
+    set<pii> s; s.insert({ 0, 0 }); // u, w
+    vi dis(n, LINF); dis[0] = 0;
+    vb vis(n);
+    while (sz(s)) {
+        auto [w1, u] = *s.begin();
+        s.erase(s.begin());
+        if (vis[u]) continue;
+        vis[u] = 1;
+        for (auto& [w2, v] : g[u])
+            if (w1 + w2 < dis[v]) {
+                dis[v] = w1 + w2;
+                s.insert({ dis[v], v });
+            }
+    }
+    return dis;
 }
 
 int32_t main()
@@ -106,26 +112,13 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m;
         cin >> n >> m;
-        vpii g[n];
+        vector<vector<pii>> g(n);
         for (int i = 0; i < m; i++) {
             int a, b, c; cin >> a >> b >> c;
             a--, b--;
             g[a].eb(c, b);
         }
-        set<pii> s; s.insert({ 0, 0 }); // u, w
-        vi dis(n, LINF); dis[0] = 0;
-        vb vis(n);
-        while (sz(s)) {
-            auto [w1, u] = *s.begin();
-            s.erase(s.begin());
-            if (vis[u]) continue;
-            vis[u] = 1;
-            for (auto& [w2, v] : g[u])
-                if (w1 + w2 < dis[v]) {
-                    dis[v] = w1 + w2;
-                    s.insert({ dis[v], v });
-                }
-        }
+        auto dis = dijkstra(g);
         for (int i = 0; i < n; i++)
             cout << dis[i] << " ";
     }
