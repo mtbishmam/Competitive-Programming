@@ -36,7 +36,7 @@ void dbg_out() { cerr << endl; }
 template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
 #define debug(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
 
-using ll = long long;
+using ll = int64_t;
 using ld = long double;
 using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;

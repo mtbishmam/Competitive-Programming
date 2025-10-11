@@ -36,7 +36,7 @@ void dbg_out() { cerr << endl; }
 template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
 #define debug(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
 
-using ll = long long;
+using ll = int64_t;
 using ld = long double;
 using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
@@ -48,6 +48,7 @@ using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
+#define rep(i, a, b) for (int i = (a); i < (b); i++)
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
@@ -74,6 +75,21 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
+const ll inf = LINF;
+void floydWarshall(vector<vector<ll>>& m) {
+    int n = sz(m);
+    rep(i, 0, n) m[i][i] = min(m[i][i], (int)0);
+    rep(k, 0, n) rep(i, 0, n) rep(j, 0, n)
+        if (m[i][k] != inf && m[k][j] != inf) {
+            auto newDist = max(m[i][k] + m[k][j], -inf);
+            m[i][j] = min(m[i][j], newDist);
+        }
+    rep(k, 0, n)
+        if (m[k][k] < 0) rep(i, 0, n) rep(j, 0, n)
+            if (m[i][k] != inf && m[k][j] != inf)
+                m[i][j] = -inf;
+}
+
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -90,7 +106,7 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m, q;
         cin >> n >> m >> q;
-        int dis[n][n];
+        vvi dis(n, vi(n));
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
                 dis[i][j] = LINF;
@@ -100,11 +116,7 @@ int32_t main()
             dis[a][b] = min(dis[a][b], c);
             dis[b][a] = min(dis[b][a], c);
         }
-        for (int k = 0; k < n; k++)
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                    dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
-        for (int i = 0; i < n; i++) dis[i][i] = 0;
+        floydWarshall(dis);
         while (q--) {
             int a, b; cin >> a >> b;
             a--, b--;
