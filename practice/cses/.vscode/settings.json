@@ -57,6 +57,8 @@
         "list": "cpp",
         "unordered_set": "cpp",
         "flat_map": "cpp",
-        "flat_set": "cpp"
+        "flat_set": "cpp",
+        "span": "cpp",
+        "stacktrace": "cpp"
     }
 }

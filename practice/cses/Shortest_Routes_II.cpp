@@ -48,7 +48,6 @@ using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
-#define rep(i, a, b) for (int i = (a); i < (b); i++)
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
@@ -89,8 +88,29 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n;
-        cin >> n;
+        int n, m, q;
+        cin >> n >> m >> q;
+        int dis[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                dis[i][j] = LINF;
+        for (int i = 0; i < m; i++) {
+            int a, b, c; cin >> a >> b >> c;
+            a--, b--;
+            dis[a][b] = min(dis[a][b], c);
+            dis[b][a] = min(dis[b][a], c);
+        }
+        for (int k = 0; k < n; k++)
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
+        for (int i = 0; i < n; i++) dis[i][i] = 0;
+        while (q--) {
+            int a, b; cin >> a >> b;
+            a--, b--;
+            int ans = dis[a][b];
+            cout << (ans == LINF ? -1 : ans) << endl;
+        }
     }
     return 0;
 }

@@ -12,9 +12,10 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
-// #include <cassert>
+#include <cassert>
 #include <functional>
 #include <chrono>
+#include <climits>
 using namespace std;
 
 #define endl "\n"
@@ -25,6 +26,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
+#define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -42,6 +44,7 @@ using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
+using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
@@ -53,12 +56,17 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
 
-const string cq[2] = { "NO", "YES" };
-const vi dx = { -1,  0, 0, 1, 1,  1, -1, -1 };
-const vi dy = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 2147483647;
-const ll LINF = 9223372036854775807;
+const string ny[] = { "NO", "YES" };
+const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
+const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
+// const int INF = 2147483647;
+// const ll LINF = 9223372036854775807;
+const int INF = 1e9;
+const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
+// const int MOD = 998244353;
+const double EPS = 1e-9;
+const double PI = acos(-1);
 const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
@@ -83,85 +91,114 @@ int32_t main()
         int n, m;
         cin >> n >> m;
         vvc a(n, vc(m));
-        int sx, sy;
-        vpii mons, bounds;
+        int sx, sy; vpii mons, corns;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 cin >> a[i][j];
-                if (a[i][j] == 'A') sx = i, sy = j;
-                if (a[i][j] == 'M') mons.eb(i, j);
-                if (i == 0 or i == n - 1) {
-                    if (a[i][j] == '.') bounds.eb(i, j);
-                    if (a[i][j] == 'A') {
+                if (a[i][j] == 'A') {
+                    sx = i, sy = j;
+                    if (!i or i == n - 1 or !j or j == m - 1) {
                         cout << "YES";
-                        return 0;
+                        exit(0);
                     }
                 }
-                if (j == 0 or j == m - 1) {
-                    if (a[i][j] == '.') bounds.eb(i, j);
-                    if (a[i][j] == 'A') {
-                        cout << "YES";
-                        return 0;
-                    }
-                }
+                else if (a[i][j] == 'M') mons.eb(i, j);
+                if (!i or i == n - 1 or !j or j == m - 1) corns.eb(i, j);
             }
         }
-        queue<pii> q;
-        vvi mdis(n, vi(m, MOD));
+        queue<pii> mq;
+        vvi mdis(n, vi(m, INF));
+        vvb mvis(n, vb(m));
+        auto misvalid = [&](int x, int y) { return 0 <= x and x < n and 0 <= y and y < m and !mvis[x][y] and a[x][y] != '#'; };
         for (auto& [x, y] : mons) {
-            q.push({ x, y });
+            mvis[x][y] = 1;
             mdis[x][y] = 0;
+            mq.push({ x, y });
         }
-        while (q.size()) {
-            auto& [x, y] = q.front();
-            q.pop();
+
+        while (sz(mq)) {
+            auto [x, y] = mq.front();
+            mq.pop();
             for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i], ny = y + dy[i];
-                if (nx < 0 or nx >= n or ny < 0 or ny >= m or mdis[x][y] + 1 >= mdis[nx][ny] or a[nx][ny] == '#');
-                else {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+                if (misvalid(nx, ny)) {
                     mdis[nx][ny] = mdis[x][y] + 1;
-                    q.push({ nx, ny });
+                    mvis[nx][ny] = 1;
+                    mq.push({ nx, ny });
                 }
             }
         }
-        q.push({ sx, sy });
-        vvi dis(n, vi(m, MOD)), path(n, vi(m));
-        dis[sx][sy] = 0;
-        while (q.size()) {
-            auto& [x, y] = q.front();
+
+        queue<pii> q;
+        vvi dis(n, vi(m, INF));
+        vvb vis(n, vb(m));
+        auto isvalid = [&](int x, int y) { return 0 <= x and x < n and 0 <= y and y < m and !vis[x][y] and a[x][y] != '#'; };
+        vpii ap; ap.eb(sx, sy);
+        for (auto& [x, y] : ap) {
+            vis[x][y] = 1;
+            dis[x][y] = 0;
+            q.push({ x, y });
+        }
+
+        while (sz(q)) {
+            auto [x, y] = q.front();
             q.pop();
             for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i], ny = y + dy[i];
-                if (nx < 0 or nx >= n or ny < 0 or ny >= m or dis[x][y] + 1 >= dis[nx][ny] or a[nx][ny] == '#');
-                else {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+                if (isvalid(nx, ny)) {
                     dis[nx][ny] = dis[x][y] + 1;
-                    path[nx][ny] = i;
-                    q.push({ nx, ny });
+                    vis[nx][ny] = 1;
+                    if (dis[nx][ny] < mdis[nx][ny]) {
+                        q.push({ nx, ny });
+                    }
                 }
             }
         }
-        sort(all(bounds), [&](pii& a, pii& b) {return dis[a.ff][a.ss] < dis[b.ff][b.ss];});
-        for (auto& [x, y] : bounds) {
+
+        vis = vvb(n, vb(m));
+        for (auto& [x, y] : corns) {
             if (dis[x][y] < mdis[x][y]) {
                 cout << "YES" << endl;
+                int cx = x, cy = y;
                 string ans;
-                int ex = x, ey = y;
-                while (!(ex == sx and ey == sy)) {
-                    int move = path[ex][ey];
-                    if (move == 0) ans += "U";
-                    else if (move == 1) ans += "L";
-                    else if (move == 2) ans += "R";
-                    else ans += "D";
-                    ex -= dx[move];
-                    ey -= dy[move];
+                while (1) {
+                    for (int i = 0; i < 4; i++) {
+                        int nx = cx + dx[i];
+                        int ny = cy + dy[i];
+                        if (isvalid(nx, ny) and dis[nx][ny] + 1 == dis[cx][cy]) {
+                            if (ny - 1 == cy) ans += 'L';
+                            else if (ny + 1 == cy) ans += 'R';
+                            else if (nx - 1 == cx) ans += 'U';
+                            else ans += 'D';
+                            cx = nx;
+                            cy = ny;
+                        }
+                    }
+                    if (cx == sx and cy == sy) break;
                 }
                 reverse(all(ans));
-                cout << ans.size() << endl;
+                cout << sz(ans) << endl;
                 cout << ans;
-                return 0;
+                exit(0);
             }
         }
         cout << "NO";
     }
     return 0;
 }
+
+//
+
+/* Lemmas
+
+*/
+
+/* Solutions
+
+*/
+
+/* Analysis
+
+*/

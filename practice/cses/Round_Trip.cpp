@@ -12,9 +12,10 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
-// #include <cassert>
+#include <cassert>
 #include <functional>
 #include <chrono>
+#include <climits>
 using namespace std;
 
 #define endl "\n"
@@ -25,7 +26,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+#define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -43,6 +44,7 @@ using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
+using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
@@ -54,12 +56,17 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
 
-const string cq[2] = { "NO", "YES" };
+const string ny[] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
 const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
-const int INF = 2147483647;
-const ll LINF = 9223372036854775807;
+// const int INF = 2147483647;
+// const ll LINF = 9223372036854775807;
+const int INF = 1e9;
+const ll LINF = 1e18;
 const int MOD = 1e9 + 7;
+// const int MOD = 998244353;
+const double EPS = 1e-9;
+const double PI = acos(-1);
 const int N = 1e5 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
@@ -83,48 +90,54 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m;
         cin >> n >> m;
-        vvi g(n + 1);
+        vvi g(n);
         for (int i = 0; i < m; i++) {
-            int x, y; cin >> x >> y;
+            int x, y;
+            cin >> x >> y; x--, y--;
             g[x].eb(y);
             g[y].eb(x);
         }
-        vb vis(n + 1);
-        vi par(n + 1);
-        int start, end, cycle = 0;
-        auto f = [&](auto&& f, int node, int p) -> void {
-            for (auto& child : g[node])
-                if (!vis[child]) {
-                    vis[child] = 1;
-                    par[child] = node;
-                    f(f, child, node);
-                }
-                else if (child != p) {
-                    start = child;
-                    end = node;
-                    cycle = 1;
-                }
-            };
-        for (int i = 1; i <= n; i++) {
-            if (!vis[i]) {
-                vis[i] = 1;
-                par[i] = -1;
-                f(f, i, -1);
-                if (cycle) {
-                    vi ans; ans.eb(start);
-                    while (end != start) {
-                        ans.eb(end);
-                        end = par[end];
+        bool flag = 1;
+        vb vis(n);
+        vi par(n, -1);
+        auto f = [&](auto f, int u, int p) -> void {
+            vis[u] = 1;
+            par[u] = p;
+            for (auto& v : g[u]) {
+                if (!vis[v]) f(f, v, u);
+                else if (v != p) {
+                    flag = 0;
+                    vi ans;
+                    ans.eb(v);
+                    int c = u;
+                    while (c != v) {
+                        ans.eb(c);
+                        c = par[c];
                     }
-                    ans.eb(start);
-                    cout << ans.size() << endl;
-                    cout << ans;
+                    ans.eb(c);
+                    cout << sz(ans) << endl;
+                    for (auto& i : ans) cout << i + 1 << " ";
                     exit(0);
                 }
             }
-        }
+            };
+        for (int i = 0; i < n; i++)
+            if (!vis[i]) f(f, i, i);
         cout << "IMPOSSIBLE";
-
     }
     return 0;
 }
+
+//
+
+/* Lemmas
+
+*/
+
+/* Solutions
+
+*/
+
+/* Analysis
+
+*/
