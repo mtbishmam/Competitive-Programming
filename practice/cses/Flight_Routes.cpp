@@ -75,49 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-const ll inf = LINF;
-bool hasNegCycle;
-struct Ed { int a, b, w, s() { return a < b ? a : -a; } };
-struct Node { ll dist = inf; int prev = -1; };
-void bellmanFord(vector<Node>& nodes, vector<Ed>& edges, int s) {
-    nodes[s].dist = 0; int n = sz(nodes);
-    sort(all(edges), [](Ed a, Ed b) { return a.s() < b.s(); });
-    int lim = sz(nodes) / 2 + 2;
-    rep(i, 0, lim) for (Ed ed : edges) {
-        Node cur = nodes[ed.a], & dest = nodes[ed.b];
-        // if (abs(cur.dist) == inf) continue;
-        ll d = cur.dist + ed.w;
-        if (d < dest.dist) {
-            dest.prev = ed.a;
-            dest.dist = (i < lim - 1 ? d : -inf);
-            if (i == lim - 1) {
-                hasNegCycle = 1;
-
-                cout << "YES" << endl;
-                int start = ed.a;
-                for (int i = 0; i < n; i++)
-                    start = nodes[start].prev;
-
-                int end = start;
-                vi ans; ans.eb(end);
-                start = nodes[start].prev;
-                while (start != end) {
-                    ans.eb(start);
-                    start = nodes[start].prev;
-                }
-                ans.eb(start);
-                reverse(all(ans));
-                for (auto& i : ans) cout << i + 1 << " ";
-                exit(0);
-            }
-        }
-    }
-    rep(i, 0, lim) for (Ed e : edges) {
-        if (nodes[e.a].dist == -inf)
-            nodes[e.b].dist = -inf;
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -132,17 +89,8 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        vector<Ed> edges(m);
-        vector<Node> nodes(n);
-        for (int i = 0; i < m; i++) {
-            int a, b, c; cin >> a >> b >> c;
-            a--, b--;
-            edges[i] = { a, b, c };
-        }
-        bellmanFord(nodes, edges, 0);
-        cout << "NO" << endl;
+        int n;
+        cin >> n;
     }
     return 0;
 }
