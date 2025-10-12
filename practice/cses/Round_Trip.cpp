@@ -97,16 +97,14 @@ int32_t main()
             g[x].eb(y);
             g[y].eb(x);
         }
-        bool flag = 1;
         vb vis(n);
         vi par(n, -1);
-        auto f = [&](auto f, int u, int p) -> void {
+        auto f = [&](auto f, int u, int p = -1) -> void {
             vis[u] = 1;
             par[u] = p;
             for (auto& v : g[u]) {
                 if (!vis[v]) f(f, v, u);
                 else if (v != p) {
-                    flag = 0;
                     vi ans;
                     ans.eb(v);
                     int c = u;
@@ -122,7 +120,7 @@ int32_t main()
             }
             };
         for (int i = 0; i < n; i++)
-            if (!vis[i]) f(f, i, i);
+            if (!vis[i]) f(f, i);
         cout << "IMPOSSIBLE";
     }
     return 0;

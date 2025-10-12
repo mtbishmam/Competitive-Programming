@@ -89,34 +89,40 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m, k;
-        cin >> n >> m >> k;
-        vector<vector<pii>> g(n);
+        int n, m;
+        cin >> n >> m;
+        vvi g(n);
         for (int i = 0; i < m; i++) {
-            int a, b, c; cin >> a >> b >> c;
-            a--, b--;
-            g[a].eb(c, b);
+            int a, b; cin >> a >> b;
+            g[--a].eb(--b);
         }
-
-        multiset<pii> ms; ms.insert({ 0, 0 });
-        vvi dis(n, vi(k, LINF));
-        while (sz(ms)) {
-            auto [w1, u] = *ms.begin();
-            ms.erase(ms.begin());
-
-            if (dis[u].back() < w1) continue;
-
-            for (auto& [w2, v] : g[u]) {
-                if (w1 + w2 < dis[v].back()) {
-                    dis[v].back() = w1 + w2;
-                    ms.insert({ dis[v].back(), v });
-                    sort(all(dis[v]));
+        vi vis(n), par(n, -1);
+        auto f = [&](auto f, int u, int p = -1) -> void {
+            vis[u] = 1;
+            par[u] = p;
+            for (auto& v : g[u]) {
+                if (!vis[v]) f(f, v, u);
+                else if (vis[v] == 1) {
+                    vi ans;
+                    int end = v; ans.eb(end);
+                    int start = u;
+                    while (start != end) {
+                        ans.eb(start);
+                        start = par[start];
+                    }
+                    ans.eb(start);
+                    reverse(all(ans));
+                    cout << sz(ans) << endl;
+                    for (auto& i : ans) cout << i + 1 << " ";
+                    exit(0);
                 }
             }
+            vis[u] = 2;
+            };
+        for (int i = 0; i < n; i++) {
+            if (!vis[i]) f(f, i);
         }
-        for (int i = 0; i < k; i++)
-            cout << dis[n - 1][i] << " ";
-
+        cout << "IMPOSSIBLE";
     }
     return 0;
 }
