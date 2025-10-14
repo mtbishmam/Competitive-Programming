@@ -89,15 +89,31 @@ int32_t main()
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s; cin >> s;
-        int n = sz(s);
-        int ans = 0, prev = 0;
-        int ones = 0, zeros = 0;
-        for (int i = 0; i < n; i++) {
-            while (i < n and s[i] == '1') i++, ones++;
-            if (ones and i < n and s[i] == '0') ans += ones + 1;
-        }
-        cout << ans << endl;
+        int n; cin >> n;
+        vi a(n); cin >> a;
+        // int mn = *min_element(all(a));
+        // vi b = a; uniq(b);
+        // bool f = 1;
+        // if (sz(b) == 1) f = 1;
+        // else {
+        //     for (auto& i : a) i -= mn;
+        //     int lst = -1;
+        //     for (int i = 0; i < n; i++) {
+        //         if (a[i]) {
+        //             int vals = i - lst - 1;
+        //             if (vals % 2) f = 0;
+        //             // debug(vals);
+        //             lst = i + 1;
+        //         }
+        //     }
+        //     if ((n - 1 - lst + 1) % 2) f = 0;
+        // }
+        // cout << ny[f] << endl;
+
+        int o = 0, e = 0; bool f = 1;
+        for (int i = 0; i < n; i++) (a[i] % 2 ? o++ : e++);
+        if (o and e) f = 0;
+        cout << ny[f] << endl;
     }
     return 0;
 }

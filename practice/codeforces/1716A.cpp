@@ -85,19 +85,27 @@ int32_t main()
     ios_base::sync_with_stdio(0);
     cin.tie(NULL);
     // cout.tie(NULL);
+    int N = 100;
+    vi dp(N);
+    dp[1] = 2;
+    dp[2] = 1;
+    dp[3] = 1;
+    for (int i = 4; i < N; i++) {
+        dp[i] = min(dp[i - 2], dp[i - 3]) + 1;
+    }
+    auto brute = [&](int n) {
+        return dp[n];
+        };
+
+    // for (int i = 1; i < N; i++) cerr << i << " " << dp[i] << endl;
 
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s; cin >> s;
-        int n = sz(s);
-        int ans = 0, prev = 0;
-        int ones = 0, zeros = 0;
-        for (int i = 0; i < n; i++) {
-            while (i < n and s[i] == '1') i++, ones++;
-            if (ones and i < n and s[i] == '0') ans += ones + 1;
-        }
-        cout << ans << endl;
+        int n; cin >> n;
+        if (n == 1) cout << 2 << endl;
+        else cout << (n + 2) / 3 << endl;
+        // cout << dp[n] << endl;
     }
     return 0;
 }

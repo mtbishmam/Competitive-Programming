@@ -87,17 +87,20 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s; cin >> s;
-        int n = sz(s);
-        int ans = 0, prev = 0;
-        int ones = 0, zeros = 0;
-        for (int i = 0; i < n; i++) {
-            while (i < n and s[i] == '1') i++, ones++;
-            if (ones and i < n and s[i] == '0') ans += ones + 1;
+        int n; cin >> n;
+        vi a(n + 1); for (int i = 1; i <= n; i++) cin >> a[i], a[i] |= a[i - 1];
+        vi b(n + 1); for (int i = 1; i <= n; i++) cin >> b[i], b[i] |= b[i - 1];
+        int ans = 0;
+        for (int l = 1; l <= n; l++) {
+            for (int r = 1; r <= n; r++) {
+                int aa = a[r] ^ a[l - 1];
+                int bb = b[r] ^ b[l - 1];
+                ans = max(ans, aa + bb);
+            }
         }
-        cout << ans << endl;
+        cout << ans;
     }
     return 0;
 }

@@ -87,7 +87,7 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         vi a(n); cin >> a;

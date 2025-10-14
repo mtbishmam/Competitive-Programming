@@ -89,15 +89,18 @@ int32_t main()
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
+        int n; cin >> n;
         string s; cin >> s;
-        int n = sz(s);
-        int ans = 0, prev = 0;
-        int ones = 0, zeros = 0;
+        bool f = 0;
+        int c = count(all(s), '8');
+        if (!c) f = 0;
         for (int i = 0; i < n; i++) {
-            while (i < n and s[i] == '1') i++, ones++;
-            if (ones and i < n and s[i] == '0') ans += ones + 1;
+            if (s[i] == '8') {
+                int x = n - i;
+                if (x >= 11) f = 1;
+            }
         }
-        cout << ans << endl;
+        cout << ny[f] << endl;
     }
     return 0;
 }

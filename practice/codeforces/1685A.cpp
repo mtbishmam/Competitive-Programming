@@ -89,15 +89,9 @@ int32_t main()
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s; cin >> s;
-        int n = sz(s);
-        int ans = 0, prev = 0;
-        int ones = 0, zeros = 0;
-        for (int i = 0; i < n; i++) {
-            while (i < n and s[i] == '1') i++, ones++;
-            if (ones and i < n and s[i] == '0') ans += ones + 1;
-        }
-        cout << ans << endl;
+        int n; cin >> n;
+        vi a(n); cin >> a;
+
     }
     return 0;
 }
