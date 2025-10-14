@@ -75,28 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-vi val, comp, z, cont, ans;
-int Time, ncomps;
-template<class G, class F> int dfs(int j, G& g, F& f) {
-    int low = val[j] = ++Time, x; z.push_back(j);
-    for (auto& e : g[j])
-        if (comp[e] < 0) low = min(low, val[e] ? : dfs(e, g, f));
-    if (low == val[j]) {
-        do {
-            x = z.back(); z.pop_back();
-            comp[x] = ncomps; cont.push_back(x);
-        } while (x != j);
-        f(cont, g); cont.clear(); ncomps++;
-    }
-    return val[j] = low;
-}
-template<class G, class F> void scc(G& g, F& f) {
-    int n = sz(g);
-    val.assign(n, 0); comp.assign(n, -1);
-    Time = ncomps = 0;
-    rep(i, 0, n) if (comp[i] < 0) dfs(i, g, f);
-}
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -113,18 +91,51 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m;
         cin >> n >> m;
-        vvi g(n);
+        vector<vpii> g(n), rg(n);
         for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            g[--a].eb(--b);
+            int a, b, c;
+            cin >> a >> b >> c;
+            g[--a].eb(c, --b);
+            rg[b].eb(c, a);
         }
-        auto f = [&](vi& cont, vvi& g) {
-            if (sz(cont) > sz(ans)) ans = cont;
-            };
-        scc(g, f);
-        cout << sz(ans) << endl;
-        for (auto& i : ans) cout << i + 1 << " ";
 
+        multiset<pii> ms; ms.insert({ 0, n - 1 });
+        vi dis(n, LINF); dis[n - 1] = 0;
+        while (sz(ms)) {
+            auto [w1, u] = *ms.begin();
+            ms.erase(ms.begin());
+            for (auto& [w2, v] : rg[u]) {
+                if (w1 + w2 < dis[v]) {
+                    dis[v] = w1 + w2;
+                    ms.insert({ dis[v], v });
+                }
+            }
+        }
+
+        vi paths(n, -1), mnf(n, INF), mxf(n);
+        auto f = [&](auto f, int u) -> void {
+            auto& ret = paths[u];
+            if (u == n - 1) {
+                ret = 1;
+                mnf[u] = 1;
+                mxf[u] = 1;
+                return;
+            }
+            if (~ret) return;
+            ret = 0;
+            for (auto& [w, v] : g[u]) {
+                if (dis[u] - w == dis[v]) {
+                    f(f, v);
+                    ret = add(ret, paths[v]);
+                    mnf[u] = min(mnf[u], 1 + mnf[v]);
+                    mxf[u] = max(mxf[u], 1 + mxf[v]);
+                }
+            }
+            }; f(f, 0);
+        cout << dis[0] << " ";
+        cout << paths[0] << " ";
+        cout << mnf[0] - 1 << " ";
+        cout << mxf[0] - 1 << " ";
     }
     return 0;
 }

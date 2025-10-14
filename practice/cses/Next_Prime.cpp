@@ -75,26 +75,29 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-vi val, comp, z, cont, ans;
-int Time, ncomps;
-template<class G, class F> int dfs(int j, G& g, F& f) {
-    int low = val[j] = ++Time, x; z.push_back(j);
-    for (auto& e : g[j])
-        if (comp[e] < 0) low = min(low, val[e] ? : dfs(e, g, f));
-    if (low == val[j]) {
-        do {
-            x = z.back(); z.pop_back();
-            comp[x] = ncomps; cont.push_back(x);
-        } while (x != j);
-        f(cont, g); cont.clear(); ncomps++;
+using ull = unsigned long long;
+using u128 = __uint128_t;
+ull modmul(ull a, ull b, ull m) { return (u128)a * b % m; }
+ull modpow(ull a, ull n, ull m) {
+    ull r = 1;
+    while (n) {
+        if (n & 1) r = modmul(r, a, m);
+        a = modmul(a, a, m);
+        n >>= 1;
     }
-    return val[j] = low;
+    return r;
 }
-template<class G, class F> void scc(G& g, F& f) {
-    int n = sz(g);
-    val.assign(n, 0); comp.assign(n, -1);
-    Time = ncomps = 0;
-    rep(i, 0, n) if (comp[i] < 0) dfs(i, g, f);
+
+bool isPrime(ull n) {
+    if (n < 2 || n % 6 % 4 != 1) return (n | 1) == 3;
+    ull A[] = { 2, 325, 9375, 28178, 450775, 9780504, 1795265022 }, s = __builtin_ctzll(n - 1), d = n >> s;
+    for (ull a : A) { // ^ count trailing zeros
+        ull p = modpow(a % n, d, n), i = s;
+        while (p != 1 && p != n - 1 && a % n && i--)
+            p = modmul(p, p, n);
+        if (p != n - 1 && i != s) return 0;
+    }
+    return 1;
 }
 
 int32_t main()
@@ -109,22 +112,12 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        vvi g(n);
-        for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            g[--a].eb(--b);
-        }
-        auto f = [&](vi& cont, vvi& g) {
-            if (sz(cont) > sz(ans)) ans = cont;
-            };
-        scc(g, f);
-        cout << sz(ans) << endl;
-        for (auto& i : ans) cout << i + 1 << " ";
-
+        int n;
+        cin >> n; n++;
+        while (!isPrime(n)) n++;
+        cout << n << endl;
     }
     return 0;
 }

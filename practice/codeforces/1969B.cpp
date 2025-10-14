@@ -75,28 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-vi val, comp, z, cont, ans;
-int Time, ncomps;
-template<class G, class F> int dfs(int j, G& g, F& f) {
-    int low = val[j] = ++Time, x; z.push_back(j);
-    for (auto& e : g[j])
-        if (comp[e] < 0) low = min(low, val[e] ? : dfs(e, g, f));
-    if (low == val[j]) {
-        do {
-            x = z.back(); z.pop_back();
-            comp[x] = ncomps; cont.push_back(x);
-        } while (x != j);
-        f(cont, g); cont.clear(); ncomps++;
-    }
-    return val[j] = low;
-}
-template<class G, class F> void scc(G& g, F& f) {
-    int n = sz(g);
-    val.assign(n, 0); comp.assign(n, -1);
-    Time = ncomps = 0;
-    rep(i, 0, n) if (comp[i] < 0) dfs(i, g, f);
-}
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -109,22 +87,18 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        vvi g(n);
-        for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            g[--a].eb(--b);
-        }
-        auto f = [&](vi& cont, vvi& g) {
-            if (sz(cont) > sz(ans)) ans = cont;
-            };
-        scc(g, f);
-        cout << sz(ans) << endl;
-        for (auto& i : ans) cout << i + 1 << " ";
+        string s; cin >> s;
+        int n = sz(s);
+        int ans = 0;
+        int lst = n - 1;
+        while (lst >= 0 and s[lst] == '1') lst--;
+        if (lst < 0) cout << ans;
+        else {
 
+        }
+        cout << e
     }
     return 0;
 }
@@ -140,5 +114,8 @@ int32_t main()
 */
 
 /* Analysis
-
+    01101001
+    01100011 -> 3
+    01000111 -> 4
+    00001111 -> 4
 */

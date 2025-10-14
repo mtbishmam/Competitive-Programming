@@ -75,26 +75,30 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-vi val, comp, z, cont, ans;
-int Time, ncomps;
-template<class G, class F> int dfs(int j, G& g, F& f) {
-    int low = val[j] = ++Time, x; z.push_back(j);
-    for (auto& e : g[j])
-        if (comp[e] < 0) low = min(low, val[e] ? : dfs(e, g, f));
-    if (low == val[j]) {
-        do {
-            x = z.back(); z.pop_back();
-            comp[x] = ncomps; cont.push_back(x);
-        } while (x != j);
-        f(cont, g); cont.clear(); ncomps++;
-    }
-    return val[j] = low;
+vvi treeJump(vi& P) {
+    int on = 1, d = 32;
+    // while (on < sz(P)) on *= 2, d++;
+    vector<vi> jmp(d, P);
+    rep(i, 1, d) rep(j, 0, sz(P))
+        jmp[i][j] = jmp[i - 1][jmp[i - 1][j]];
+    return jmp;
 }
-template<class G, class F> void scc(G& g, F& f) {
-    int n = sz(g);
-    val.assign(n, 0); comp.assign(n, -1);
-    Time = ncomps = 0;
-    rep(i, 0, n) if (comp[i] < 0) dfs(i, g, f);
+
+int jmp(vvi& tbl, int nod, int steps) {
+    rep(i, 0, sz(tbl))
+        if (steps & (1 << i)) nod = tbl[i][nod];
+    return nod;
+}
+
+int lca(vvi& tbl, vi& depth, int a, int b) {
+    if (depth[a] < depth[b]) swap(a, b);
+    a = jmp(tbl, a, depth[a] - depth[b]);
+    if (a == b) return a;
+    for (int i = sz(tbl); i--; ) {
+        int c = tbl[i][a], d = tbl[i][b];
+        if (c != d) a = c, b = d;
+    }
+    return tbl[0][a];
 }
 
 int32_t main()
@@ -113,18 +117,18 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m;
         cin >> n >> m;
-        vvi g(n);
-        for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            g[--a].eb(--b);
+        vvi g(n); vi par(n);
+        for (int i = 0; i < n; i++) {
+            int x; cin >> x; x--;
+            g[i].eb(x);
+            par[i] = x;
         }
-        auto f = [&](vi& cont, vvi& g) {
-            if (sz(cont) > sz(ans)) ans = cont;
-            };
-        scc(g, f);
-        cout << sz(ans) << endl;
-        for (auto& i : ans) cout << i + 1 << " ";
-
+        vvi lca = treeJump(par);
+        while (m--) {
+            int u, k;
+            cin >> u >> k; u--;
+            cout << jmp(lca, u, k) + 1 << endl;
+        }
     }
     return 0;
 }

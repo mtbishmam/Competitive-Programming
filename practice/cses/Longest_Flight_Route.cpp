@@ -75,28 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-vi val, comp, z, cont, ans;
-int Time, ncomps;
-template<class G, class F> int dfs(int j, G& g, F& f) {
-    int low = val[j] = ++Time, x; z.push_back(j);
-    for (auto& e : g[j])
-        if (comp[e] < 0) low = min(low, val[e] ? : dfs(e, g, f));
-    if (low == val[j]) {
-        do {
-            x = z.back(); z.pop_back();
-            comp[x] = ncomps; cont.push_back(x);
-        } while (x != j);
-        f(cont, g); cont.clear(); ncomps++;
-    }
-    return val[j] = low;
-}
-template<class G, class F> void scc(G& g, F& f) {
-    int n = sz(g);
-    val.assign(n, 0); comp.assign(n, -1);
-    Time = ncomps = 0;
-    rep(i, 0, n) if (comp[i] < 0) dfs(i, g, f);
-}
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -118,13 +96,36 @@ int32_t main()
             int a, b; cin >> a >> b;
             g[--a].eb(--b);
         }
-        auto f = [&](vi& cont, vvi& g) {
-            if (sz(cont) > sz(ans)) ans = cont;
+        vb vis(n);
+        vi dp(n, -INF), next(n, -1);
+        auto f = [&](auto f, int u) -> int {
+            if (u == n - 1) return dp[u] = 1;
+            auto& ret = dp[u];
+            if (ret != -INF) return ret;
+            ret = -INF;
+            for (auto& v : g[u]) {
+                int cur = f(f, v);
+                // ret = max(ret, 1 + f(f, v))
+                if (ret < cur + 1) {
+                    ret = cur + 1;
+                    next[u] = v;
+                }
+            }
+            return ret;
             };
-        scc(g, f);
-        cout << sz(ans) << endl;
-        for (auto& i : ans) cout << i + 1 << " ";
-
+        int longest = f(f, 0);
+        if (dp[n - 1] != -INF) {
+            vi ans;
+            int u = 0; ans.eb(u);
+            do {
+                u = next[u];
+                ans.eb(u);
+            } while (u != n - 1);
+            cout << sz(ans) << endl;
+            for (auto& i : ans) cout << i + 1 << " ";
+            cout << endl;
+        }
+        else cout << "IMPOSSIBLE";
     }
     return 0;
 }
