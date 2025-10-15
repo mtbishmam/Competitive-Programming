@@ -36,7 +36,7 @@ void dbg_out() { cerr << endl; }
 template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
 #define debug(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
 
-using ll = long long;
+using ll = int64_t;
 using ld = long double;
 using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
@@ -48,6 +48,7 @@ using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
+#define rep(i, a, b) for (int i = (a); i < (b); i++)
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
@@ -74,6 +75,22 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
+struct UF {
+    int n;
+    vi e;
+    UF(int n) : e(n, -1) {}
+    bool sameSet(int a, int b) { return find(a) == find(b); }
+    int size(int x) { return -e[find(x)]; }
+    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
+    bool join(int a, int b) {
+        a = find(a), b = find(b);
+        if (a == b) return false;
+        if (e[a] > e[b]) swap(a, b);
+        e[a] += e[b]; e[b] = a;
+        return true;
+    }
+};
+
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -88,34 +105,26 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        struct UF {
-            vi e;
-            UF(int n) : e(n, -1) {}
-            bool sameSet(int a, int b) { return find(a) == find(b); }
-            int size(int x) { return -e[find(x)]; }
-            int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-            bool join(int a, int b) {
-                a = find(a), b = find(b);
-                if (a == b) return false;
-                if (e[a] > e[b]) swap(a, b);
-                e[a] += e[b]; e[b] = a;
-                return true;
-            }
-        };
-        int n, m;
-        cin >> n >> m;
-        struct ob { int x, y, w; };
-        vector<ob> a;
+        int n; cin >> n;
+        int m; cin >> m;
+        vvi e(m);
         for (int i = 0; i < m; i++) {
-            int x, y, w; cin >> x >> y >> w;
-            a.push_back({ x, y, w });
+            int a, b, c;
+            cin >> a >> b >> c;
+            a--, b--;
+            e[i] = { c, a, b };
         }
-        sort(all(a), [&](ob& a, ob& b) { return a.w < b.w; });
-        int ans = 0; UF dsu(n + 1);
-        for (auto& [x, y, w] : a)
-            if (!dsu.sameSet(x, y)) dsu.join(x, y), ans += w;
-        if (dsu.size(1) != n) cout << "IMPOSSIBLE";
-        else cout << ans;
+        sort(all(e));
+        int ans = 0; UF dsu(n);
+        for (int i = 0; i < m; i++) {
+            int a, b, c; a = e[i][1], b = e[i][2], c = e[i][0];
+            if (!dsu.sameSet(a, b)) {
+                dsu.join(a, b);
+                ans += c;
+            }
+        }
+        if (dsu.size(0) == n) cout << ans;
+        else cout << "IMPOSSIBLE";
     }
     return 0;
 }

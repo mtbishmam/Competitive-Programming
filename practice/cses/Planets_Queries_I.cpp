@@ -75,32 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-vvi treeJump(vi& P) {
-    int on = 1, d = 32;
-    // while (on < sz(P)) on *= 2, d++;
-    vector<vi> jmp(d, P);
-    rep(i, 1, d) rep(j, 0, sz(P))
-        jmp[i][j] = jmp[i - 1][jmp[i - 1][j]];
-    return jmp;
-}
-
-int jmp(vvi& tbl, int nod, int steps) {
-    rep(i, 0, sz(tbl))
-        if (steps & (1 << i)) nod = tbl[i][nod];
-    return nod;
-}
-
-int lca(vvi& tbl, vi& depth, int a, int b) {
-    if (depth[a] < depth[b]) swap(a, b);
-    a = jmp(tbl, a, depth[a] - depth[b]);
-    if (a == b) return a;
-    for (int i = sz(tbl); i--; ) {
-        int c = tbl[i][a], d = tbl[i][b];
-        if (c != d) a = c, b = d;
-    }
-    return tbl[0][a];
-}
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -115,19 +89,24 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        vvi g(n); vi par(n);
-        for (int i = 0; i < n; i++) {
-            int x; cin >> x; x--;
-            g[i].eb(x);
-            par[i] = x;
-        }
-        vvi lca = treeJump(par);
-        while (m--) {
-            int u, k;
-            cin >> u >> k; u--;
-            cout << jmp(lca, u, k) + 1 << endl;
+        int n; cin >> n;
+        int q; cin >> q;
+        vi a(n); cin >> a;
+        for (auto& i : a) i--;
+
+        int maxn = 32;
+        vvi lca(maxn, vi(n));
+        for (int i = 0; i < n; i++) lca[0][i] = a[i];
+        for (int j = 1; j < maxn; j++)
+            for (int i = 0; i < n; i++)
+                lca[j][i] = lca[j - 1][lca[j - 1][i]];
+
+        while (q--) {
+            int u, k; cin >> u >> k;
+            u--;
+            for (int i = 0; i < maxn; i++)
+                if (k >> i & 1) u = lca[i][u];
+            cout << u + 1 << endl;
         }
     }
     return 0;

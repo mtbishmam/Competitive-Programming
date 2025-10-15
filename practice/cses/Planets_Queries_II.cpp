@@ -75,32 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-vvi treeJump(vi& P) {
-    int on = 1, d = 1;
-    while (on < sz(P)) on *= 2, d++;
-    vector<vi> jmp(d, P);
-    rep(i, 1, d) rep(j, 0, sz(P))
-        jmp[i][j] = jmp[i - 1][jmp[i - 1][j]];
-    return jmp;
-}
-
-int jmp(vvi& tbl, int nod, int steps) {
-    rep(i, 0, sz(tbl))
-        if (steps & (1 << i)) nod = tbl[i][nod];
-    return nod;
-}
-
-int lca(vvi& tbl, vi& depth, int a, int b) {
-    if (depth[a] < depth[b]) swap(a, b);
-    a = jmp(tbl, a, depth[a] - depth[b]);
-    if (a == b) return a;
-    for (int i = sz(tbl); i--; ) {
-        int c = tbl[i][a], d = tbl[i][b];
-        if (c != d) a = c, b = d;
-    }
-    return tbl[0][a];
-}
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -115,12 +89,77 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, q;
-        cin >> n >> q;
-        vi p(n);
-        for (int i = 0; i < n; i++) {
-            int x; cin >> x; x--;
-            p[i] = x;
+        int n; cin >> n;
+        int q; cin >> q;
+        vi a(n); cin >> a;
+        for (auto& i : a) i--;
+
+        int cid = 0;
+        vi vis(n);
+        vi cycleid(n, -1), dis_from_cyc(n), incycle(n), pos_in_cyc(n), cyclen(n);
+        auto f = [&](auto&& f, int u) -> void {
+            vis[u] = 1;
+
+            int v = a[u];
+            if (!vis[v]) f(f, v);
+            else if (vis[v] == 1) {
+                int c = v;
+                vi cyc;
+                do {
+                    cycleid[c] = cid;
+                    incycle[c] = 1;
+                    dis_from_cyc[c] = 0;
+                    pos_in_cyc[c] = sz(cyc);
+                    cyc.eb(c);
+                    c = a[c];
+                } while (c != v);
+                cyclen[cid] = sz(cyc);
+                cid++;
+            }
+
+            if (cycleid[u] == -1 and vis[v] == 2) { // i get the problem
+                cycleid[u] = cycleid[v];
+                dis_from_cyc[u] = 1 + dis_from_cyc[v];
+                incycle[u] = 0;
+            }
+
+            vis[u] = 2;
+            };
+
+        for (int i = 0; i < n; i++) if (!vis[i]) f(f, i);
+
+
+        while (q--) {
+            int a, b; cin >> a >> b;
+            a--, b--;
+
+            if (cycleid[a] != cycleid[b]) {
+                cout << -1 << endl;
+                continue;
+            }
+
+            // a not in cyc, b not in cyc
+            if (!incycle[a] and !incycle[b]) {
+                if (dis_from_cyc[a] <= dis_from_cyc[b]) {
+                    cout << dis_from_cyc[b] - dis_from_cyc[a] << endl;
+                }
+                else cout << -1 << endl;
+            }
+            // a not in cyc, b in cyc
+            else if (!incycle[a] and incycle[b]) {
+                cout << dis_from_cyc[a] + pos_in_cyc[b] << endl;
+            }
+            // a in cyc, b not in cyc
+            else if (incycle[a] and !incycle[b]) {
+                cout << -1 << endl;
+            }
+            // a in cyc, b in cyc
+            else if (incycle[a] and incycle[b]) {
+                if (pos_in_cyc[a] <= pos_in_cyc[b]) {
+                    cout << pos_in_cyc[b] - pos_in_cyc[a] << endl;
+                }
+                else cout << (cyclen[cycleid[a]] - pos_in_cyc[a] + pos_in_cyc[b]) << endl;
+            }
         }
 
     }
@@ -139,4 +178,8 @@ int32_t main()
 
 /* Analysis
 
+*/
+
+/* Gains
+    Start cid or any id type counter from 0
 */
