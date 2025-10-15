@@ -86,40 +86,24 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
-
-
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        ll n; cin >> n;
-        ll a[n + 1], b[n + 1];
-        for (ll i = 1; i <= n; i++) {
-            cin >> a[i];
+        int n; cin >> n;
+        // int prev = 0; -> get a better code for this
+        // rep(i, 0, n) {
+        //     string s; cin >> s;
+        // }
+
+        int ans = 0;
+        vs a(n); cin >> a;
+        for (int i = 0; i < n; i++) {
+            int j = i + 1;
+            while (j < n and a[i] == a[j]) j++;
+            i = j - 1;
+            ans++;
         }
-        sort(a + 1, a + n + 1);
-        ll cur = n;
-        for (ll i = 1; i <= n; i += 2) {
-            b[i] = a[cur--];
-        }
-        for (ll i = 2; i <= n; i += 2) {
-            b[i] = a[cur--];
-        }
-        for (ll i = 1; i <= n; i++) a[i] = b[i];
-        bool f = 1;
-        for (ll i = 1; i <= n; i++) {
-            ll l = i - 1, r = i + 1;
-            if (l == 0) l = n;
-            if (r == n + 1) r = 1;
-            if (a[l] > a[r]) swap(l, r);
-            if (a[r] < a[i] || a[l] > a[i]);
-            else f = 0;
-        }
-        if (f) {
-            cout << "YES\n";
-            for (ll i = 1; i <= n; i++) cout << a[i] << ' ';
-        }
-        else cout << "NO";
-        cout << '\n';
+        cout << ans << endl;
     }
     return 0;
 }

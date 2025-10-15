@@ -12,7 +12,7 @@
 #include <math.h>
 #include <iomanip>
 #include <cstring>
-// #include <cassert>
+#include <cassert>
 #include <functional>
 #include <chrono>
 #include <climits>
@@ -26,7 +26,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-// #define int long long
+#define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -36,7 +36,7 @@ void dbg_out() { cerr << endl; }
 template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
 #define debug(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
 
-using ll = long long;
+using ll = int64_t;
 using ld = long double;
 using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
@@ -44,9 +44,11 @@ using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
 using pii = pair<int, int>; using vpii = vector<pii>;
+using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
+#define rep(i, a, b) for (int i = (a); i < (b); i++)
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
@@ -54,8 +56,6 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define add(x, y) (x + y >= MOD ? x + y - MOD : x + y)
 #define mul(x, y) (((x % MOD) * (y % MOD)) % MOD)
 #define sz(x) (int)(x).size()
-template<class T> bool ckmin(T& a, const T& b) { return b < a ? a = b, 1 : 0; }
-template<class T> bool ckmax(T& a, const T& b) { return a < b ? a = b, 1 : 0; }
 
 const string ny[] = { "NO", "YES" };
 const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
@@ -91,15 +91,57 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         vi a(n); cin >> a;
-        int mx = 0; ll ans = 0;
-        auto sign = [&](int x) { return (x > 0 ? 1 : 0); };
+
+        // int mx = 0;
+        // auto sign = [&](int x) { return x < 0; };
+        // for (int i = 0; i < n; i++) {
+        //     int j = i + 1;
+        //     while (j < n and sign(a[j - 1]) != sign(a[j])) j++;
+        //     mx = max(mx, j - i);
+        //     i = j - 1;
+        // }
+        // vi pre(n);
+        // for (int i = 0; i < n; i++) {
+        //     pre[i] = a[i];
+        //     if (i) pre[i] += pre[i - 1];
+        // }
+        // int mxsum(-LINF);
+        // for (int i = 0; i < n; i++) {
+        //     int j = i + 1;
+        //     while (j < n and sign(a[j - 1]) != sign(a[j])) j++;
+        //     int cur = j - i;
+        //     if (cur == mx) {
+        //         int sum = pre[j - 1];
+        //         if (i) sum -= pre[i - 1];
+        //         mxsum = max(mxsum, sum);
+        //     }
+        //     i = j - 1;
+        // }
+        // cout << mxsum << endl;
+
+        int ans = 0;
+        auto sign = [&](int x) { return x < 0; };
         for (int i = 0; i < n; i++) {
-            int j = i + 1, mx = a[i];
-            while (j < n && sign(a[j - 1]) == sign(a[j])) mx = max(mx, a[j++]);
-            ans += mx;
+            int j = i + 1; int cur = a[i];
+            while (j < n and sign(a[i]) == sign(a[j])) cur = max(cur, a[j]), j++;
             i = j - 1;
+            ans += cur;
         }
         cout << ans << endl;
     }
     return 0;
 }
+
+//
+
+/* Lemmas
+
+*/
+
+/* Solutions
+
+*/
+
+/* Analysis
+
+*/
