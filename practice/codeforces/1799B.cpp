@@ -75,22 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -103,20 +87,27 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
-        for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
-            }
-            cout << cur << " " << mx << endl;
+        vi a(n); cin >> a;
+
+        // all eq case
+        vi b = a; uniq(b);
+        if (sz(b) == 1) cout << 0 << endl;
+        // has 1 case
+        else if (b[0] == 1) cout << -1 << endl;
+        else {
+            vpii ans;
+            int x = a[0], y;
+            int i = 0, j;
+            for (int i = 1; i < n; i++)
+                if (a[i] != x) {
+                    y = a[i];
+                    j = i;
+                    break;
+                }
+            if ()
         }
     }
     return 0;
@@ -133,5 +124,11 @@ int32_t main()
 */
 
 /* Analysis
+    If we could prove that getting to 2 is always possible
+*/
 
+/* Gains
+    The 30 should've given me the idea of binary expo
+    The fact that one of them is at least one bigger than the other,
+        means that we can always get to 2
 */

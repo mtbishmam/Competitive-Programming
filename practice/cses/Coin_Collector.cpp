@@ -75,22 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -107,17 +91,71 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
+        vi a(n); cin >> a;
+        vvi g(n), rg(n);
         for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
-            }
-            cout << cur << " " << mx << endl;
+            int x, y; cin >> x >> y;
+            x--, y--;
+            g[x].eb(y);
+            rg[y].eb(x);
         }
+
+        vb vis(n);
+        stack<int> topo;
+        auto f1 = [&](auto&& f1, int u) -> void {
+            vis[u] = 1;
+            for (auto& v : g[u]) if (!vis[v]) f1(f1, v);
+            topo.push(u);
+            };
+        for (int u = 0; u < n; u++) if (!vis[u]) f1(f1, u);
+
+        int cid = 0;
+        vi comp(n, -1), compcoin(n);
+        auto f2 = [&](auto&& f2, int u) -> void {
+            comp[u] = cid;
+            for (auto& v : rg[u]) if (comp[v] == -1) f2(f2, v);
+            compcoin[comp[u]] += a[u];
+            };
+        while (sz(topo)) {
+            int u = topo.top(); topo.pop();
+            if (comp[u] == -1) f2(f2, u), cid++;
+        }
+
+
+        vvi dag(cid);
+        for (int u = 0; u < n; u++) {
+            for (auto& v : g[u]) if (comp[u] != comp[v]) dag[comp[u]].eb(comp[v]);
+        }
+
+        vb cvis(cid);
+        // stack<int> ctopo; // extra hassle, use vector and reverse
+        vi ctopo;
+        auto f3 = [&](auto&& f3, int uc) -> void {
+            cvis[uc] = 1;
+            for (auto& uv : dag[uc]) if (!cvis[uc]) f3(f3, uv);
+            ctopo.eb(uc);
+            };
+        for (int uc = 0; uc < cid; uc++) {
+            sort(all(dag[uc])); dag[uc].erase(unique(all(dag[uc])), dag[uc].end());
+        }
+        for (int uc = 0; uc < cid; uc++) if (!cvis[uc]) f3(f3, uc);
+        reverse(all(ctopo));
+
+
+        vi dp(cid, -1);
+        auto f = [&](auto&& f, int uc) -> int {
+            auto& ret = dp[uc];
+            if (~ret) return ret;
+            ret = compcoin[uc];
+            for (auto& uv : dag[uc])
+                ret = max(ret, compcoin[uc] + f(f, uv));
+            return ret;
+            };
+
+        int ans = 0;
+        for (auto& uc : ctopo) ans = max(ans, f(f, uc));
+        cout << ans;
+
     }
     return 0;
 }

@@ -26,7 +26,6 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -75,21 +74,8 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
-    }
-};
+#pragma GCC optimize("O3", "unroll-loops")
+#pragma GCC target("popcnt", "avx2")
 
 int32_t main()
 {
@@ -105,19 +91,21 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
-        for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
-            }
-            cout << cur << " " << mx << endl;
+        int n, k;
+        cin >> n >> k;
+        vi a(n);
+        string s;
+        rep(i, 0, n) {
+            cin >> s;
+            rep(j, 0, sz(s)) if (s[j] == '1') a[i] |= (1 << j);
         }
+        int ans = INF;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                ans = min(ans, __builtin_popcount(a[i] ^ a[j]));
+            }
+        }
+        cout << ans << "\n";
     }
     return 0;
 }

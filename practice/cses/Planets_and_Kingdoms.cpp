@@ -75,22 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -107,16 +91,36 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
+        vvi g(n), rg(n);
         for (int i = 0; i < m; i++) {
             int a, b; cin >> a >> b;
             a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
-            }
-            cout << cur << " " << mx << endl;
+            g[a].eb(b);
+            rg[b].eb(a);
+        }
+
+        vb vis(n);
+        stack<int> topo;
+        auto f1 = [&](auto&& f1, int u) -> void {
+            vis[u] = 1;
+            for (auto& v : g[u]) if (!vis[v]) f1(f1, v);
+            topo.push(u);
+            }; for (int i = 0; i < n; i++) if (!vis[i]) f1(f1, i);
+
+        int cid = 0;
+        vi comp(n, -1);
+        auto f2 = [&](auto&& f2, int u) -> void {
+            comp[u] = cid;
+            for (auto& v : rg[u]) if (comp[v] == -1) f2(f2, v);
+            };
+        while (sz(topo)) {
+            int u = topo.top();
+            topo.pop();
+            if (comp[u] == -1) f2(f2, u), cid++;
+        }
+        cout << cid << endl;
+        for (int i = 0; i < n; i++) {
+            cout << comp[i] + 1 << " ";
         }
     }
     return 0;

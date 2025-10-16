@@ -75,22 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -107,17 +91,37 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
-        for (int i = 0; i < m; i++) {
+        vvi g(n);
+        rep(i, 0, m) {
             int a, b; cin >> a >> b;
-            a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
-            }
-            cout << cur << " " << mx << endl;
+            g[--a].eb(--b);
+            g[b].eb(a);
         }
+        int t = 0;
+        vb vis(n);
+        vi ans, in(n), low(n);
+        auto f = [&](auto&& f, int u, int p = -1) -> void {
+            vis[u] = 1;
+            in[u] = low[u] = t++;
+            int vs = 0;
+            for (auto& v : g[u]) {
+                if (v == p) continue;
+                else if (vis[v]) low[u] = min(low[u], in[v]);
+                else {
+                    f(f, v, u);
+                    low[u] = min(low[u], low[v]);
+                    if (low[v] >= in[u] && p != -1) {
+                        ans.eb(u);
+                    }
+                    vs++;
+                }
+            }
+            if (p == -1 && vs > 1) ans.eb(u);
+            };
+        for (int u = 0; u < n; u++) if (!vis[u]) f(f, u);
+        sort(all(ans)); ans.erase(unique(all(ans)), ans.end());
+        cout << sz(ans) << endl;
+        for (auto& i : ans) cout << i + 1 << " ";
     }
     return 0;
 }

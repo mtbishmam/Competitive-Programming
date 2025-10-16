@@ -75,22 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -103,20 +87,35 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
-        for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
+        vi a(n); cin >> a;
+        bool z = 0;
+        int neg = 0;
+        // int prod = 1;
+        int idx = -1;
+        for (int i = 0; i < n; i++) {
+            if (!a[i]) z = 1;
+            if (a[i] < 0) {
+                neg++;
+                idx = i;
             }
-            cout << cur << " " << mx << endl;
+            // prod *= a[i];
+        }
+        if (z) {
+            cout << 0 << endl;
+        }
+        else if (neg) {
+            if (neg & 1) cout << 0 << endl;
+            else {
+                cout << 1 << endl;
+                cout << idx + 1 << " " << 0 << endl;
+            }
+        }
+        else {
+            cout << 1 << endl;
+            cout << 1 << " " << 0 << endl;
         }
     }
     return 0;

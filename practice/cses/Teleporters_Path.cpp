@@ -75,21 +75,38 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
+vi eulerWalk(vector<vpii>& gr, int nedges, int src = 0) {
+    int n = sz(gr);
+    vi D(n), its(n), eu(nedges), ret, s = { src };
+    D[src]++; // to allow Euler paths, not just cycles
+    while (!s.empty()) {
+        int x = s.back(), y, e, & it = its[x], end = sz(gr[x]);
+        if (it == end) { ret.push_back(x); s.pop_back(); continue; }
+        tie(y, e) = gr[x][it++];
+        if (!eu[e]) {
+            D[x]--, D[y]++;
+            eu[e] = 1;
+            s.push_back(y);
+        }
     }
-};
+    for (int& x : D) if (x < 0 || sz(ret) != nedges + 1) return {};
+    return { ret.rbegin(), ret.rend() };
+}
+
+void solve() {
+    int n; cin >> n;
+    int m; cin >> m;
+    vector<vpii> g(n);
+    for (int i = 0; i < m; i++) {
+        int a, b; cin >> a >> b;
+        g[--a].eb(--b, i);
+        // g[b].eb(a, i);
+    }
+    vi ans = eulerWalk(g, m, 0);
+    vi uans = ans; uniq(uans);
+    if (!sz(ans) or ans.back() != n - 1) cout << "IMPOSSIBLE";
+    else for (auto& i : ans) cout << i + 1 << " ";
+}
 
 int32_t main()
 {
@@ -105,19 +122,7 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
-        for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
-            }
-            cout << cur << " " << mx << endl;
-        }
+        solve();
     }
     return 0;
 }

@@ -75,22 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -105,19 +89,53 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
         int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
+        int n; cin >> n;
+        int N = n * 2;
+        vvi g(N), rg(N);
         for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
-            }
-            cout << cur << " " << mx << endl;
+            int x, y;
+            string s1, s2;
+            cin >> s1 >> x >> s2 >> y;
+            x--, y--;
+            x *= 2; y *= 2; // Visualize adding an extra bit
+            if (s1 == "-") x ^= 1;
+            if (s2 == "-") y ^= 1;
+
+            // x ∨ y  ⇒  ¬x → y and ¬y → x
+            g[x ^ 1].eb(y);
+            g[y ^ 1].eb(x);
+            rg[y].eb(x ^ 1);
+            rg[x].eb(y ^ 1);
         }
+
+        vb vis(N);
+        stack<int> topo;
+        auto f1 = [&](auto&& f1, int u) -> void {
+            vis[u] = 1;
+            for (auto& v : g[u]) if (!vis[v]) f1(f1, v);
+            topo.push(u);
+            };
+        for (int i = 0; i < N; i++) if (!vis[i]) f1(f1, i);
+
+        int cid = 0;
+        vi comp(N, -1);
+        auto f2 = [&](auto&& f2, int u) -> void {
+            comp[u] = cid;
+            for (auto& v : rg[u]) if (comp[v] == -1) f2(f2, v);
+            };
+        while (sz(topo)) {
+            int u = topo.top(); topo.pop();
+            if (comp[u] == -1) f2(f2, u), cid++;
+        }
+
+        bool f = 1;
+        for (int i = 0; i < N; i += 2) // basically checking if x -> ~x (contradiction)
+            if (comp[i] == comp[i ^ 1]) f = 0;
+
+        // if comp[x] > comp[x ^ 1] -> variable x is true
+        if (f) for (int i = 0; i < N; i += 2) cout << (comp[i] > comp[i ^ 1] ? "+" : "-") << " ";
+        else cout << "IMPOSSIBLE";
     }
     return 0;
 }

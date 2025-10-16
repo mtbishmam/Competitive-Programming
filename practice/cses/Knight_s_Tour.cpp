@@ -58,8 +58,8 @@ using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 #define sz(x) (int)(x).size()
 
 const string ny[] = { "NO", "YES" };
-const int dx[8] = { -1,  0, 0, 1, 1,  1, -1, -1 };
-const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
+const int dx[8] = { -1, -1, -2, -2, 1, 1, 2, 2 };
+const int dy[8] = { -2, 2, -1, 1, -2, 2, -1, 1 };
 // const int INF = 2147483647;
 // const ll LINF = 9223372036854775807;
 const int INF = 1e9;
@@ -75,22 +75,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct UF {
-    int n;
-    vi e;
-    UF(int n) : e(n, -1) {}
-    bool sameSet(int a, int b) { return find(a) == find(b); }
-    int size(int x) { return -e[find(x)]; }
-    int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
-    bool join(int a, int b) {
-        a = find(a), b = find(b);
-        if (a == b) return false;
-        if (e[a] > e[b]) swap(a, b);
-        e[a] += e[b]; e[b] = a;
-        return true;
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -103,21 +87,35 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int m; cin >> m;
-        UF dsu(n); int cur = n, mx = 0;
-        for (int i = 0; i < m; i++) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (!dsu.sameSet(a, b)) {
-                dsu.join(a, b);
-                mx = max(mx, dsu.size(a));
-                cur--;
+        int m; cin >> m; m--;
+        int n; cin >> n; n--;
+        vvi ans(8, vi(8));
+        struct ob { int x, y, moves; };
+        auto isvalid = [&](int x, int y) { return 0 <= x and x < 8 and 0 <= y and y < 8 and !ans[x][y]; };
+        auto f = [&](auto&& f, int x, int y, int t) -> void {
+            ans[x][y] = t;
+            if (t == 64) {
+                for (auto& i : ans) cout << i << endl;
+                exit(0);
             }
-            cout << cur << " " << mx << endl;
-        }
+            vector<ob> cells;
+            for (int i = 0; i < 8; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+                if (isvalid(nx, ny)) {
+                    int moves = 0;
+                    for (int j = 0; j < 8; j++) {
+                        int nxx = nx + dx[j];
+                        int nyy = ny + dy[j];
+                        moves += isvalid(nxx, nyy);
+                    }
+                    cells.push_back({ nx, ny, moves });
+                }
+            }
+            sort(all(cells), [&](auto& a, auto& b) { return a.moves < b.moves; });
+            if (sz(cells)) f(f, cells[0].x, cells[0].y, t + 1); // seems like there's always a way
+            }; f(f, n, m, 1);
     }
     return 0;
 }
