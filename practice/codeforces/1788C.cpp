@@ -86,41 +86,62 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
+    auto brute = [&](int n) -> vpii {
+        vpii ret;
+        vi a, b;
+        for (int i = 1; i <= n; i++) a.eb(i);
+        for (int i = n + 1; i <= 2 * n; i++) b.eb(i);
+        do {
+            vi c;
+            for (int i = 0; i < n; i++) c.eb(a[i] + b[i]);
+            sort(all(c));
+            bool f = 1;
+            for (int i = 0; i < n - 1; i++) if (c[i + 1] - c[i] != 1) f = 0;
+            if (f) {
+                for (int i = 0; i < n; i++) ret.eb(a[i], b[i]);
+                return ret;
+            }
+        } while (next_permutation(all(b)));
+        return vpii();
+        };
+
+    // for (int i = 1; i <= 8; i++) {
+    //     int n = i;
+    //     auto ans = brute(n);
+    //     cout << n << endl;
+    //     if (sz(ans)) {
+    //         cout << "Yes" << endl;
+    //         for (auto& i : ans) cout << i.ff << " " << i.ss << endl;
+    //     }
+    //     else cout << "No";
+    //     cout << endl;
+    // }
+
+
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        vi a(n); cin >> a;
-
-        // all eq case
-        vi b = a; uniq(b);
-        if (sz(b) == 1) cout << 0 << endl;
-        // has 1 case
-        else if (b[0] == 1) cout << -1 << endl;
-        else {
-            auto do_try = [&](int i, int j) -> vpii {
-                int x = a[i], y = a[j];
-                int tries = 0;
-                vpii ret;
-                while (1) {
-                    if (x > )
-
-                        if (a[i] == 2 && a[j] == 2) return ret;
-                    tries++;
-                    if (tries > 35) break;
-                }
-                a[i] = x;
-                a[j] = y;
-                return {};
-                };
-
+        if (n % 2) {
             vpii ans;
-            for (int i = 0; i < n; i++) {
-                for (int j = i + 1; j < n; j++) {
-                    vi cur = do_try(i, j);
-                }
+            int mid = n / 2; int mx = n * 2;
+            for (int i = mid; i >= 1; i--, mx--) {
+                ans.eb(i, mx);
             }
+            for (int i = n; i > mid; i--, mx--) {
+                ans.eb(i, mx);
+            }
+            cout << "Yes" << endl;
+            for (auto& i : ans) cout << i.ff << " " << i.ss << endl;
         }
+        else cout << "No" << endl;
+        // auto ans = brute(n);
+        // if (sz(ans)) {
+        //     cout << "Yes" << endl;
+        //     for (auto& i : ans) cout << i.ff << " " << i.ss << endl;
+        // }
+        // else cout << "No";
+        // cout << endl;
     }
     return 0;
 }
@@ -136,11 +157,5 @@ int32_t main()
 */
 
 /* Analysis
-    If we could prove that getting to 2 is always possible
-*/
 
-/* Gains
-    The 30 should've given me the idea of binary expo
-    The fact that one of them is at least one bigger than the other,
-        means that we can always get to 2
 */

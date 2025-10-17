@@ -87,40 +87,44 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        vi a(n); cin >> a;
+        int n = 8;
+        vvc a(n, vc(n));
+        for (auto& ai : a) cin >> ai;
+        int ans = 0; int nn = 2 * n;
+        vb row(n), col(n), diam(nn), dias(nn);
+        auto isvalid = [&](int x, int y) { return 0 <= x and x < n and 0 <= y and y < n; };
+        auto issafe = [&](int x, int y) {
+            // Efficient Checking
+            if (row[x] or col[y] or diam[x + y] or dias[(x - y + nn) % nn]) return false;
 
-        // all eq case
-        vi b = a; uniq(b);
-        if (sz(b) == 1) cout << 0 << endl;
-        // has 1 case
-        else if (b[0] == 1) cout << -1 << endl;
-        else {
-            auto do_try = [&](int i, int j) -> vpii {
-                int x = a[i], y = a[j];
-                int tries = 0;
-                vpii ret;
-                while (1) {
-                    if (x > )
+            // Manual Checking
+            // for (int j = 0; j < n; j++) if (a[x][j] == '#') return false;
+            // for (int i = 0; i < n; i++) if (a[i][y] == '#') return false;
 
-                        if (a[i] == 2 && a[j] == 2) return ret;
-                    tries++;
-                    if (tries > 35) break;
-                }
-                a[i] = x;
-                a[j] = y;
-                return {};
-                };
+            // for (int k = 0; k < n; k++) if (isvalid(x + k, y + k) and a[x + k][y + k] == '#') return false;
+            // for (int k = 0; k < n; k++) if (isvalid(x - k, y - k) and a[x - k][y - k] == '#') return false;
 
-            vpii ans;
-            for (int i = 0; i < n; i++) {
-                for (int j = i + 1; j < n; j++) {
-                    vi cur = do_try(i, j);
-                }
+            // for (int k = 0; k < n; k++) if (isvalid(x + k, y - k) and a[x + k][y - k] == '#') return false;
+            // for (int k = 0; k < n; k++) if (isvalid(x - k, y + k) and a[x - k][y + k] == '#') return false;
+            return true;
+            };
+        auto f = [&](auto&& f, int i) -> void {
+            if (i == n) {
+                ans++;
+                return;
             }
-        }
+            for (int j = 0; j < n; j++)
+                if (isvalid(i, j) and issafe(i, j) and a[i][j] == '.') {
+                    a[i][j] = '#';
+                    row[i] = col[j] = diam[i + j] = dias[(i - j + nn) % nn] = 1;
+                    f(f, i + 1);
+                    row[i] = col[j] = diam[i + j] = dias[(i - j + nn) % nn] = 0;
+                    a[i][j] = '.';
+                }
+            }; f(f, 0);
+        cout << ans << endl;
     }
     return 0;
 }
@@ -136,11 +140,5 @@ int32_t main()
 */
 
 /* Analysis
-    If we could prove that getting to 2 is always possible
-*/
 
-/* Gains
-    The 30 should've given me the idea of binary expo
-    The fact that one of them is at least one bigger than the other,
-        means that we can always get to 2
 */
