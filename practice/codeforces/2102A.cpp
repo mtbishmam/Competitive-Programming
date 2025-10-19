@@ -19,7 +19,6 @@
 using namespace std;
 
 #define endl "\n"
-#define V vector
 #define pb push_back
 #define eb emplace_back
 #define ff first
@@ -91,8 +90,12 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        vi a(n); cin >> a;
-        string s; cin >> s;
+        int m; cin >> m;
+        int p; cin >> p;
+        int q; cin >> q;
+        bool f = 1;
+        if (n % p == 0 && (n / p) * q != m) f = 0;
+        cout << ny[f] << endl;
     }
     return 0;
 }
