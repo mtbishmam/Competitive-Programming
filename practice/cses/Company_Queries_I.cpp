@@ -91,66 +91,31 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         int q; cin >> q;
-        vi a(n); cin >> a;
-        for (auto& i : a) i--;
-        int cid = 0;
-        vi vis(n), cycid(n, -1), distocyc(n), cyclen(n), incyc(n);
-        vi posincyc(n);
-        auto f = [&](auto&& f, int u) -> void {
-            vis[u] = 1;
-            int v = a[u];
-            if (!vis[v]) f(f, v);
-            else if (vis[v] == 1) {
-                int c = v; vi cyc;
-                do {
-                    cycid[c] = cid;
-                    incyc[c] = 1;
-                    posincyc[c] = sz(cyc); // extra
-                    cyc.eb(c);
-                    c = a[c];
-                } while (c != v);
-                cyclen[cid] = sz(cyc);
-                cid++;
-            }
-            if (cycid[u] == -1) {
-                distocyc[u] = distocyc[v] + 1;
-                cycid[u] = cycid[v];
-            }
-            vis[u] = 2;
-            }; rep(i, 0, n) if (!vis[i]) f(f, i);
-
-        vvi jmp(30, vi(n));
-        for (int i = 0; i < n; i++) jmp[0][i] = a[i];
+        vi a(n);
+        rep(i, 1, n) cin >> a[i], a[i]--;
+        vvi jmp(30, vi(n, -1));
+        for (int i = 1; i < n; i++) jmp[0][i] = a[i];
         for (int j = 1; j < 30; j++)
-            for (int i = 0; i < n; i++)
-                jmp[j][i] = jmp[j - 1][jmp[j - 1][i]];
-
+            for (int i = 0; i < n; i++) {
+                int jth = jmp[j - 1][i];
+                if (jth < 0) continue;
+                jmp[j][i] = jmp[j - 1][jth];
+            }
         auto jump = [&](int u, int k) {
-            for (int j = 0; j < 30; j++)
-                if (k & (1 << j)) u = jmp[j][u];
+            for (int i = 0; i < 30; i++)
+                if (k & (1 << i)) {
+                    u = jmp[i][u];
+                    if (u < 0) return u;
+                }
             return u;
             };
-
         while (q--) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (cycid[a] != cycid[b]) {
-                cout << -1 << endl;
-                continue;
-            }
-
-            int ans = -1;
-            if (jump(a, distocyc[a] - distocyc[b]) == b) {
-                ans = distocyc[a] - distocyc[b];
-            }
-            else {
-                int cur = distocyc[a];
-                a = jump(a, cur);
-                int cycdis = (posincyc[b] - posincyc[a] + cyclen[cycid[a]]) % cyclen[cycid[a]];
-                if (jump(a, cycdis) == b) ans = cur + cycdis;
-            }
-            cout << ans << endl;
+            int u, k;
+            cin >> u >> k;
+            int ans = jump(--u, k);
+            cout << (ans < 0 ? ans : ans + 1) << endl;
         }
+
     }
     return 0;
 }

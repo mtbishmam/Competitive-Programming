@@ -75,6 +75,48 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
+struct Dinic {
+    struct Edge {
+        int to, rev; ll c, oc;
+        ll flow() { return max(oc - c, (int)0); } // using (int) bc ll gives bug
+    }; // flow() gives actual flow
+    vi lvl, ptr, q;
+    vector<vector<Edge>> adj;
+    Dinic(int n) : lvl(n), ptr(n), q(n), adj(n) {}
+    void addEdge(int a, int b, ll c, ll rcap = 0) {
+        adj[a].push_back({ b, sz(adj[b]), c, c });
+        adj[b].push_back({ a, sz(adj[a]) - 1, rcap, rcap });
+    } // rcap = c on bidirectional
+    ll dfs(int v, int t, ll f) {
+        if (v == t || !f) return f;
+        for (int& i = ptr[v]; i < sz(adj[v]); i++) {
+            Edge& e = adj[v][i];
+            if (lvl[e.to] == lvl[v] + 1)
+                if (ll p = dfs(e.to, t, min(f, e.c))) {
+                    e.c -= p, adj[e.to][e.rev].c += p;
+                    return p;
+                }
+        }
+        return 0;
+    }
+    ll calc(int s, int t) {
+        ll flow = 0; q[0] = s;
+        rep(L, 0, 31) do { // 'int L=30' maybe faster for random data
+            lvl = ptr = vi(sz(q));
+            int qi = 0, qe = lvl[s] = 1;
+            while (qi < qe && !lvl[t]) {
+                int v = q[qi++];
+                for (Edge e : adj[v])
+                    if (!lvl[e.to] && e.c >> (30 - L))
+                        q[qe++] = e.to, lvl[e.to] = lvl[v] + 1;
+            }
+            while (ll p = dfs(s, t, LLONG_MAX)) flow += p;
+        } while (lvl[t]);
+        return flow;
+    }
+    bool leftOfMinCut(int a) { return lvl[a] != 0; }
+};
+
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -90,67 +132,26 @@ int32_t main()
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
+        int m; cin >> m;
         int q; cin >> q;
-        vi a(n); cin >> a;
-        for (auto& i : a) i--;
-        int cid = 0;
-        vi vis(n), cycid(n, -1), distocyc(n), cyclen(n), incyc(n);
-        vi posincyc(n);
-        auto f = [&](auto&& f, int u) -> void {
-            vis[u] = 1;
-            int v = a[u];
-            if (!vis[v]) f(f, v);
-            else if (vis[v] == 1) {
-                int c = v; vi cyc;
-                do {
-                    cycid[c] = cid;
-                    incyc[c] = 1;
-                    posincyc[c] = sz(cyc); // extra
-                    cyc.eb(c);
-                    c = a[c];
-                } while (c != v);
-                cyclen[cid] = sz(cyc);
-                cid++;
-            }
-            if (cycid[u] == -1) {
-                distocyc[u] = distocyc[v] + 1;
-                cycid[u] = cycid[v];
-            }
-            vis[u] = 2;
-            }; rep(i, 0, n) if (!vis[i]) f(f, i);
-
-        vvi jmp(30, vi(n));
-        for (int i = 0; i < n; i++) jmp[0][i] = a[i];
-        for (int j = 1; j < 30; j++)
-            for (int i = 0; i < n; i++)
-                jmp[j][i] = jmp[j - 1][jmp[j - 1][i]];
-
-        auto jump = [&](int u, int k) {
-            for (int j = 0; j < 30; j++)
-                if (k & (1 << j)) u = jmp[j][u];
-            return u;
-            };
-
+        Dinic d(n + m + 2);
         while (q--) {
             int a, b; cin >> a >> b;
-            a--, b--;
-            if (cycid[a] != cycid[b]) {
-                cout << -1 << endl;
-                continue;
-            }
-
-            int ans = -1;
-            if (jump(a, distocyc[a] - distocyc[b]) == b) {
-                ans = distocyc[a] - distocyc[b];
-            }
-            else {
-                int cur = distocyc[a];
-                a = jump(a, cur);
-                int cycdis = (posincyc[b] - posincyc[a] + cyclen[cycid[a]]) % cyclen[cycid[a]];
-                if (jump(a, cycdis) == b) ans = cur + cycdis;
-            }
-            cout << ans << endl;
+            d.addEdge(--a, n + --b, 1);
         }
+        rep(i, 0, n) d.addEdge(n + m, i, 1);
+        rep(j, 0, m) d.addEdge(n + j, n + m + 1, 1);
+        cout << d.calc(n + m, n + m + 1) << endl;
+        vpii ans;
+        for (int i = 0; i < n; i++) {
+            for (auto& edge : d.adj[i]) {
+                auto& [to, rev, c, oc] = edge;
+                if (n <= to and to < n + m and edge.flow() > 0) {
+                    ans.eb(i, to - n);
+                }
+            }
+        }
+        for (auto& i : ans) cout << i.ff + 1 << " " << i.ss + 1 << endl;
     }
     return 0;
 }

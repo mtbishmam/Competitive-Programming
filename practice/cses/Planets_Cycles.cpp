@@ -90,12 +90,10 @@ int32_t main()
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int q; cin >> q;
         vi a(n); cin >> a;
         for (auto& i : a) i--;
         int cid = 0;
         vi vis(n), cycid(n, -1), distocyc(n), cyclen(n), incyc(n);
-        vi posincyc(n);
         auto f = [&](auto&& f, int u) -> void {
             vis[u] = 1;
             int v = a[u];
@@ -105,7 +103,6 @@ int32_t main()
                 do {
                     cycid[c] = cid;
                     incyc[c] = 1;
-                    posincyc[c] = sz(cyc); // extra
                     cyc.eb(c);
                     c = a[c];
                 } while (c != v);
@@ -118,39 +115,9 @@ int32_t main()
             }
             vis[u] = 2;
             }; rep(i, 0, n) if (!vis[i]) f(f, i);
-
-        vvi jmp(30, vi(n));
-        for (int i = 0; i < n; i++) jmp[0][i] = a[i];
-        for (int j = 1; j < 30; j++)
-            for (int i = 0; i < n; i++)
-                jmp[j][i] = jmp[j - 1][jmp[j - 1][i]];
-
-        auto jump = [&](int u, int k) {
-            for (int j = 0; j < 30; j++)
-                if (k & (1 << j)) u = jmp[j][u];
-            return u;
-            };
-
-        while (q--) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (cycid[a] != cycid[b]) {
-                cout << -1 << endl;
-                continue;
-            }
-
-            int ans = -1;
-            if (jump(a, distocyc[a] - distocyc[b]) == b) {
-                ans = distocyc[a] - distocyc[b];
-            }
-            else {
-                int cur = distocyc[a];
-                a = jump(a, cur);
-                int cycdis = (posincyc[b] - posincyc[a] + cyclen[cycid[a]]) % cyclen[cycid[a]];
-                if (jump(a, cycdis) == b) ans = cur + cycdis;
-            }
-            cout << ans << endl;
-        }
+        for (int i = 0; i < n; i++)
+            if (incyc[i]) cout << cyclen[cycid[i]] << " ";
+            else cout << distocyc[i] + cyclen[cycid[i]] << " ";
     }
     return 0;
 }

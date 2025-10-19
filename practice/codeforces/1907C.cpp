@@ -26,7 +26,6 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -70,10 +69,10 @@ const double EPS = 1e-9;
 const double PI = acos(-1);
 const int N = 1e5 + 1;
 
-// #include<ext/pb_ds/assoc_container.hpp>
-// #include<ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 int32_t main()
 {
@@ -87,70 +86,54 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int q; cin >> q;
-        vi a(n); cin >> a;
-        for (auto& i : a) i--;
-        int cid = 0;
-        vi vis(n), cycid(n, -1), distocyc(n), cyclen(n), incyc(n);
-        vi posincyc(n);
-        auto f = [&](auto&& f, int u) -> void {
-            vis[u] = 1;
-            int v = a[u];
-            if (!vis[v]) f(f, v);
-            else if (vis[v] == 1) {
-                int c = v; vi cyc;
-                do {
-                    cycid[c] = cid;
-                    incyc[c] = 1;
-                    posincyc[c] = sz(cyc); // extra
-                    cyc.eb(c);
-                    c = a[c];
-                } while (c != v);
-                cyclen[cid] = sz(cyc);
-                cid++;
-            }
-            if (cycid[u] == -1) {
-                distocyc[u] = distocyc[v] + 1;
-                cycid[u] = cycid[v];
-            }
-            vis[u] = 2;
-            }; rep(i, 0, n) if (!vis[i]) f(f, i);
+        string s; cin >> s;
+        // ordered_set<pair<int, char>> os;
+        // for (int i = 0; i < n; i++) os.insert({ i, s[i] });
+        // while (1) {
+        //     bool f = 0;
+        //     for (int i = 0; i < sz(os) - 1; i++) {
+        //         auto it = os.find_by_order(i);
+        //         auto it2 = os.find_by_order(i + 1);
+        //         if (it->ss != it2->ss) {
+        //             debug(i);
+        //             debug(it->ff, it->ss);
+        //             debug(it2->ff, it2->ss);
+        //             os.erase(it);
+        //             os.erase(it2);
+        //             f = 1;
+        //             break;
+        //         }
+        //     }
+        //     if (!f) break;
+        // }
+        // cout << sz(os) << endl;
 
-        vvi jmp(30, vi(n));
-        for (int i = 0; i < n; i++) jmp[0][i] = a[i];
-        for (int j = 1; j < 30; j++)
-            for (int i = 0; i < n; i++)
-                jmp[j][i] = jmp[j - 1][jmp[j - 1][i]];
-
-        auto jump = [&](int u, int k) {
-            for (int j = 0; j < 30; j++)
-                if (k & (1 << j)) u = jmp[j][u];
-            return u;
-            };
-
-        while (q--) {
-            int a, b; cin >> a >> b;
-            a--, b--;
-            if (cycid[a] != cycid[b]) {
-                cout << -1 << endl;
-                continue;
+        map<char, int> mp;
+        for (auto& c : s) mp[c]++;
+        set<pair<char, int>> st;
+        for (auto& i : mp) st.insert({ i.ff, i.ss });
+        while (sz(st) >= 2) {
+            bool f = 0;
+            auto it = st.end(); it--;
+            auto it2 = it; it2--;
+            if (it->ss && it2->ss) {
+                if (it->ss - 1) st.insert({ it->ff, it->ss - 1 });
+                if (it2->ss - 1) st.insert({ it2->ff, it2->ss - 1 });
+                st.erase(it);
+                st.erase(it2);
+                f = 1;
             }
-
-            int ans = -1;
-            if (jump(a, distocyc[a] - distocyc[b]) == b) {
-                ans = distocyc[a] - distocyc[b];
-            }
-            else {
-                int cur = distocyc[a];
-                a = jump(a, cur);
-                int cycdis = (posincyc[b] - posincyc[a] + cyclen[cycid[a]]) % cyclen[cycid[a]];
-                if (jump(a, cycdis) == b) ans = cur + cycdis;
-            }
-            cout << ans << endl;
+            if (!f) break;
         }
+        int ans = 0;
+        for (auto i : st) {
+            ans += i.ss;
+            debug(i.ff, i.ss);
+        }
+        cout << ans << endl;
     }
     return 0;
 }
