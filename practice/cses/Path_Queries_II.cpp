@@ -19,7 +19,6 @@
 using namespace std;
 
 #define endl "\n"
-#define V vector
 #define pb push_back
 #define eb emplace_back
 #define ff first
@@ -27,7 +26,8 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int int64_t
+#define V vector
+// #define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -76,6 +76,166 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
+template<class T, class HLDSegTree>
+class HLD {
+    int n;
+    vector<int> par, heavy, level, root, tree_pos;
+    HLDSegTree tree;
+private:
+    int dfs(const V<V<int>>& graph, int u);
+    template<class BinOp>
+    void process_path(int u, int v, BinOp op);
+public:
+    HLD(int n_, const V<V<int>>& graph)
+        : n(n_), par(n), heavy(n, -1), level(n), root(n), tree_pos(n), tree(n) {
+        par[0] = -1;
+        level[0] = 0;
+        dfs(graph, 0);
+        int ii = 0;
+        for (int u = 0; u < n; u++) {
+            if (par[u] != -1 && heavy[par[u]] == u) continue;
+            for (int v = u; v != -1; v = heavy[v]) {
+                root[v] = u;
+                tree_pos[v] = ii++;
+            }
+        }
+    }
+    void update(int u, int v, T val) {
+        process_path(u, v, [this, val](int l, int r) {
+            tree.update(l, r, val); });
+    }
+    T query(int u, int v) {
+        T res = T();
+        process_path(u, v, [this, &res](int l, int r) {
+            res = max(res, tree.query(l, r)); });
+        return res;
+    }
+};
+template<class T, class HLDSegTree>
+int HLD<T, HLDSegTree>::dfs(const V<V<int>>& graph, int u) {
+    int cc = 1, max_sub = 0;
+    for (int v : graph[u]) {
+        if (v == par[u]) continue;
+        par[v] = u;
+        level[v] = level[u] + 1;
+        int sub = dfs(graph, v);
+        if (sub > max_sub) {
+            max_sub = sub;
+            heavy[u] = v;
+        }
+        cc += sub;
+    }
+    return cc;
+}
+template<class T, class HLDSegTree>
+template<class BinOp>
+void HLD<T, HLDSegTree>::process_path(int u, int v, BinOp op) {
+    for (; root[u] != root[v]; v = par[root[v]]) {
+        if (level[root[u]] > level[root[v]]) swap(u, v);
+        op(tree_pos[root[v]], tree_pos[v]);
+        assert(v != -1);
+    }
+    if (level[u] > level[v]) swap(u, v);
+    op(tree_pos[u], tree_pos[v]);
+}
+
+template<class S>
+struct lazysegtree {
+    int n; V<S> t;
+    lazysegtree(int n) : n(n), t(2 * n - 1, S()) {}
+    void init(const V<S>& v) {
+        n = sz(v); t.assign(n + n - 1, S());
+        build(0, 0, n - 1, v);
+    } template <typename... T>
+        void update(int l, int r, const T&... v) {
+        assert(0 <= l && l <= r && r < n);
+        update(0, 0, n - 1, l, r, v...);
+    }
+    S query(int l, int r) {
+        assert(0 <= l && l <= r && r < n);
+        return query(0, 0, n - 1, l, r);
+    }
+private:
+    inline void push(int u, int b, int e) {
+        if (t[u].lazy == 0) return;
+        int mid = (b + e) >> 1;
+        int rc = u + ((mid - b + 1) << 1);
+        t[u + 1].update(b, mid, t[u].lazy);
+        t[rc].update(mid + 1, e, t[u].lazy);
+        t[u].lazy = 0;
+    }
+    void build(int u, int b, int e, const V<S>& v) {
+        if (b == e) return void(t[u] = v[b]);
+        int mid = (b + e) >> 1;
+        int rc = u + ((mid - b + 1) << 1);
+        build(u + 1, b, mid, v); build(rc, mid + 1, e, v);
+        t[u] = t[u + 1] + t[rc];
+    } template<typename... T>
+        void update(int u, int b, int e, int l, int r, const T&... v) {
+        if (l <= b && e <= r) return t[u].update(b, e, v...);
+        push(u, b, e);
+        int mid = (b + e) >> 1;
+        int rc = u + ((mid - b + 1) << 1);
+        if (l <= mid) update(u + 1, b, mid, l, r, v...);
+        if (mid < r) update(rc, mid + 1, e, l, r, v...);
+        t[u] = t[u + 1] + t[rc];
+    }
+    S query(int u, int b, int e, int l, int r) {
+        if (l <= b && e <= r) return t[u];
+        push(u, b, e);
+        S res;
+        int mid = (b + e) >> 1;
+        int rc = u + ((mid - b + 1) << 1);
+        if (r <= mid) res = query(u + 1, b, mid, l, r);
+        else if (mid < l) res = query(rc, mid + 1, e, l, r);
+        else res = query(u + 1, b, mid, l, r) + query(rc, mid + 1, e, l, r);
+        t[u] = t[u + 1] + t[rc];
+        return res;
+    }
+}; // Hash upto here = 773c09
+/* (1) Declaration :
+Create a node class. Now, segtree<node> T;
+T.init(10) creates everything as node()
+Consider using V<node> leaves to build
+(2) update(l, r, ...v) : update range [l,r]
+order in ...v must be same as node.update() fn */
+struct node {
+    int val = 0, lazy = 0;
+    node(int s = 0, int lz = 0) : val(s), lazy(lz) {}
+    node operator+(const node& obj) const {
+        return { max(val, obj.val), 0 };
+    }
+    void update(int b, int e, const node& x) {
+        val += (e - b + 1) * x.val, lazy += x.val;
+    }
+};
+
+struct segtree {
+    using T = int;
+    T unit = INT_MIN;
+    T f(T a, T b) { return max(a, b); } // associative fn
+    int n; V<T> t;
+    segtree(int _n = 0) { init(_n); }
+    void init(int _n) {
+        n = 1; while (n < _n) n <<= 1;
+        t.assign(2 * n, unit);
+    }
+    void update(int i, T val) {
+        i += n; t[i] = val;
+        for (i >>= 1; i >= 1; i >>= 1)
+            t[i] = f(t[i << 1], t[i << 1 | 1]);
+    }
+    void update(int l, int r, T val) { update(l, val); }
+    T query(int l, int r) {
+        T lc = unit, rc = unit;
+        for (l += n, r += n + 1; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) lc = f(lc, t[l++]);
+            if (r & 1) rc = f(rc, t[--r]);
+        }
+        return f(lc, rc);
+    }
+};
+
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -88,11 +248,31 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
+        int m; cin >> m;
         vi a(n); cin >> a;
-        string s; cin >> s;
+        vvi g(n);
+        rep(i, 1, n) {
+            int a, b; cin >> a >> b;
+            g[--a].eb(--b);
+            g[b].eb(a);
+        }
+        HLD<int, segtree> hld(n, g);
+        rep(i, 0, n) hld.update(i, i, a[i]);
+        while (m--) {
+            int t; cin >> t;
+            if (t == 1) {
+                int s; cin >> s; --s;
+                int x; cin >> x;
+                hld.update(s, s, x);
+            }
+            else {
+                int a, b; cin >> a >> b; --a, --b;
+                cout << hld.query(a, b) << " ";
+            }
+        }
     }
     return 0;
 }
