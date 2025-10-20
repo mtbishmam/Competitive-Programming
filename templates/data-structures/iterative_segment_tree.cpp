@@ -1,5 +1,5 @@
+template <class T>
 struct segtree {
-    using T = int;
     T unit = INT_MIN;
     T f(T a, T b) { return max(a, b); } // associative fn
     int n; V<T> t;
