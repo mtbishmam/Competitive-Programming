@@ -232,12 +232,65 @@ int32_t main()
             g[--a].eb(--b);
             g[b].eb(a);
         }
-        HLD<node, segtree<node>> hld(n, g);
+        // HLD<node, segtree<node>> hld(n, g);
+        // while (m--) {
+        //     int l, r; cin >> l >> r;
+        //     hld.update(--l, --r, node(1));
+        // }
+        // for (int i = 0; i < n; i++) cout << hld.query(i, i).val << " ";
+        vi par(n), lvl(n);
+        auto f = [&](auto&& f, int u, int p = -1) -> void {
+            par[u] = p;
+            for (auto& v : g[u]) if (v != p) {
+                lvl[v] = lvl[u] + 1;
+                f(f, v, u);
+            }
+            }; f(f, 0);
+        vvi jmp(30, vi(n, -1));
+        for (int i = 0; i < n; i++) jmp[0][i] = par[i];
+        for (int j = 1; j < 30; j++)
+            for (int i = 0; i < n; i++) {
+                if (jmp[j - 1][i] == -1) continue;
+                jmp[j][i] = jmp[j - 1][jmp[j - 1][i]];
+            }
+
+        auto jump = [&](int u, int k) {
+            for (int i = 0; i < 30; i++)
+                if (k & (1 << i)) {
+                    u = jmp[i][u];
+                    assert(u != -1);
+                }
+            return u;
+            };
+
+        auto lca = [&](int a, int b) {
+            if (lvl[a] < lvl[b]) swap(a, b);
+            int diff = lvl[a] - lvl[b];
+            a = jump(a, diff);
+            if (a == b) return a;
+            for (int i = 30 - 1; i >= 0; i--)
+                if (jmp[i][a] != jmp[i][b]) {
+                    a = jmp[i][a];
+                    b = jmp[i][b];
+                }
+            return jmp[0][a];
+            };
+
+        vi path(n);
         while (m--) {
-            int l, r; cin >> l >> r;
-            hld.update(--l, --r, node(1));
+            int a, b; cin >> a >> b;
+            path[--a]++, path[--b]++;
+            int lc = lca(a, b);
+            path[lc]--;
+            if (par[lc] != -1) path[par[lc]]--;
         }
-        for (int i = 0; i < n; i++) cout << hld.query(i, i).val << " ";
+        auto f2 = [&](auto&& f2, int u, int p = -1) -> void {
+            for (auto& v : g[u]) if (v != p) {
+                f2(f2, v, u);
+                path[u] += path[v];
+            }
+            }; f2(f2, 0);
+        for (int i = 0; i < n; i++) cout << path[i] << ' ';
     }
     return 0;
 }
