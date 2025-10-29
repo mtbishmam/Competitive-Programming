@@ -19,6 +19,7 @@
 using namespace std;
 
 #define endl "\n"
+#define V vector
 #define pb push_back
 #define eb emplace_back
 #define ff first
@@ -75,70 +76,75 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-// template<typename T> using V = vector<T>;
-// template<class S> struct segtree {
-//     int n; V<S> t;
-//     void init(int _) { n = _; t.assign(n + n - 1, S()); }
-//     void init(const V<S>& v) {
-//         n = sz(v); t.assign(n + n - 1, S());
-//         build(0, 0, n - 1, v);
-//     } template <typename... T>
-//         void upd(int l, int r, const T&... v) {
-//         assert(0 <= l && l <= r && r < n);
-//         upd(0, 0, n - 1, l, r, v...);
-//     }
-//     S get(int l, int r) {
-//         assert(0 <= l && l <= r && r < n);
-//         return get(0, 0, n - 1, l, r);
-//     }
-// private:
-//     inline void push(int u, int b, int e) {
-//         if (t[u].lazy == 0) return;
-//         int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
-//         t[u + 1].upd(b, mid, t[u].lazy);
-//         t[rc].upd(mid + 1, e, t[u].lazy);
-//         t[u].lazy = 0;
-//     }
-//     void build(int u, int b, int e, const V<S>& v) {
-//         if (b == e) return void(t[u] = v[b]);
-//         int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
-//         build(u + 1, b, mid, v); build(rc, mid + 1, e, v);
-//         t[u] = t[u + 1] + t[rc];
-//     } template<typename... T>
-//         void upd(int u, int b, int e, int l, int r, const T&...v) {
-//         if (l <= b && e <= r)  return t[u].upd(b, e, v...);
-//         push(u, b, e);
-//         int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
-//         if (l <= mid) upd(u + 1, b, mid, l, r, v...);
-//         if (mid < r) upd(rc, mid + 1, e, l, r, v...);
-//         t[u] = t[u + 1] + t[rc];
-//     }
-//     S get(int u, int b, int e, int l, int r) {
-//         if (l <= b && e <= r) return t[u];
-//         push(u, b, e);
-//         S res; int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
-//         if (r <= mid) res = get(u + 1, b, mid, l, r);
-//         else if (mid < l) res = get(rc, mid + 1, e, l, r);
-//         else res = get(u + 1, b, mid, l, r) + get(rc, mid + 1, e, l, r);
-//         t[u] = t[u + 1] + t[rc];
-//         return res;
-//     }
-// };
-// struct node {
-//     ll sum = 0, lazy = 0;
-//     node(ll s = 0, ll l = 0) : sum(s), lazy(l) {} // write full constructor
-//     node operator+ (const node& obj) {
-//         return { sum + obj.sum, 0 };
-//     }
-//     void upd(int b, int e, ll x) {
-//         sum += (e - b + 1) * x, lazy += x;
-//     }
-// };
+template<class S>
+struct lazy_segtree {
+    int n; V<S> t;
+    lazy_segtree(int n = 0) : n(n), t(2 * n, S()) {}
+    void init(const V<S>& v) {
+        n = sz(v); t.assign(2 * n, S());
+        build(0, 0, n - 1, v);
+    } template <typename... T>
+        void update(int l, int r, const T&... v) {
+        assert(0 <= l && l <= r && r < n);
+        update(0, 0, n - 1, l, r, v...);
+    }
+    S query(int l, int r) {
+        assert(0 <= l && l <= r && r < n);
+        return query(0, 0, n - 1, l, r);
+    }
+private:
+    inline void push(int u, int b, int e) {
+        if (t[u].lazy == 0) return;
+        int mid = (b + e) >> 1;
+        int rc = u + ((mid - b + 1) << 1);
+        t[u + 1].update(b, mid, t[u].lazy);
+        t[rc].update(mid + 1, e, t[u].lazy);
+        t[u].lazy = 0;
+    }
+    void build(int u, int b, int e, const V<S>& v) {
+        if (b == e) return void(t[u] = v[b]);
+        int mid = (b + e) >> 1;
+        int rc = u + ((mid - b + 1) << 1);
+        build(u + 1, b, mid, v); build(rc, mid + 1, e, v);
+        t[u] = t[u + 1] + t[rc];
+    } template<typename... T>
+        void update(int u, int b, int e, int l, int r, const T&... v) {
+        if (l <= b && e <= r) return t[u].update(b, e, v...);
+        push(u, b, e);
+        int mid = (b + e) >> 1;
+        int rc = u + ((mid - b + 1) << 1);
+        if (l <= mid) update(u + 1, b, mid, l, r, v...);
+        if (mid < r) update(rc, mid + 1, e, l, r, v...);
+        t[u] = t[u + 1] + t[rc];
+    }
+    S query(int u, int b, int e, int l, int r) {
+        if (l <= b && e <= r) return t[u];
+        push(u, b, e);
+        S res;
+        int mid = (b + e) >> 1;
+        int rc = u + ((mid - b + 1) << 1);
+        if (r <= mid) res = query(u + 1, b, mid, l, r);
+        else if (mid < l) res = query(rc, mid + 1, e, l, r);
+        else res = query(u + 1, b, mid, l, r) + query(rc, mid + 1, e, l, r);
+        t[u] = t[u + 1] + t[rc];
+        return res;
+    }
+};
+struct node {
+    int val = 0, lazy = 0;
+    node(int s = 0, int lz = 0) : val(s), lazy(lz) {}
+    node operator+(const node& obj) const {
+        return { val + obj.val, 0 };
+    }
+    void update(int b, int e, const node& x) {
+        val += (e - b + 1) * x.val, lazy += x.val;
+    }
+};
 
 template<class T>
 struct segtree {
     T unit = 0;
-    T f(T& a, T& b) { return a ^ b; }
+    T f(T& a, T& b) { return a + b; }
     int n; vector<T> t;
     segtree(int _n) { init(_n); }
     void init(int _n) {
@@ -160,28 +166,23 @@ struct segtree {
     }
 };
 
-int32_t main()
-{
-#ifndef ONLINE_JUDGE
-    // freopen("input.txt", "r", stdin);
-    // freopen("output.txt", "w", stdout);
-    // freopen("error.txt", "a", stderr);
-#endif
-    ios_base::sync_with_stdio(0);
-    cin.tie(NULL);
-    // cout.tie(NULL);
-
-    int T(1);
-    // cin >> T;
-    for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int q; cin >> q;
-        vi a(n); cin >> a;
-        segtree<int> tree(n);
-        for (int i = 0; i < n; i++) tree.update(i, a[i]);
-        while (q--) {
-            int l, r; cin >> l >> r;
-            cout << tree.query(--l, --r) << endl;
+int32_t main() {
+    int n; cin >> n;
+    int q; cin >> q;
+    vi a(n); cin >> a;
+    // segtree<int> tree(n);
+    lazy_segtree<node> tree(n);
+    for (int i = 0; i < n; i++) tree.update(i, i, a[i]);
+    while (q--) {
+        int t; cin >> t;
+        if (t == 1) {
+            int l, r, x; cin >> l >> r >> x;
+            --l, --r;
+            tree.update(l, r, x);
+        }
+        else {
+            int k; cin >> k; --k;
+            cout << tree.query(k, k).val << endl;
         }
     }
     return 0;

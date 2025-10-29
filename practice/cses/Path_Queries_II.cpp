@@ -27,7 +27,7 @@ using namespace std;
 #define ub upper_bound
 #define em emplace
 #define V vector
-// #define int int64_t
+#define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -107,7 +107,7 @@ public:
     T query(int u, int v) {
         T res = T();
         process_path(u, v, [this, &res](int l, int r) {
-            res = max(res, tree.query(l, r)); });
+            res = res + tree.query(l, r); });
         return res;
     }
 };
@@ -140,11 +140,11 @@ void HLD<T, HLDSegTree>::process_path(int u, int v, BinOp op) {
 }
 
 template<class S>
-struct lazysegtree {
+struct lazy_segtree {
     int n; V<S> t;
-    lazysegtree(int n) : n(n), t(2 * n - 1, S()) {}
+    lazy_segtree(int n = 0) : n(n), t(2 * n, S()) {}
     void init(const V<S>& v) {
-        n = sz(v); t.assign(n + n - 1, S());
+        n = sz(v); t.assign(2 * n, S());
         build(0, 0, n - 1, v);
     } template <typename... T>
         void update(int l, int r, const T&... v) {
@@ -192,13 +192,7 @@ private:
         t[u] = t[u + 1] + t[rc];
         return res;
     }
-}; // Hash upto here = 773c09
-/* (1) Declaration :
-Create a node class. Now, segtree<node> T;
-T.init(10) creates everything as node()
-Consider using V<node> leaves to build
-(2) update(l, r, ...v) : update range [l,r]
-order in ...v must be same as node.update() fn */
+};
 struct node {
     int val = 0, lazy = 0;
     node(int s = 0, int lz = 0) : val(s), lazy(lz) {}
@@ -210,83 +204,30 @@ struct node {
     }
 };
 
-template <class T>
-struct segtree {
-    T unit = INT_MIN;
-    T f(T a, T b) { return max(a, b); } // associative fn
-    int n; V<T> t;
-    segtree(int _n = 0) { init(_n); }
-    void init(int _n) {
-        n = 1; while (n < _n) n <<= 1;
-        t.assign(2 * n, unit);
+int32_t main() {
+    int n; cin >> n;
+    int m; cin >> m;
+    vi a(n); cin >> a;
+    vvi g(n);
+    rep(i, 1, n) {
+        int a, b; cin >> a >> b;
+        g[--a].eb(--b);
+        g[b].eb(a);
     }
-    void update(int l, int r, T val) { update(l, val); }
-    void update(int i, T val) {
-        i += n; t[i] = val;
-        for (i >>= 1; i >= 1; i >>= 1)
-            t[i] = f(t[i << 1], t[i << 1 | 1]);
-    }
-    T query(int l, int r) {
-        T lc = unit, rc = unit;
-        for (l += n, r += n + 1; l < r; l >>= 1, r >>= 1) {
-            if (l & 1) lc = f(lc, t[l++]);
-            if (r & 1) rc = f(rc, t[--r]);
+    HLD<node, lazy_segtree<node>> hld(n, g);
+    rep(i, 0, n) hld.update(i, i, a[i]);
+    while (m--) {
+        int t; cin >> t;
+        if (t == 1) {
+            int s; cin >> s; --s;
+            int x; cin >> x;
+            int p = hld.query(s, s).val;
+            hld.update(s, s, x - p);
         }
-        return f(lc, rc);
-    }
-};
-
-int32_t main()
-{
-#ifndef ONLINE_JUDGE
-    // freopen("input.txt", "r", stdin);
-    // freopen("output.txt", "w", stdout);
-    // freopen("error.txt", "a", stderr);
-#endif
-    ios_base::sync_with_stdio(0);
-    cin.tie(NULL);
-    // cout.tie(NULL);
-
-    int T(1);
-    // cin >> T;
-    for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int m; cin >> m;
-        vi a(n); cin >> a;
-        vvi g(n);
-        rep(i, 1, n) {
-            int a, b; cin >> a >> b;
-            g[--a].eb(--b);
-            g[b].eb(a);
-        }
-        HLD<int, segtree<int>> hld(n, g);
-        rep(i, 0, n) hld.update(i, i, a[i]);
-        while (m--) {
-            int t; cin >> t;
-            if (t == 1) {
-                int s; cin >> s; --s;
-                int x; cin >> x;
-                hld.update(s, s, x);
-            }
-            else {
-                int a, b; cin >> a >> b; --a, --b;
-                cout << hld.query(a, b) << " ";
-            }
+        else {
+            int a, b; cin >> a >> b; --a, --b;
+            cout << hld.query(a, b).val << " ";
         }
     }
     return 0;
 }
-
-//
-
-/* Lemmas
-
-*/
-
-/* Solutions
-
-*/
-
-/* Analysis
-
-*/

@@ -1,8 +1,8 @@
 template <class T>
 struct segtree {
     T unit = INT_MIN;
-    T f(T a, T b) { return max(a, b); } // associative fn
-    int n; V<T> t;
+    T f(T& a, T& b) { return max(a, b); } // associative fn
+    int n; vector<T> t;
     segtree(int _n = 0) { init(_n); }
     void init(int _n) {
         n = 1; while (n < _n) n <<= 1;

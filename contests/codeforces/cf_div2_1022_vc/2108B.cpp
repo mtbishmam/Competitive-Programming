@@ -76,30 +76,6 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-template<class T>
-struct segtree {
-    T unit = 0;
-    T f(T& a, T& b) { return a + b; }
-    int n; V<T> t;
-    segtree(int _n) {
-        n = 1; while (n < _n) n <<= 1;
-        t.assign(2 * n, unit);
-    }
-    void update(int i, T val) {
-        t[i += n] = val;
-        for (i >>= 1; i >= 1; i >>= 1)
-            t[i] = f(t[i << 1], t[i << 1 | 1]);
-    }
-    T query(int l, int r) {
-        T lc = unit, rc = unit;
-        for (l += n, r += n + 1; l < r; l >>= 1, r >>= 1) {
-            if (l & 1) lc = f(lc, t[l++]);
-            if (r & 1) rc = f(rc, t[--r]);
-        }
-        return f(lc, rc);
-    }
-};
-
 int32_t main()
 {
 #ifndef ONLINE_JUDGE
@@ -112,39 +88,15 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int q; cin >> q;
-        vi a(n); cin >> a;
-        vvi g(n);
-        rep(i, 1, n) {
-            int x, y; cin >> x >> y;
-            g[--x].eb(--y); g[y].eb(x);
-        }
-        int timer = 0;
-        vi sub(n, 1), tin(n);
-        auto f = [&](auto&& f, int u, int p = -1) -> void {
-            tin[u] = timer++;
-            for (auto& v : g[u])
-                if (v != p) {
-                    f(f, v, u);
-                    sub[u] += sub[v];
-                }
-            }; f(f, 0);
-        segtree<int> tree(n);
-        rep(i, 0, n) tree.update(tin[i], a[i]);
-        while (q--) {
-            int t;
-            cin >> t;
-            if (t == 1) {
-                int s, x; cin >> s >> x; s--;
-                tree.update(tin[s], x);
-            }
-            else {
-                int s; cin >> s; s--;
-                cout << tree.query(tin[s], tin[s] + sub[s] - 1) << endl;
-            }
+        int x; cin >> x;
+        int bits = __builtin_popcount(x);
+        if (!x && )
+        else if (bits >= n) cout << x << endl;
+        else {
+
         }
     }
     return 0;

@@ -75,63 +75,88 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-template<typename T> using V = vector<T>;
-template<class S> struct segtree {
-    int n; V<S> t;
-    void init(int _) { n = _; t.assign(n + n - 1, S()); }
-    void init(const V<S>& v) {
-        n = sz(v); t.assign(n + n - 1, S());
-        build(0, 0, n - 1, v);
-    } template <typename... T>
-        void upd(int l, int r, const T&... v) {
-        assert(0 <= l && l <= r && r < n);
-        upd(0, 0, n - 1, l, r, v...);
+// template<typename T> using V = vector<T>;
+// template<class S> struct segtree {
+//     int n; V<S> t;
+//     void init(int _) { n = _; t.assign(n + n - 1, S()); }
+//     void init(const V<S>& v) {
+//         n = sz(v); t.assign(n + n - 1, S());
+//         build(0, 0, n - 1, v);
+//     } template <typename... T>
+//         void upd(int l, int r, const T&... v) {
+//         assert(0 <= l && l <= r && r < n);
+//         upd(0, 0, n - 1, l, r, v...);
+//     }
+//     S get(int l, int r) {
+//         assert(0 <= l && l <= r && r < n);
+//         return get(0, 0, n - 1, l, r);
+//     }
+// private:
+//     inline void push(int u, int b, int e) {
+//         if (t[u].lazy == 0) return;
+//         int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
+//         t[u + 1].upd(b, mid, t[u].lazy);
+//         t[rc].upd(mid + 1, e, t[u].lazy);
+//         t[u].lazy = 0;
+//     }
+//     void build(int u, int b, int e, const V<S>& v) {
+//         if (b == e) return void(t[u] = v[b]);
+//         int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
+//         build(u + 1, b, mid, v); build(rc, mid + 1, e, v);
+//         t[u] = t[u + 1] + t[rc];
+//     } template<typename... T>
+//         void upd(int u, int b, int e, int l, int r, const T&...v) {
+//         if (l <= b && e <= r)  return t[u].upd(b, e, v...);
+//         push(u, b, e);
+//         int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
+//         if (l <= mid) upd(u + 1, b, mid, l, r, v...);
+//         if (mid < r) upd(rc, mid + 1, e, l, r, v...);
+//         t[u] = t[u + 1] + t[rc];
+//     }
+//     S get(int u, int b, int e, int l, int r) {
+//         if (l <= b && e <= r) return t[u];
+//         push(u, b, e);
+//         S res; int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
+//         if (r <= mid) res = get(u + 1, b, mid, l, r);
+//         else if (mid < l) res = get(rc, mid + 1, e, l, r);
+//         else res = get(u + 1, b, mid, l, r) + get(rc, mid + 1, e, l, r);
+//         t[u] = t[u + 1] + t[rc];
+//         return res;
+//     }
+// };
+// struct node {
+//     ll sum = 0, lazy = 0;
+//     node(ll s = 0, ll l = 0) : sum(s), lazy(l) {} // write full constructor
+//     node operator+ (const node& obj) {
+//         return { sum + obj.sum, 0 };
+//     }
+//     void upd(int b, int e, ll x) {
+//         sum += (e - b + 1) * x, lazy += x;
+//     }
+// };
+
+template<class T>
+struct segtree {
+    T unit = INT_MAX;
+    T f(T& a, T& b) { return min(a, b); }
+    int n; vector<T> t;
+    segtree(int _n) { init(_n); }
+    void init(int _n) {
+        n = 1; while (n < _n) n <<= 1;
+        t.assign(2 * n, unit);
     }
-    S get(int l, int r) {
-        assert(0 <= l && l <= r && r < n);
-        return get(0, 0, n - 1, l, r);
+    void update(int i, T val) {
+        t[i += n] = val;
+        for (i >>= 1; i >= 1; i >>= 1)
+            t[i] = f(t[i << 1], t[i << 1 | 1]);
     }
-private:
-    inline void push(int u, int b, int e) {
-        if (t[u].lazy == 0) return;
-        int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
-        t[u + 1].upd(b, mid, t[u].lazy);
-        t[rc].upd(mid + 1, e, t[u].lazy);
-        t[u].lazy = 0;
-    }
-    void build(int u, int b, int e, const V<S>& v) {
-        if (b == e) return void(t[u] = v[b]);
-        int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
-        build(u + 1, b, mid, v); build(rc, mid + 1, e, v);
-        t[u] = t[u + 1] + t[rc];
-    } template<typename... T>
-        void upd(int u, int b, int e, int l, int r, const T&...v) {
-        if (l <= b && e <= r)  return t[u].upd(b, e, v...);
-        push(u, b, e);
-        int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
-        if (l <= mid) upd(u + 1, b, mid, l, r, v...);
-        if (mid < r) upd(rc, mid + 1, e, l, r, v...);
-        t[u] = t[u + 1] + t[rc];
-    }
-    S get(int u, int b, int e, int l, int r) {
-        if (l <= b && e <= r) return t[u];
-        push(u, b, e);
-        S res; int mid = (b + e) >> 1, rc = u + ((mid - b + 1) << 1);
-        if (r <= mid) res = get(u + 1, b, mid, l, r);
-        else if (mid < l) res = get(rc, mid + 1, e, l, r);
-        else res = get(u + 1, b, mid, l, r) + get(rc, mid + 1, e, l, r);
-        t[u] = t[u + 1] + t[rc];
-        return res;
-    }
-};
-struct node {
-    ll val = 0, lazy = 0;
-    node(ll v = 0, ll l = 0) : val(v), lazy(l) {} // write full constructor
-    node operator+ (const node& obj) {
-        return { min(val,obj.val), 0 };
-    }
-    void upd(int b, int e, ll x) {
-        val += (e - b + 1) * x, lazy += x;
+    T query(int l, int r) {
+        T lc = unit, rc = unit;
+        for (l += n, r += n + 1; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) lc = f(lc, t[l++]);
+            if (r & 1) rc = f(rc, t[--r]);
+        }
+        return f(lc, rc);
     }
 };
 
@@ -152,20 +177,17 @@ int32_t main()
         int n; cin >> n;
         int q; cin >> q;
         vi a(n); cin >> a;
-        segtree<node> tree; tree.init(n);
-        for (int i = 0; i < n; i++) tree.upd(i, i, a[i]);
+        segtree<int> tree(n);
+        for (int i = 0; i < n; i++) tree.update(i, a[i]);
         while (q--) {
             int t; cin >> t;
-            if (t == 2) {
-                int l, r; cin >> l >> r;
-                l--, r--;
-                cout << tree.get(l, r).val << endl;
+            if (t == 1) {
+                int k, u; cin >> k >> u;
+                tree.update(--k, u);
             }
             else {
-                int k, u; cin >> k >> u;
-                k--;
-                tree.upd(k, k, u - a[k]);
-                a[k] = u;
+                int l, r; cin >> l >> r;
+                cout << tree.query(--l, --r) << endl;
             }
         }
     }

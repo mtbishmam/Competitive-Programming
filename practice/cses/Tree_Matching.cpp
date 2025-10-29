@@ -19,6 +19,7 @@
 using namespace std;
 
 #define endl "\n"
+#define V vector
 #define pb push_back
 #define eb emplace_back
 #define ff first
@@ -93,23 +94,15 @@ int32_t main()
         vvi g(n);
         rep(i, 1, n) {
             int x, y; cin >> x >> y;
-            g[--x].eb(--y);
-            g[y].eb(x);
+            g[--x].eb(--y), g[y].eb(x);
         }
-        vvi dp(n, vi(2));
-        auto f = [&](auto&& f, int u, int p) -> void {
-            for (auto& v : g[u])
-                if (v != p) f(f, v, u);
-            for (auto& v : g[u])
-                if (v != p) dp[u][0] += max(dp[v][0], dp[v][1]);
-            int vsum = dp[u][0];
-            for (auto& v : g[u])
-                if (v != p) {
-                    int sumwov = vsum - max(dp[v][0], dp[v][1]);
-                    dp[u][1] = max(dp[u][1], 1 + dp[v][0] + sumwov);
-                }
-            }; f(f, 0, -1);
-        cout << max(dp[0][0], dp[0][1]);
+        vb used(n); int ans = 0;
+        auto f = [&](auto&& f, int u, int p = -1) -> void {
+            for (auto& v : g[u]) if (v != p) {
+                f(f, v, u);
+                if (!used[v] && !used[u]) used[v] = used[u] = 1, ans++;
+            }
+            }; f(f, 0); cout << ans;
     }
     return 0;
 }
@@ -125,5 +118,14 @@ int32_t main()
 */
 
 /* Analysis
+    not taking this edge
+    dp[u][0] += sum(max(dp[v][1], dp[v][0]);
 
+    taking this edge
+    dp[u][1] = max(dp[u][1], dp[v][0])
+
+    Base case
+        if (j == 1) dp[u][1] = 1
+
+    ans[u] = max(dp[u][1], dp[u][0]);
 */
