@@ -69,7 +69,7 @@ const int MOD = 1e9 + 7;
 // const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
-const int N = 1e5 + 1;
+const int N = 1e6 + 1;
 
 // #include<ext/pb_ds/assoc_container.hpp>
 // #include<ext/pb_ds/tree_policy.hpp>
@@ -87,26 +87,27 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
+    vb isprime(N, 1);
+    isprime[0] = isprime[1] = 0;
+    for (int i = 2; i * i < N; i++) {
+        if (isprime[i])
+            for (int j = i * i; j < N; j += i)
+                isprime[j] = 0;
+    }
+
+    vi pre(N);
+    for (int i = 1; i < N; i++) pre[i] += pre[i - 1] + isprime[i];
+    vi pp(N);
+    for (int i = 1; i < N; i++) {
+        if (isprime[pre[i]]) pp[i]++;
+        pp[i] += pp[i - 1];
+    }
+
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int x; cin >> x;
-        int y; cin >> y;
-        if (x > y) swap(x, y);
-        if (!y) cout << -1 << endl;
-        else if (x) cout << -1 << endl;
-        else if ((n - 1) % y != 0) cout << -1 << endl;
-        else {
-
-            vi ans;
-            int cur = 2, cnt = 0;
-            for (int i = 0; i < n - 1; i++, cnt++) {
-                if (cnt >= y) cnt = 0, cur = i + 2;
-                ans.eb(cur);
-            }
-            cout << ans << endl;
-        }
+        int l, r; cin >> l >> r;
+        cout << pp[r] - pp[l - 1] << endl;
     }
     return 0;
 }
@@ -122,11 +123,5 @@ int32_t main()
 */
 
 /* Analysis
-    a * x + b * y = n - 1
 
-    (total - s) * x + s * y = total
-    total * x - sx + sy = total
-    s (y - x) = total (1 - x)
-    s (x - y) = total (x - 1)
-    s = (n - 1) (x - 1) / (x - y)
 */

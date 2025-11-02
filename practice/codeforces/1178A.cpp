@@ -88,25 +88,24 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int x; cin >> x;
-        int y; cin >> y;
-        if (x > y) swap(x, y);
-        if (!y) cout << -1 << endl;
-        else if (x) cout << -1 << endl;
-        else if ((n - 1) % y != 0) cout << -1 << endl;
-        else {
-
-            vi ans;
-            int cur = 2, cnt = 0;
-            for (int i = 0; i < n - 1; i++, cnt++) {
-                if (cnt >= y) cnt = 0, cur = i + 2;
-                ans.eb(cur);
+        vi a(n); cin >> a;
+        int x = a.front();
+        int t = x; vi ans; ans.eb(0);
+        for (int i = 1; i < n; i++) {
+            if (x / 2 >= a[i]) {
+                t += a[i];
+                ans.eb(i);
             }
-            cout << ans << endl;
         }
+        int tt = accumulate(all(a), 0);
+        if (t * 2 > tt) {
+            cout << sz(ans) << endl;
+            for (auto& i : ans) cout << i + 1 << " ";
+        }
+        else cout << 0 << endl;
     }
     return 0;
 }
@@ -122,11 +121,5 @@ int32_t main()
 */
 
 /* Analysis
-    a * x + b * y = n - 1
 
-    (total - s) * x + s * y = total
-    total * x - sx + sy = total
-    s (y - x) = total (1 - x)
-    s (x - y) = total (x - 1)
-    s = (n - 1) (x - 1) / (x - y)
 */

@@ -91,22 +91,12 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int x; cin >> x;
-        int y; cin >> y;
-        if (x > y) swap(x, y);
-        if (!y) cout << -1 << endl;
-        else if (x) cout << -1 << endl;
-        else if ((n - 1) % y != 0) cout << -1 << endl;
+        if (n & 1) rep(i, 0, n) cout << 1 << " ";
         else {
-
-            vi ans;
-            int cur = 2, cnt = 0;
-            for (int i = 0; i < n - 1; i++, cnt++) {
-                if (cnt >= y) cnt = 0, cur = i + 2;
-                ans.eb(cur);
-            }
-            cout << ans << endl;
+            cout << "1 3 ";
+            rep(i, 0, n - 2) cout << 2 << " ";
         }
+        cout << endl;
     }
     return 0;
 }
@@ -118,15 +108,26 @@ int32_t main()
 */
 
 /* Solutions
-
+    1. two elements need to be different
+    2. simulate with a bruteforce
 */
 
 /* Analysis
-    a * x + b * y = n - 1
+    n (xorsum) = sum
+    n (xorsum) = n * x
+    xorsum = x
 
-    (total - s) * x + s * y = total
-    total * x - sx + sy = total
-    s (y - x) = total (1 - x)
-    s (x - y) = total (x - 1)
-    s = (n - 1) (x - 1) / (x - y)
+    n * (x ^ x ^ x ^ y) = (x + x + x + y)
+    n * (x ^ y) = 3x + y
+
+    xorsum = x
+    sum = y
+    y = n * x
+
+
+
+    13 = 1101
+    8  = 1000
+    2  = 0010
+    1  = 0001
 */

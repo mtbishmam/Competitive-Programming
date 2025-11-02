@@ -27,7 +27,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int int64_t
+// #define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -78,35 +78,54 @@ const int N = 1e5 + 1;
 
 int32_t main()
 {
-#ifndef ONLINE_JUDGE
-    // freopen("input.txt", "r", stdin);
-    // freopen("output.txt", "w", stdout);
-    // freopen("error.txt", "a", stderr);
-#endif
-    ios_base::sync_with_stdio(0);
-    cin.tie(NULL);
-    // cout.tie(NULL);
-
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int x; cin >> x;
-        int y; cin >> y;
-        if (x > y) swap(x, y);
-        if (!y) cout << -1 << endl;
-        else if (x) cout << -1 << endl;
-        else if ((n - 1) % y != 0) cout << -1 << endl;
-        else {
+        int k; cin >> k;
+        string s; cin >> s;
+        int ans = 0; bool f = 1;
+        for (int i = 0; i < n; i++) {
+            if (s[i] == '1') {
+                int prv = i - k;
+                int nxt = i + k;
 
-            vi ans;
-            int cur = 2, cnt = 0;
-            for (int i = 0; i < n - 1; i++, cnt++) {
-                if (cnt >= y) cnt = 0, cur = i + 2;
-                ans.eb(cur);
+                if (prv < 0 && nxt >= n) {
+                    s[i] = '-';
+                    ans++;
+                }
             }
-            cout << ans << endl;
         }
+
+        for (int i = 0; i < n; i++) {
+            if (s[i] == '1') {
+                int prv = i - k;
+                int nxt = i + k;
+
+                bool ok = 0;
+                if (prv >= 0 && s[prv] == '1') ok = 1;
+                if (nxt < n && s[nxt] == '1') ok = 1;
+                if (!ok) {
+                    if (nxt < n && s[nxt] != '-') {
+                        s[nxt] = '1';
+                        ans++;
+                        // debug(i, 1);
+                    }
+                    else if (prv >= 0 && s[prv] != '-') {
+                        s[prv] = '1';
+                        ans++;
+                        // debug(i, 0);
+
+                    }
+                    else {
+                        // f = 0;
+                        s[i] = '!';
+                        ans++;
+                    }
+                }
+            }
+        }
+        cout << ans << endl;
     }
     return 0;
 }
@@ -122,11 +141,5 @@ int32_t main()
 */
 
 /* Analysis
-    a * x + b * y = n - 1
 
-    (total - s) * x + s * y = total
-    total * x - sx + sy = total
-    s (y - x) = total (1 - x)
-    s (x - y) = total (x - 1)
-    s = (n - 1) (x - 1) / (x - y)
 */

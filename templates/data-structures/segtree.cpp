@@ -1,6 +1,6 @@
 struct node {
-    ll val;
-    node(ll val = 0) : val(val) {}
+    ll val = 0;
+    node() {}
 };
 template<class T>
 struct segtree {

@@ -88,25 +88,58 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int x; cin >> x;
-        int y; cin >> y;
-        if (x > y) swap(x, y);
-        if (!y) cout << -1 << endl;
-        else if (x) cout << -1 << endl;
-        else if ((n - 1) % y != 0) cout << -1 << endl;
-        else {
-
-            vi ans;
-            int cur = 2, cnt = 0;
-            for (int i = 0; i < n - 1; i++, cnt++) {
-                if (cnt >= y) cnt = 0, cur = i + 2;
-                ans.eb(cur);
-            }
-            cout << ans << endl;
+        int n, en, tn; cin >> n >> en >> tn;
+        struct ob { int vi, ei, ti; };
+        vector<ob> a(n);
+        rep(i, 0, n) {
+            int vi, ei, ti;
+            cin >> vi >> ei >> ti;
+            a[i] = { vi, ei, ti };
         }
+        vi ans;
+        V<V<V<int>>> dp(n, V<V<int>>(en + 1, vi(tn + 1, -1)));
+        auto f = [&](auto&& f, int i, int en, int tn) -> int {
+            if (i == n) return 0;
+            auto& ret = dp[i][en][tn];
+            if (~ret) return ret;
+
+            ret = 0;
+            auto& [vi, ei, ti] = a[i];
+            int o1 = -INF, o2 = -INF;
+            if (en - ei >= 0 && tn - ti >= 0) {
+                o1 = vi + f(f, i + 1, en - ei, tn - ti);
+            }
+            o2 = f(f, i + 1, en, tn);
+            ret = max(o1, o2);
+            return ret;
+            };
+        int mx = f(f, 0, en, tn);
+        cout << mx << endl;
+        if (mx == 0) {
+            continue;
+        }
+        auto f2 = [&](auto&& f2, int i, int en, int tn, int mx) -> int {
+            if (i == n) return 0;
+
+            auto& [vi, ei, ti] = a[i];
+            int o1 = -INF;
+            if (en - ei >= 0 && tn - ti >= 0) o1 = vi + f(f, i + 1, en - ei, tn - ti);
+            int o2 = f(f, i + 1, en, tn);
+            if (o1 == mx) {
+                ans.eb(i);
+                f2(f2, i + 1, en - ei, tn - ti, mx - vi);
+                return o1;
+            }
+            else {
+                f2(f2, i + 1, en, tn, mx);
+                return o2;
+            }
+            return -1;
+            }; f2(f2, 0, en, tn, mx);
+        for (auto& i : ans) cout << i + 1 << " ";
+        cout << endl;
     }
     return 0;
 }
@@ -122,11 +155,5 @@ int32_t main()
 */
 
 /* Analysis
-    a * x + b * y = n - 1
 
-    (total - s) * x + s * y = total
-    total * x - sx + sy = total
-    s (y - x) = total (1 - x)
-    s (x - y) = total (x - 1)
-    s = (n - 1) (x - 1) / (x - y)
 */

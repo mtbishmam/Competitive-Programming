@@ -91,22 +91,26 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int x; cin >> x;
-        int y; cin >> y;
-        if (x > y) swap(x, y);
-        if (!y) cout << -1 << endl;
-        else if (x) cout << -1 << endl;
-        else if ((n - 1) % y != 0) cout << -1 << endl;
-        else {
+        int k; cin >> k;
+        string s; cin >> s;
+        int k1, k2; k1 = k2 = 0;
+        for (int i = 0; i < n; i++)
+            (s[i] - '0' ? k1++ : k2++);
+        int mx = k1 / 2 + k2 / 2;
+        if (mx >= k) {
+            int rem = n - 2 * k;
+            int rp = rem / 2; // mismatch pairs
 
-            vi ans;
-            int cur = 2, cnt = 0;
-            for (int i = 0; i < n - 1; i++, cnt++) {
-                if (cnt >= y) cnt = 0, cur = i + 2;
-                ans.eb(cur);
+            if (k1 >= rp && k2 >= rp) {
+                k1 -= rp, k2 -= rp;
+                int mx2 = k1 / 2 + k2 / 2;
+                if (mx2 >= k) cout << "YES";
+                else cout << "NO";
             }
-            cout << ans << endl;
+            else cout << "NO";
+            cout << endl;
         }
+        else cout << "NO" << endl;
     }
     return 0;
 }
@@ -122,11 +126,6 @@ int32_t main()
 */
 
 /* Analysis
-    a * x + b * y = n - 1
+    1111110000
 
-    (total - s) * x + s * y = total
-    total * x - sx + sy = total
-    s (y - x) = total (1 - x)
-    s (x - y) = total (x - 1)
-    s = (n - 1) (x - 1) / (x - y)
 */

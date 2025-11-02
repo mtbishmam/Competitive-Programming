@@ -91,22 +91,29 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int x; cin >> x;
-        int y; cin >> y;
-        if (x > y) swap(x, y);
-        if (!y) cout << -1 << endl;
-        else if (x) cout << -1 << endl;
-        else if ((n - 1) % y != 0) cout << -1 << endl;
-        else {
-
-            vi ans;
-            int cur = 2, cnt = 0;
-            for (int i = 0; i < n - 1; i++, cnt++) {
-                if (cnt >= y) cnt = 0, cur = i + 2;
-                ans.eb(cur);
-            }
-            cout << ans << endl;
+        string s; cin >> s;
+        s = '-' + s;
+        int ans = 0;
+        int z = 0;
+        vi suf0(n + 2), suf1(n + 2);
+        for (int i = n; i >= 1; i--) {
+            suf0[i] = suf0[i + 1] + (s[i] == '0');
+            suf1[i] = suf1[i + 1] + (s[i] == '1');
         }
+        for (int i = 0; i < n; i++) {
+            int x = s[i] - '0';
+            if (x != z) {
+                if (x == 1 && suf0[i]) {
+                    ans++;
+                    z ^= 1;
+                }
+                if (x == 0 && suf1[i]) {
+                    ans++;
+                    z ^= 1;
+                }
+            }
+        }
+        cout << ans << endl;
     }
     return 0;
 }
@@ -122,11 +129,5 @@ int32_t main()
 */
 
 /* Analysis
-    a * x + b * y = n - 1
 
-    (total - s) * x + s * y = total
-    total * x - sx + sy = total
-    s (y - x) = total (1 - x)
-    s (x - y) = total (x - 1)
-    s = (n - 1) (x - 1) / (x - y)
 */

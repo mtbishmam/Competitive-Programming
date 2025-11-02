@@ -88,25 +88,37 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int x; cin >> x;
-        int y; cin >> y;
-        if (x > y) swap(x, y);
-        if (!y) cout << -1 << endl;
-        else if (x) cout << -1 << endl;
-        else if ((n - 1) % y != 0) cout << -1 << endl;
-        else {
-
-            vi ans;
-            int cur = 2, cnt = 0;
-            for (int i = 0; i < n - 1; i++, cnt++) {
-                if (cnt >= y) cnt = 0, cur = i + 2;
-                ans.eb(cur);
-            }
-            cout << ans << endl;
+        int n; cin >> n; vvi g(n);
+        for (int i = 0; i < n - 1; i++) {
+            int x, y; cin >> x >> y;
+            g[--x].eb(--y);
+            g[y].eb(x);
         }
+        vi sub(n, 1);
+        auto f = [&](auto&& f, int u, int p = -1) -> void {
+            for (auto& v : g[u]) if (v != p) {
+                f(f, v, u);
+                sub[u] += sub[v];
+            }
+            }; f(f, 0);
+
+
+        auto f2 = [&](auto&& f, int u, int p = -1) -> int {
+            int mx = 0, mxv = -1;
+            for (auto& v : g[u]) if (v != p) {
+                if (sub[v] <= n / 2) continue;
+                if (sub[v] > mx) {
+                    mx = sub[v];
+                    mxv = v;
+                }
+            }
+            if (~mxv) return f(f, mxv, u);
+            else return u;
+            };
+
+        cout << f2(f2, 0) + 1;
     }
     return 0;
 }
@@ -122,11 +134,5 @@ int32_t main()
 */
 
 /* Analysis
-    a * x + b * y = n - 1
 
-    (total - s) * x + s * y = total
-    total * x - sx + sy = total
-    s (y - x) = total (1 - x)
-    s (x - y) = total (x - 1)
-    s = (n - 1) (x - 1) / (x - y)
 */
