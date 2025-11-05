@@ -19,6 +19,7 @@
 using namespace std;
 
 #define endl "\n"
+#define V vector
 #define pb push_back
 #define eb emplace_back
 #define ff first
@@ -39,7 +40,7 @@ template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cer
 using ll = int64_t;
 using ld = long double;
 using ull = unsigned long long;
-using vi = vector<int>; using vvi = vector<vi>;
+using vi = vector<int>; using vvi = V<vi>;
 using vl = vector<ll>; using vvl = vector<vl>;
 using vb = vector<bool>; using vvb = vector<vb>;
 using vc = vector<char>; using vvc = vector<vc>;
@@ -112,26 +113,47 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n, m;
         cin >> n >> m;
-        vector<vector<pii>> g1(n), g2(n);
+        V<V<pii>> g(n);
         for (int i = 0; i < m; i++) {
-            int a, b, c; cin >> a >> b >> c;
-            a--, b--;
-            g1[a].eb(c, b);
-            g2[b].eb(c, a);
+            int a, b, c;
+            cin >> a >> b >> c;
+            g[--a].eb(c, --b);
         }
+        struct ob {
+            int w, u, f;
+            bool operator <(const ob& b) const {
+                return w < b.w;
+            }
+        };
+        // multiset<ob> ms; ms.insert({ 0, 0, 0 });
+        multiset<tuple<ll, int, bool>> ms; ms.insert({ 0, 0, 0 });
+        vvi dp(n, vi(2, LINF));
+        while (sz(ms)) {
+            auto it = ms.begin();
+            auto [w, u, f] = *it;
+            ms.erase(it);
 
-        auto dis1 = dijkstra(g1, 0);
-        auto dis2 = dijkstra(g2, n - 1);
-        int ans = dis1[n - 1];
-        for (int i = 0; i < n; i++) {
-            if (dis1[i] != LINF and dis2[i] != LINF) {
-                for (auto& [w, b] : g1[i]) {
-                    int cur = dis1[i] + dis2[b] + w / 2;
-                    ans = min(ans, cur);
+            if (!f && dp[u][0] < w) continue;
+            if (f && dp[u][1] < w) continue;
+
+            for (auto& [w2, v] : g[u]) {
+                if (!f) {
+                    if (w + w2 < dp[v][0]) {
+                        dp[v][0] = w + w2;
+                        ms.insert({ dp[v][0], v, 0 });
+                    }
+                    if (w + w2 / 2 < dp[v][1]) {
+                        dp[v][1] = w + w2 / 2;
+                        ms.insert({ dp[v][1], v, 1 });
+                    }
+                }
+                if (f && w + w2 < dp[v][1]) {
+                    dp[v][1] = w + w2;
+                    ms.insert({ dp[v][1], v, 1 });
                 }
             }
         }
-        cout << ans;
+        cout << dp[n - 1][1] << endl;
     }
     return 0;
 }

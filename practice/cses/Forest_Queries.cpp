@@ -19,6 +19,7 @@
 using namespace std;
 
 #define endl "\n"
+#define V vector
 #define pb push_back
 #define eb emplace_back
 #define ff first
@@ -89,38 +90,32 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        struct ob { int a, b, c; };
-        vector<ob> v(m); vvi g(n), rg(n);
-        for (int i = 0; i < m; i++) {
-            int a, b, c;
-            cin >> a >> b >> c;
-            --a, --b, c *= -1;
-            v[i] = { a, b, c };
-            g[a].eb(b);
-            rg[b].eb(a);
-        }
-        auto f = [](auto&& f, int u, vb& vis, vvi& g) -> void {
-            vis[u] = 1;
-            for (auto& v : g[u])
-                if (!vis[v]) f(f, v, vis, g);
-            };
-        vb vis(n); f(f, 0, vis, g);
-        vb rvis(n); f(f, n - 1, rvis, rg);
-        vi dis(n, LINF); dis[0] = 0;
-        bool ncyc = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                auto& [a, b, c] = v[j];
-                if (vis[a] && rvis[b] && dis[a] + c < dis[b]) {
-                    dis[b] = dis[a] + c;
-                    if (i == n - 1) ncyc = 1;
-                }
+        int n; cin >> n;
+        int q; cin >> q;
+        vvc a(n, vc(n));
+        for (auto& i : a) cin >> i;
+        vvi pre(n, vi(n));
+        rep(i, 0, n) {
+            rep(j, 0, n) {
+                pre[i][j] = a[i][j] == '*';
+                if (i) pre[i][j] += pre[i - 1][j];
+                if (j) pre[i][j] += pre[i][j - 1];
+                if (i && j) pre[i][j] -= pre[i - 1][j - 1];
             }
         }
-        if (ncyc) cout << -1 << endl;
-        else cout << -dis[n - 1] << endl;
+        // rep(i, 0, n) rep(j, 0, n) {
+        //     cout << pre[i][j] << " \n"[j + 1 == n];
+        // }
+        while (q--) {
+            int x1, y1, x2, y2;
+            cin >> x1 >> y1 >> x2 >> y2;
+            x1--, y1--, x2--, y2--;
+            int ans = pre[x2][y2];
+            if (y1) ans -= pre[x2][y1 - 1];
+            if (x1) ans -= pre[x1 - 1][y2];
+            if (x1 && y1) ans += pre[x1 - 1][y1 - 1];
+            cout << ans << endl;
+        }
     }
     return 0;
 }

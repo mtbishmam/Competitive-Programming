@@ -21,6 +21,7 @@
 #include <climits>
 using namespace std;
 using int64 = long long;
+using M = vector<vector<int64>>;
 const int MOD = 1000000007;
 const int S = 1 << 8; // 256 states
 
@@ -36,8 +37,7 @@ int neigh[8][2] = {
     {6,0}
 };
 
-vector< vector<int64> > trans; // trans[cur][next] = ways
-
+M trans; // trans[cur][next] = ways
 // DFS to fill layer: pos_used tracks which cells already used in this layer (including cur bits)
 // cur_mask: cells already occupied coming from previous verticals
 // pos_used: bitmask of cells used in this layer so far (start = cur_mask)
@@ -65,9 +65,9 @@ void dfs_fill(int cur_mask, int pos_used, int next_mask) {
 }
 
 // matrix multiply (n x n)
-vector<vector<int64>> matMul(const vector<vector<int64>>& A, const vector<vector<int64>>& B) {
+M matMul(const M& A, const M& B) {
     int n = (int)A.size();
-    vector<vector<int64>> C(n, vector<int64>(n, 0));
+    M C(n, vector<int64>(n, 0));
     // naive triple loop but n = 256 -> acceptable with optimization -O2
     for (int i = 0; i < n; ++i) {
         for (int k = 0; k < n; ++k) {
@@ -84,9 +84,9 @@ vector<vector<int64>> matMul(const vector<vector<int64>>& A, const vector<vector
     return C;
 }
 
-vector<vector<int64>> matPow(vector<vector<int64>> base, long long exp) {
+M matPow(M base, long long exp) {
     int n = (int)base.size();
-    vector<vector<int64>> res(n, vector<int64>(n, 0));
+    M res(n, vector<int64>(n, 0));
     for (int i = 0; i < n; ++i) res[i][i] = 1;
     while (exp > 0) {
         if (exp & 1) res = matMul(res, base);
@@ -109,7 +109,7 @@ int main() {
     }
 
     // build base matrix A where A[i][j] = trans[i][j]
-    vector<vector<int64>> A(S, vector<int64>(S, 0));
+    M A(S, vector<int64>(S, 0));
     for (int i = 0; i < S; ++i)
         for (int j = 0; j < S; ++j)
             A[i][j] = trans[i][j] % MOD;
@@ -118,7 +118,7 @@ int main() {
     if (!(cin >> T)) return 0;
     for (int tc = 1; tc <= T; ++tc) {
         long long N; cin >> N;
-        vector<vector<int64>> AN = matPow(A, N);
+        M AN = matPow(A, N);
         int64 ans = AN[0][0] % MOD; // start with mask 0, end with mask 0
         cout << "Case " << tc << ": " << ans << '\n';
     }

@@ -19,6 +19,7 @@
 using namespace std;
 
 #define endl "\n"
+#define V vector
 #define pb push_back
 #define eb emplace_back
 #define ff first
@@ -87,40 +88,11 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, m;
-        cin >> n >> m;
-        struct ob { int a, b, c; };
-        vector<ob> v(m); vvi g(n), rg(n);
-        for (int i = 0; i < m; i++) {
-            int a, b, c;
-            cin >> a >> b >> c;
-            --a, --b, c *= -1;
-            v[i] = { a, b, c };
-            g[a].eb(b);
-            rg[b].eb(a);
-        }
-        auto f = [](auto&& f, int u, vb& vis, vvi& g) -> void {
-            vis[u] = 1;
-            for (auto& v : g[u])
-                if (!vis[v]) f(f, v, vis, g);
-            };
-        vb vis(n); f(f, 0, vis, g);
-        vb rvis(n); f(f, n - 1, rvis, rg);
-        vi dis(n, LINF); dis[0] = 0;
-        bool ncyc = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                auto& [a, b, c] = v[j];
-                if (vis[a] && rvis[b] && dis[a] + c < dis[b]) {
-                    dis[b] = dis[a] + c;
-                    if (i == n - 1) ncyc = 1;
-                }
-            }
-        }
-        if (ncyc) cout << -1 << endl;
-        else cout << -dis[n - 1] << endl;
+        int n; cin >> n;
+        vi a(n); cin >> a;
+        string s; cin >> s;
     }
     return 0;
 }

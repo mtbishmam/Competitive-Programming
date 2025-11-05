@@ -88,24 +88,33 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         vi a(n); cin >> a;
         vi b(n + 1); cin >> b;
         int ans = 0;
-        map<pii, int> mp;
-        vb vis(n + 1);
+        vpii r;
         for (int i = 0; i < n; i++) {
             int x = a[i];
             int y = b[i];
             if (x > y) swap(x, y);
             ans += y - x;
-
+            r.eb(x, y);
         }
+        int x = b[n];
+        bool can = 0;
+        int mn = INF;
         for (auto& [l, r] : r) {
-
+            if (l <= x && x <= r) can = 1;
+            else {
+                mn = min(mn, abs(l - x));
+                mn = min(mn, abs(r - x));
+            }
         }
+        if (can) ans++;
+        else ans += mn + 1;
+        cout << ans << endl;
     }
     return 0;
 }
