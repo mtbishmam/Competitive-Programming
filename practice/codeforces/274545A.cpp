@@ -27,7 +27,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int int64_t
+// #define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -71,45 +71,10 @@ const double EPS = 1e-9;
 const double PI = acos(-1);
 const int N = 1e5 + 1;
 
-// #include<ext/pb_ds/assoc_container.hpp>
-// #include<ext/pb_ds/tree_policy.hpp>
-// using namespace __gnu_pbds;
-// template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
-struct node {
-    int sum, mx_pre;
-    node(int v = 0) : sum(v), mx_pre(v) {}
-};
-
-template<typename T>
-struct segtree {
-    T f(T& a, T& b) {
-        T ret;
-        ret.sum = a.sum + b.sum; // this is final
-        ret.mx_pre = max(a.mx_pre, a.sum + b.mx_pre);
-        return ret;
-    }
-    int n; V<T> t;
-    segtree(int n) : n(n), t(4 * n, T()) {}
-    void update(int pos, T val, int i, int l, int r) {
-        if (l == r) return void(t[i] = val);
-        int mid = (l + r) >> 1;
-        if (pos <= mid) update(pos, val, i << 1, l, mid);
-        else update(pos, val, i << 1 | 1, mid + 1, r);
-        t[i] = f(t[i << 1], t[i << 1 | 1]);
-    }
-    void update(int pos, int val) { update(pos, node(val), 1, 0, n - 1); }
-
-    T query(int L, int R, int i, int l, int r) {
-        if (r < L || R < l || R < L) return T();
-        if (L <= l && r <= R) return t[i];
-        int mid = (l + r) >> 1;
-        T lc = query(L, R, i << 1, l, mid);
-        T rc = query(L, R, i << 1 | 1, mid + 1, r);
-        return f(lc, rc);
-    }
-    T query(int L, int R) { return query(L, R, 1, 0, n - 1); }
-};
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 int32_t main()
 {
@@ -126,22 +91,13 @@ int32_t main()
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int q; cin >> q;
-        vi a(n); cin >> a;
-        segtree<node> tree(n);
-        for (int i = 0; i < n; i++) tree.update(i, a[i]);
-        while (q--) {
-            int t; cin >> t;
-            if (t == 1) {
-                int k, u; cin >> k >> u; --k;
-                tree.update(k, u);
-            }
-            else {
-                int l, r; cin >> l >> r; --l, --r;
-                int ans = max((int)0, tree.query(l, r).mx_pre);
-                cout << ans << endl;
-            }
+        vi a(n), ans(n); cin >> a;
+        ordered_set<pii> os;
+        for (int i = 0; i < n; i++) {
+            ans[i] = sz(os) - (int)os.order_of_key({ a[i], INF });
+            os.insert({ a[i], i });
         }
+        cout << ans;
     }
     return 0;
 }

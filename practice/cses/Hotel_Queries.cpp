@@ -78,19 +78,40 @@ const int N = 1e5 + 1;
 
 template<class T>
 struct segtree {
+    T f(T& a, T& b) { return max(a, b); }
     int n; V<T> t;
     segtree(int n) : n(n), t(4 * n, 0) {}
     void update(int pos, T val, int i, int l, int r) {
-        if (l == r) return void(t[l] = val;);
+        if (l == r) return void(t[i] = val);
         int mid = l + r >> 1;
         if (pos <= mid) update(pos, val, i << 1, l, mid);
         else update(pos, val, i << 1 | 1, mid + 1, r);
+        t[i] = f(t[i << 1], t[i << 1 | 1]);
     }
     T query(int x, int i, int l, int r) {
-
+        if (l == r) {
+            t[i] -= x;
+            return l;
+        }
+        int mid = l + r >> 1;
+        T ret;
+        if (x <= t[i << 1]) ret = query(x, i << 1, l, mid);
+        else ret = query(x, i << 1 | 1, mid + 1, r);
+        t[i] = f(t[i << 1], t[i << 1 | 1]);
+        return ret;
     }
     void update(int pos, T val) { update(pos, val, 1, 0, n - 1); }
-    T query(int x) { return query(l, r, 1, 0, n - 1); }
+    T query(int x) { return query(x, 1, 0, n - 1); }
+
+    T query2(int L, int R, int i, int l, int r) {
+        if (r < L || R < l || R < L) return 0;
+        if (L <= l && r <= R) return t[i];
+        int mid = l + r >> 1;
+        T lc = query2(L, R, i << 1, l, mid);
+        T rc = query2(L, R, i << 1 | 1, mid + 1, r);
+        return f(lc, rc);
+    }
+    T query2(int l, int r) { return query2(l, r, 1, 0, n - 1); }
 };
 
 int32_t main()
@@ -112,9 +133,23 @@ int32_t main()
         vi a(n); cin >> a;
         segtree<int> tree(n);
         rep(i, 0, n) tree.update(i, a[i]);
+        // while (q--) {
+        //     int x; cin >> x;
+        //     int l = 0, r = n - 1, ans = -1;
+        //     while (l <= r) {
+        //         int mid = l + r >> 1;
+        //         if (tree.query2(0, mid) >= x) r = mid - 1, ans = mid;
+        //         else l = mid + 1;
+        //     }
+        //     if (~ans) {
+        //         a[ans] -= x;
+        //         tree.update(ans, a[ans]);
+        //     }
+        //     cout << ans + 1 << ' ';
+        // }
         while (q--) {
             int x; cin >> x;
-            if (sg[1] < x) cout << 0 << " ";
+            if (tree.t[1] < x) cout << 0 << " ";
             else cout << tree.query(x) + 1 << " ";
         }
     }

@@ -19,6 +19,7 @@
 using namespace std;
 
 #define endl "\n"
+#define V vector
 #define pb push_back
 #define eb emplace_back
 #define ff first
@@ -26,7 +27,7 @@ using namespace std;
 #define lb lower_bound
 #define ub upper_bound
 #define em emplace
-#define int long long
+#define int int64_t
 
 template <typename T> istream& operator>>(istream& is, vector<T>& a) { for (auto& i : a) is >> i; return is; }
 template <typename T> ostream& operator<<(ostream& os, vector<T>& a) { for (auto& i : a) os << i << " "; return os; };
@@ -36,7 +37,7 @@ void dbg_out() { cerr << endl; }
 template <typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
 #define debug(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
 
-using ll = long long;
+using ll = int64_t;
 using ld = long double;
 using ull = unsigned long long;
 using vi = vector<int>; using vvi = vector<vi>;
@@ -48,6 +49,7 @@ using pll = pair<ll, ll>; using vpll = vector<pll>;
 using vs = vector<string>;
 using tiii = tuple<int, int, int>; ; using vtiii = vector<tiii>;
 
+#define rep(i, a, b) for (int i = (a); i < (b); i++)
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define uniq(x) sort(all(x)), (x).erase(unique(all(x)), (x).end())
@@ -74,88 +76,42 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-/* 1. Sum only (long long) */
-struct node_sum {
-    ll val;
-    node_sum(ll val = 0) : val(val) {}
-    node_sum operator+(const node_sum& r) const {
-        return node_sum(val + r.val);
-    }
-};
-/* 2. Max only (int) */
-struct node_max {
-    int val;
-    node_max(int val = -INF) : val(val) {}
-    node_max operator+(const node_max& r) const {
-        return node_max(max(val, r.val));
-    }
-};
-/* 3. Min only (int) */
-struct node_min {
-    int val;
-    node_min(int val = INF) : val(val) {}
-    node_min operator+(const node_min& r) const {
-        return node_min(min(val, r.val));
-    }
-};
-
 struct node {
-    int pre, suf, sum;
-    node(int pre = 0, int suf = 0, int sum = 0) : pre(pre), suf(suf), sum(sum) {}
-    node operator+ (const node& r) const {
-        node ret;
-        ret.sum = sum + r.sum;
-        ret.pre = max(pre, sum + r.pre);
-        ret.suf = max(r.suf, r.sum + suf);
-        return ret;
-    }
+    int sum, mx_pre, mx_suf, mx;
+    node(int v = 0) : sum(v), mx_pre(v), mx_suf(v), mx(v) {}
 };
 
 template<class T>
-struct segment_tree {
-    int n;
-    vector<T> sg;
-    segment_tree(int _n) {
-        n = _n;
-        sg.assign(4 * _n, T());
+struct segtree {
+    T f(T& a, T& b) {
+        T ret;
+        ret.sum = a.sum + b.sum;
+        ret.mx_pre = max({ a.mx_pre, a.sum + b.mx_pre });
+        ret.mx_suf = max({ b.mx_suf, b.sum + a.mx_suf });
+        ret.mx = max({ ret.mx_pre, ret.mx_suf, a.mx_suf + b.mx_pre, a.mx, b.mx });
+        return ret;
     }
-    void build(int i, int l, int r, vector<int>& a) {
-        if (l == r) {
-            sg[i] = T(a[l]);
-        }
-        else {
-            int mid = (l + r) >> 1;
-            build(i * 2, l, mid, a);
-            build(i * 2 + 1, mid + 1, r, a);
-            sg[i] = sg[i * 2] + sg[i * 2 + 1];
-        }
-    }
-    T query(int L, int R, int i, int l, int r) {
-        if (R < L) return T();
-        if (r < L || R < l) return T();
-        if (L <= l && r <= R) return sg[i];
+    int n; vector<T> t;
+    segtree(int n) : n(n), t(4 * n, T()) {}
+    void update(int pos, T val, int i, int l, int r) {
+        if (l == r) return void(t[i] = val);
         int mid = (l + r) >> 1;
-        T left = query(L, R, i * 2, l, mid);
-        T right = query(L, R, i * 2 + 1, mid + 1, r);
-        return left + right;
+        if (pos <= mid) update(pos, val, i << 1, l, mid);
+        else update(pos, val, i << 1 | 1, mid + 1, r);
+        t[i] = f(t[i << 1], t[i << 1 | 1]);
     }
-    void update(int pos, T cur, int i, int l, int r) {
-        if (l == r) {
-            sg[i] = cur;
-        }
-        else {
-            int mid = (l + r) >> 1;
-            if (pos <= mid) update(pos, cur, i * 2, l, mid);
-            else update(pos, cur, i * 2 + 1, mid + 1, r);
-            sg[i] = sg[i * 2] + sg[i * 2 + 1];
-        }
-    }
-    // Wrappers
-    void build(vector<int>& a) { build(1, 0, n - 1, a); }
-    T query(int L, int R) { return query(L, R, 1, 0, n - 1); }
-    void update(int pos, int x) { update(pos, T(x), 1, 0, n - 1); }
-};
+    void update(int pos, int val) { update(pos, T(val), 1, 0, n - 1); }
 
+    T query(int L, int R, int i, int l, int r) {
+        if (r < L || R < l || R < L) return T();
+        if (L <= l && r <= R) return t[i];
+        int mid = (l + r) >> 1;
+        T lc = query(L, R, i << 1, l, mid);
+        T rc = query(L, R, i << 1 | 1, mid + 1, r);
+        return f(lc, rc);
+    }
+    T query(int L, int R) { return query(L, R, 1, 0, n - 1); }
+};
 
 int32_t main()
 {
@@ -171,21 +127,23 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n, q;
-        cin >> n >> q;
+        int n; cin >> n;
+        int q; cin >> q;
         vi a(n); cin >> a;
-        segment_tree<node> tree(n);
-        tree.build(a);
+        segtree<node> tree(n);
+        for (int i = 0; i < n; i++) tree.update(i, a[i]);
+
         while (q--) {
-            int l, r;
-            cin >> l >> r; l--, r--;
-            cout << max({ tree.query(l, r).pre, tree.query(l, r).suf, tree.query(l, r).sum }) << endl;
+            int l, r; cin >> l >> r; l--, r--;
+            int ans = tree.query(l, r).mx;
+            ans = max(ans, (int)0);
+            cout << ans << endl;
         }
     }
     return 0;
 }
 
-// subarrays with sum 0 is possible
+//
 
 /* Lemmas
 

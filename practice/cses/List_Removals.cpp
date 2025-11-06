@@ -75,22 +75,12 @@ const int N = 1e5 + 1;
 // #include<ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-
-struct node {
-    int sum, mx_pre;
-    node(int v = 0) : sum(v), mx_pre(v) {}
-};
-
-template<typename T>
+vi a;
+template<class T>
 struct segtree {
-    T f(T& a, T& b) {
-        T ret;
-        ret.sum = a.sum + b.sum; // this is final
-        ret.mx_pre = max(a.mx_pre, a.sum + b.mx_pre);
-        return ret;
-    }
+    T f(T& a, T& b) { return a + b; }
     int n; V<T> t;
-    segtree(int n) : n(n), t(4 * n, T()) {}
+    segtree(int n) : n(n), t(4 * n, 0) {}
     void update(int pos, T val, int i, int l, int r) {
         if (l == r) return void(t[i] = val);
         int mid = (l + r) >> 1;
@@ -98,17 +88,30 @@ struct segtree {
         else update(pos, val, i << 1 | 1, mid + 1, r);
         t[i] = f(t[i << 1], t[i << 1 | 1]);
     }
-    void update(int pos, int val) { update(pos, node(val), 1, 0, n - 1); }
+    void update(int pos, int x) { update(pos, x, 1, 0, n - 1); }
+    T query(int pos, int i, int l, int r) {
+        if (l == r) {
+            t[i] = 0;
+            return a[l];
+        }
+        int ret;
+        int mid = (l + r) >> 1;
+        if (pos <= t[i << 1]) ret = query(pos, i << 1, l, mid);
+        else ret = query(pos - t[i << 1], i << 1 | 1, mid + 1, r);
+        t[i] = f(t[i << 1], t[i << 1 | 1]);
+        return ret;
+    }
+    T query(int pos) { return query(pos, 1, 0, n - 1); }
 
-    T query(int L, int R, int i, int l, int r) {
+    T query2(int L, int R, int i, int l, int r) {
         if (r < L || R < l || R < L) return T();
         if (L <= l && r <= R) return t[i];
         int mid = (l + r) >> 1;
-        T lc = query(L, R, i << 1, l, mid);
-        T rc = query(L, R, i << 1 | 1, mid + 1, r);
+        T lc = query2(L, R, i << 1, l, mid);
+        T rc = query2(L, R, i << 1 | 1, mid + 1, r);
         return f(lc, rc);
     }
-    T query(int L, int R) { return query(L, R, 1, 0, n - 1); }
+    T query2(int l, int r) { return query2(l, r, 1, 0, n - 1); }
 };
 
 int32_t main()
@@ -126,21 +129,24 @@ int32_t main()
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int q; cin >> q;
-        vi a(n); cin >> a;
-        segtree<node> tree(n);
-        for (int i = 0; i < n; i++) tree.update(i, a[i]);
-        while (q--) {
-            int t; cin >> t;
-            if (t == 1) {
-                int k, u; cin >> k >> u; --k;
-                tree.update(k, u);
+        a = vi(n); cin >> a;
+        segtree<int> tree(n);
+        for (int i = 0; i < n; i++) tree.update(i, 1);
+        vi b(n); cin >> b;
+        // for (int i = 0; i < n; i++) {
+        //     int x = b[i];
+        //     cout << tree.query(x) << " ";
+        // }
+        for (int i = 0; i < n; i++) {
+            int x = b[i];
+            int l = 0, r = n - 1, ans = 0;
+            while (l <= r) {
+                int mid = (l + r) >> 1;
+                if (x <= tree.query2(0, mid)) r = mid - 1, ans = mid;
+                else l = mid + 1;
             }
-            else {
-                int l, r; cin >> l >> r; --l, --r;
-                int ans = max((int)0, tree.query(l, r).mx_pre);
-                cout << ans << endl;
-            }
+            tree.update(ans, 0);
+            cout << a[ans] << " ";
         }
     }
     return 0;

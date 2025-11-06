@@ -76,36 +76,25 @@ const int N = 1e5 + 1;
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-struct node {
-    int sum, mx_pre;
-    node(int v = 0) : sum(v), mx_pre(v) {}
-};
-
-template<typename T>
+template<class T>
 struct segtree {
-    T f(T& a, T& b) {
-        T ret;
-        ret.sum = a.sum + b.sum; // this is final
-        ret.mx_pre = max(a.mx_pre, a.sum + b.mx_pre);
-        return ret;
-    }
+    T f(T& a, T& b) { return a + b; };
     int n; V<T> t;
-    segtree(int n) : n(n), t(4 * n, T()) {}
+    segtree(int n) : n(n), t(4 * n, 0) {}
     void update(int pos, T val, int i, int l, int r) {
-        if (l == r) return void(t[i] = val);
+        if (l == r) return void(t[i] += val);
         int mid = (l + r) >> 1;
         if (pos <= mid) update(pos, val, i << 1, l, mid);
         else update(pos, val, i << 1 | 1, mid + 1, r);
         t[i] = f(t[i << 1], t[i << 1 | 1]);
     }
-    void update(int pos, int val) { update(pos, node(val), 1, 0, n - 1); }
-
+    void update(int pos, T val) { update(pos, val, 1, 0, n - 1); }
     T query(int L, int R, int i, int l, int r) {
-        if (r < L || R < l || R < L) return T();
+        if (r < L || R < l || R < L) return 0;
         if (L <= l && r <= R) return t[i];
         int mid = (l + r) >> 1;
-        T lc = query(L, R, i << 1, l, mid);
-        T rc = query(L, R, i << 1 | 1, mid + 1, r);
+        int lc = query(L, R, i << 1, l, mid);
+        int rc = query(L, R, i << 1 | 1, mid + 1, r);
         return f(lc, rc);
     }
     T query(int L, int R) { return query(L, R, 1, 0, n - 1); }
@@ -128,18 +117,36 @@ int32_t main()
         int n; cin >> n;
         int q; cin >> q;
         vi a(n); cin >> a;
-        segtree<node> tree(n);
-        for (int i = 0; i < n; i++) tree.update(i, a[i]);
-        while (q--) {
-            int t; cin >> t;
-            if (t == 1) {
-                int k, u; cin >> k >> u; --k;
-                tree.update(k, u);
+        vi vals = a;
+        struct ob { int x, l, r; };
+        V<ob> v(q);
+        rep(i, 0, q) {
+            char c; cin >> c;
+            int l, r; cin >> l >> r;
+            v[i] = { c == '!' ? 0 : 1, l, r };
+            if (c == '!') vals.eb(r);
+            else vals.eb(l), vals.eb(r);
+        }
+        sort(all(vals));
+        vals.erase(unique(all(vals)), vals.end());
+        // map<int, int> mp; int cnt = 0;
+        // for (auto& v : vals) mp[v] = cnt++;
+        auto c = [&](int x) { return lb(all(vals), x) - vals.begin(); };
+
+        segtree<int> tree(sz(vals));
+        for (auto& i : a) tree.update(i = c(i), 1);
+        for (auto& [t, l, r] : v) {
+            if (t == 0) {
+                int k = l, x = r;
+                int val = c(x);
+                tree.update(val, 1);
+                int pos = k - 1;
+                int pval = a[pos];
+                a[pos] = val;
+                tree.update(pval, -1);
             }
             else {
-                int l, r; cin >> l >> r; --l, --r;
-                int ans = max((int)0, tree.query(l, r).mx_pre);
-                cout << ans << endl;
+                cout << tree.query(c(l), c(r)) << endl;
             }
         }
     }

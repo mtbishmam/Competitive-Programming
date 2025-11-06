@@ -77,19 +77,21 @@ const int N = 1e5 + 1;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 struct node {
-    int sum, mx_pre;
-    node(int v = 0) : sum(v), mx_pre(v) {}
+    int sum, mx_pre, mx_suf, mx;
+    node(int v = 0) : sum(v), mx_pre(v), mx_suf(v), mx(v) {}
 };
 
-template<typename T>
+template<class T>
 struct segtree {
     T f(T& a, T& b) {
         T ret;
-        ret.sum = a.sum + b.sum; // this is final
-        ret.mx_pre = max(a.mx_pre, a.sum + b.mx_pre);
+        ret.sum = a.sum + b.sum;
+        ret.mx_pre = max({ a.mx_pre, a.sum + b.mx_pre });
+        ret.mx_suf = max({ b.mx_suf, b.sum + a.mx_suf });
+        ret.mx = max({ ret.mx_pre, ret.mx_suf, a.mx_suf + b.mx_pre, a.mx, b.mx });
         return ret;
     }
-    int n; V<T> t;
+    int n; vector<T> t;
     segtree(int n) : n(n), t(4 * n, T()) {}
     void update(int pos, T val, int i, int l, int r) {
         if (l == r) return void(t[i] = val);
@@ -98,7 +100,7 @@ struct segtree {
         else update(pos, val, i << 1 | 1, mid + 1, r);
         t[i] = f(t[i << 1], t[i << 1 | 1]);
     }
-    void update(int pos, int val) { update(pos, node(val), 1, 0, n - 1); }
+    void update(int pos, int val) { update(pos, T(val), 1, 0, n - 1); }
 
     T query(int L, int R, int i, int l, int r) {
         if (r < L || R < l || R < L) return T();
@@ -130,17 +132,13 @@ int32_t main()
         vi a(n); cin >> a;
         segtree<node> tree(n);
         for (int i = 0; i < n; i++) tree.update(i, a[i]);
+
         while (q--) {
-            int t; cin >> t;
-            if (t == 1) {
-                int k, u; cin >> k >> u; --k;
-                tree.update(k, u);
-            }
-            else {
-                int l, r; cin >> l >> r; --l, --r;
-                int ans = max((int)0, tree.query(l, r).mx_pre);
-                cout << ans << endl;
-            }
+            int k, x; cin >> k >> x; k--;
+            tree.update(k, x);
+            int ans = tree.query(0, n - 1).mx;
+            ans = max(ans, (int)0);
+            cout << ans << endl;
         }
     }
     return 0;
