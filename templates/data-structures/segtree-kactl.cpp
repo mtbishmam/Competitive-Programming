@@ -9,7 +9,7 @@ struct segtree {
         t.assign(2 * n, unit);
     }
     void update(int i, T val) {
-        i += n; t[i] = val;
+        t[i += n] = val;
         for (i >>= 1; i >= 1; i >>= 1)
             t[i] = f(t[i << 1], t[i << 1 | 1]);
     }
