@@ -91,42 +91,18 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
+        int k; cin >> k;
         vi a(n); cin >> a;
-        vi mx(n), mn(n);
-        for (int i = 0; i < n; i++) {
-            if (!i) mx[i] = a[i];
-            else mx[i] = max(mx[i - 1], a[i]);
-        }
-        for (int i = n - 1; i >= 0; i--) {
-            if (i + 1 == n) mn[i] = a[i];
-            else mn[i] = min(mn[i + 1], a[i]);
-        }
-        int ans = -1;
-        if (n == 1) ans = 0;
-        else for (int i = 0; i < n; i++) {
-            if (!i) {
-                if (a[i] < mn[i + 1]) {
-                    ans = i;
-                    break;
-                }
-            }
-            else if (i + 1 == n) {
-                if (mx[i - 1] < a[i]) {
-                    ans = i;
-                    break;
-                }
-            }
-            else {
-                if (mx[i - 1] < a[i] && a[i] < mn[i + 1]) {
-                    ans = i;
-                    break;
-                }
+        vi cnt(31); int ans = 0;
+        for (int bit = 30; bit >= 0; bit--) {
+            for (auto& i : a) if (i & (1 << bit)) cnt[bit]++;
+            int req = n - cnt[bit];
+            if (req <= k) {
+                k -= req;
+                ans += 1 << bit;
             }
         }
-        string nans;
-        if (ans == -1) nans = "Humanity is doomed!";
-        else nans = to_string(ans + 1);
-        cout << "Case " << Ti << ": " << nans << endl;
+        cout << ans << endl;
     }
     return 0;
 }

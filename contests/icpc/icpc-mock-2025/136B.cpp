@@ -88,45 +88,36 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        vi a(n); cin >> a;
-        vi mx(n), mn(n);
-        for (int i = 0; i < n; i++) {
-            if (!i) mx[i] = a[i];
-            else mx[i] = max(mx[i - 1], a[i]);
-        }
-        for (int i = n - 1; i >= 0; i--) {
-            if (i + 1 == n) mn[i] = a[i];
-            else mn[i] = min(mn[i + 1], a[i]);
-        }
-        int ans = -1;
-        if (n == 1) ans = 0;
-        else for (int i = 0; i < n; i++) {
-            if (!i) {
-                if (a[i] < mn[i + 1]) {
-                    ans = i;
-                    break;
-                }
+        int a, c; cin >> a >> c;
+        auto get = [&](int x) {
+            string ret;
+            while (x) {
+                ret += (char)(x % 3 + '0');
+                x /= 3;
             }
-            else if (i + 1 == n) {
-                if (mx[i - 1] < a[i]) {
-                    ans = i;
-                    break;
-                }
-            }
-            else {
-                if (mx[i - 1] < a[i] && a[i] < mn[i + 1]) {
-                    ans = i;
-                    break;
-                }
-            }
+            reverse(all(ret));
+            return ret;
+            };
+        string as = get(a);
+        string cs = get(c);
+        while (sz(as) < sz(cs)) as = "0" + as;
+        while (sz(cs) < sz(as)) cs = "0" + cs;
+        int mx = max(sz(as), sz(cs));
+        string bs;
+        for (int i = 0; i < mx; i++) {
+            int ax = (i < sz(as) ? as[i] - '0' : 0);
+            int cx = (i < sz(cs) ? cs[i] - '0' : 0);
+            char bx = (char)(((cx - ax + 3) % 3) + '0');
+            bs += bx;
         }
-        string nans;
-        if (ans == -1) nans = "Humanity is doomed!";
-        else nans = to_string(ans + 1);
-        cout << "Case " << Ti << ": " << nans << endl;
+        int pw = 1, ans = 0;
+        for (int i = sz(bs) - 1; i >= 0; i--) {
+            ans += (bs[i] - '0') * pw;
+            pw *= 3;
+        }
+        cout << ans << endl;
     }
     return 0;
 }

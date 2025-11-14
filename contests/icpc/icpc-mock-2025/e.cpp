@@ -65,8 +65,8 @@ const int dy[8] = { 0, -1, 1, 0, 1, -1,  1, -1 };
 // const ll LINF = 9223372036854775807;
 const int INF = 1e9;
 const ll LINF = 1e18;
-const int MOD = 1e9 + 7;
-// const int MOD = 998244353;
+// const int MOD = 1e9 + 7;
+const int MOD = 998244353;
 const double EPS = 1e-9;
 const double PI = acos(-1);
 const int N = 1e5 + 1;
@@ -75,6 +75,16 @@ const int N = 1e5 + 1;
 // #include<ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // template<class T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+int K = 1000;
+ll dp[62][62][1001];
+int f(int i, int j, int k, int n) {
+    if (!n) return 1;
+    auto& ret = dp[i][j][k];
+    if (~ret) return ret;
+    ret = 0;
+
+}
 
 int32_t main()
 {
@@ -87,12 +97,19 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
+    int n, k;
+    memset(dp, -1, sizeof dp); int prev = 0;
+    for (int ck = 1; ck <= K; ck++) {
+        int cur = f(f, 0, 0, n)
+            prev = (prev + cur) % MOD;
+    }
+
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        vi a(n); cin >> a;
-        string s; cin >> s;
+        n, k; cin >> n >> k;
+        // cout << f(0, 0, k, n) << endl;
+        cout << dp[0][0][k] << endl;
     }
     return 0;
 }

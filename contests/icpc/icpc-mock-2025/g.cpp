@@ -90,43 +90,23 @@ int32_t main()
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        vi a(n); cin >> a;
-        vi mx(n), mn(n);
+        string s; cin >> s;
+        int n = sz(s); int c1, c2;
+        c1 = c2 = 0; bool f = 0;
+        int nulls = 0;
+        for (int i = 0; i < n; i++, c1++) {
+            if (i + 1 < n && s[i] == '\\' && s[i + 1] == '0') {
+                f = 1;
+                break;
+            }
+        }
         for (int i = 0; i < n; i++) {
-            if (!i) mx[i] = a[i];
-            else mx[i] = max(mx[i - 1], a[i]);
-        }
-        for (int i = n - 1; i >= 0; i--) {
-            if (i + 1 == n) mn[i] = a[i];
-            else mn[i] = min(mn[i + 1], a[i]);
-        }
-        int ans = -1;
-        if (n == 1) ans = 0;
-        else for (int i = 0; i < n; i++) {
-            if (!i) {
-                if (a[i] < mn[i + 1]) {
-                    ans = i;
-                    break;
-                }
-            }
-            else if (i + 1 == n) {
-                if (mx[i - 1] < a[i]) {
-                    ans = i;
-                    break;
-                }
-            }
-            else {
-                if (mx[i - 1] < a[i] && a[i] < mn[i + 1]) {
-                    ans = i;
-                    break;
-                }
+            if (i + 1 < n && s[i] == '\\' && s[i + 1] == '0') {
+                nulls++;
             }
         }
-        string nans;
-        if (ans == -1) nans = "Humanity is doomed!";
-        else nans = to_string(ans + 1);
-        cout << "Case " << Ti << ": " << nans << endl;
+        c2 = n - nulls + 1;
+        cout << c2 << " " << c1 << endl;
     }
     return 0;
 }
@@ -142,5 +122,6 @@ int32_t main()
 */
 
 /* Analysis
+    the first part is correct
 
 */

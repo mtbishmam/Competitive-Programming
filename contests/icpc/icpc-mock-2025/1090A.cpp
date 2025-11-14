@@ -88,45 +88,30 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        vi a(n); cin >> a;
-        vi mx(n), mn(n);
-        for (int i = 0; i < n; i++) {
-            if (!i) mx[i] = a[i];
-            else mx[i] = max(mx[i - 1], a[i]);
+        vvi a(n), aa, bb;
+        int mx = 0, mxi = -1;
+        rep(i, 0, n) {
+            int m; cin >> m;
+            vi b(m); cin >> b;
+            rep(i, 0, m) if (b[i] > mx) { mx = b[i], mxi = i; }
+            a[i] = b;
         }
-        for (int i = n - 1; i >= 0; i--) {
-            if (i + 1 == n) mn[i] = a[i];
-            else mn[i] = min(mn[i + 1], a[i]);
+        int ans = 0;
+        rep(i, 0, n) {
+            int cmx = 0;
+            auto& b = a[i];
+            for (auto& i : b) if (i > cmx) { cmx = i; }
+            if (cmx < mx) {
+                aa.eb(a[i]);
+                ans += (mx - cmx) * sz(a[i]);
+            }
+            else bb.eb(a[i]);
         }
-        int ans = -1;
-        if (n == 1) ans = 0;
-        else for (int i = 0; i < n; i++) {
-            if (!i) {
-                if (a[i] < mn[i + 1]) {
-                    ans = i;
-                    break;
-                }
-            }
-            else if (i + 1 == n) {
-                if (mx[i - 1] < a[i]) {
-                    ans = i;
-                    break;
-                }
-            }
-            else {
-                if (mx[i - 1] < a[i] && a[i] < mn[i + 1]) {
-                    ans = i;
-                    break;
-                }
-            }
-        }
-        string nans;
-        if (ans == -1) nans = "Humanity is doomed!";
-        else nans = to_string(ans + 1);
-        cout << "Case " << Ti << ": " << nans << endl;
+        // sort(all(bb), [&](vi&a,vi&b) { return sz(a) < sz(b); }); we don't need to think about this. and this becmes dp
+        cout << ans << endl;
     }
     return 0;
 }
