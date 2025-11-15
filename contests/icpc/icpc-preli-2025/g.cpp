@@ -91,9 +91,45 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        vi a(n); cin >> a;
-        int ans = 0;
-        cout << "Case " << Ti << ": " << ans << endl;
+        int m; cin >> m;
+        vvi a(n, vi(m));
+        for (auto& i : a) cin >> i;
+
+        vi r(n);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                r[i] ^= a[i][j];
+            }
+        }
+        vi c(m);
+        for (int j = 0; j < m; j++) {
+            for (int i = 0; i < n; i++) {
+                c[j] ^= a[i][j];
+            }
+        }
+        int sum = 0;
+        rep(i, 0, n) sum += r[i];
+        rep(j, 0, m) sum += c[j];
+
+        int mn = sum;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                int wr = r[i] ^ a[i][j];
+                int wc = c[j] ^ a[i][j];
+                int can = wr & wc;
+
+                int sumwoa = sum - (r[i] + c[j]) + (wr + wc);
+                mn = min(mn, sumwoa);
+
+                int sum2 = sum - (r[i] + c[j]) + (wr + wc) - 2 * can;
+                mn = min(mn, sum2);
+                // int can = wr & wc;
+                // int off = sum - r[i] - c[j];
+                // off += r[i] + c[j] - 2 * can;
+                // mn = min(mn, off);
+            }
+        }
+        cout << mn << endl;
     }
     return 0;
 }

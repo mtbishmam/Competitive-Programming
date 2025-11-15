@@ -99,32 +99,64 @@ int32_t main()
         int n; cin >> n;
         int m; cin >> m;
         vi a(n); cin >> a;
-        set<int> s; for (auto& i : a) s.insert(i);
-        struct ob { int x, y, z; };
-        vector<ob> edges(m);
+        map<pii, int> mp;
         for (int i = 0; i < m; i++) {
             int a, b, c;
             cin >> a >> b >> c;
             if (a > b) swap(a, b);
-            // mp[{a, b}] = c;
-            edges[i] = { a, b, c };
+            mp[{a, b}] = c;
         }
-        int ans = 0; vb vis(m);
-        for (int tries = 0; tries <= m + 5; tries++) {
-            bool f = 0;
-            for (int i = 0; i < m; i++) {
-                if (vis[i]) continue;
-                auto& [a, b, c] = edges[i];
-                if (s.find(a) != s.end() && s.find(b) != s.end()) {
-                    ans++;
-                    s.insert(c);
-                    f = 1;
-                    vis[i] = 1;
+        // for (auto& i : mp) cerr << i.ff.ff << " " << i.ff.ss << ' ' << i.ss << endl;
+        // set<int> s; for (auto& i : a) s.insert(i);
+        int ans = sz(a);
+        while (1) {
+            // debug(a);
+            // uniq(a); ans += sz(a);
+            // vi b; 
+            uniq(a);
+            bool f = 0; bool f2 = 1;
+            for (int i = 0; i < sz(a); i++) {
+                for (int j = i + 1; j < sz(a); j++) {
+                    // if (sz(s))
+                    //     for (auto it = s.begin(); it != s.end(); it++) {
+                    //         auto it2 = it; it2++;
+                    //         for (; it2 != s.end(); it2++) {
+                    int x = a[i], y = a[j];
+                    // int x = *it, y = *it2;
+                    if (x > y) swap(x, y);
+                    if (mp.count({ x, y })) {
+                        int z = mp[{x, y}];
+                        mp.erase({ x, y });
+
+                        auto mit = lb(all(a), z);
+                        if (mit == a.end()) {
+                            f = 1;
+                            ans++;
+                            a.eb(z);
+                            // s.insert(z);
+                            // b.eb(z);
+                        }
+                        else {
+                            if (*mit != z) {
+                                f = 1;
+                                ans++;
+                                a.eb(z);
+                                // s.insert(z);
+                                // b.eb(z);
+                            }
+                        }
+
+                        if (!sz(mp)) f2 = 0;
+                    }
                 }
+
             }
             if (!f) break;
+            if (!f2) break;
+            // swap(a, b);
         }
-        cout << sz(s) << endl;
+        // ans += sz(a);
+        cout << ans << endl;
     }
     return 0;
 }
