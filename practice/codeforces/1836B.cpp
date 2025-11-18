@@ -91,36 +91,24 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        vi a(n); cin >> a;
-        int mx = *max_element(all(a)), idx;
-        for (int i = 0; i < n; i++) {
-            if (a[i] >= mx) {
-                idx = i;
-                break;
+        int k; cin >> k;
+        int g; cin >> g;
+        if (n >= k * g) cout << k * g << endl;
+        else {
+            int mx = (g / 2 - (g % 2 == 0));
+            int can = (k * g) / mx;
+            if (mx * n >= k * g) cout << n * mx;
+            else {
+                int ans = mx * (n - 1) + (k * g - (mx * (n - 1))) % g;
+                cout << ans;
             }
+            cout << endl;
         }
-        int g = 0, g2 = 0; bool f = 1, f2 = 1;
-        for (int i = idx; i < n - 1; i++) {
-            g = __gcd(a[i], a[i + 1]);
-            f &= g == a[i + 1];
-        }
-        for (int i = idx; i >= 1; i--) {
-            g2 = __gcd(a[i - 1], a[i]);
-            f2 &= g2 == a[i - 1];
-        }
-        cout << ny[f && f2] << endl;
     }
     return 0;
 }
 
-/* Gains
-    for number theory ones, I need to be more analytic
-    Should've tried with coprime numbers
-
-    For gcd = 1, it’s called a primitive sequence.
-    For gcd = d > 1, you can say it is not primitive or d-scaled primitive sequence.
-
-*/
+//
 
 /* Lemmas
 
@@ -131,5 +119,6 @@ int32_t main()
 */
 
 /* Analysis
-
+    if there's only 1 person -> k * g
+    if there's 2 people ->
 */
