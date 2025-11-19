@@ -88,29 +88,34 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        int k; cin >> k;
-        int g; cin >> g;
-        if (n >= k * g) cout << k * g << endl;
-        else {
-            int mx = (g / 2 - (g % 2 == 0));
-            if (!mx) {
-
-            }
-            int can = (k * g) / mx;
-            if (mx * n >= k * g) cout << k * g;
-            else {
-                int rem = (k * g - (mx * (n - 1))) % g;
-                int del;
-                if (rem <= mx) del = rem;
-                else del = -(g - rem);
-                int ans = mx * (n - 1) + del;
-                cout << ans;
-            }
-            cout << endl;
+        string s; cin >> s;
+        int n = sz(s);
+        // map<char, int> mp; int ans = 0;
+        // for (int i = 0; i < n; i++) {
+        //     ans += mp[s[i]];
+        //     mp[s[i]]++;
+        // }
+        // ans *= 2;
+        // ans += n;
+        // cout << ans;
+        int maxn = 125;
+        vvi pre(maxn, vi(n + 1));
+        vvi suf(maxn, vi(n + 2));
+        for (int i = 1; i <= n; i++) {
+            pre[s[i - 1]][i]++;
+            for (int j = 0; j < maxn; j++) pre[j][i] += pre[j][i - 1];
         }
+        for (int i = n; i >= 1; i--) {
+            suf[s[i - 1]][i]++;
+            for (int j = 0; j < maxn; j++) suf[j][i] += suf[j][i + 1];
+        }
+        int ans = n;
+        for (int i = 1; i <= n; i++) {
+            ans += pre[s[i - 1]][i - 1] + suf[s[i - 1]][i + 1];
+        }
+        cout << ans;
     }
     return 0;
 }
@@ -126,6 +131,6 @@ int32_t main()
 */
 
 /* Analysis
-    if there's only 1 person -> k * g
-    if there's 2 people ->
+    aabc
+    4 +
 */

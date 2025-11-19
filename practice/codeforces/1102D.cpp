@@ -88,29 +88,26 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int k; cin >> k;
-        int g; cin >> g;
-        if (n >= k * g) cout << k * g << endl;
-        else {
-            int mx = (g / 2 - (g % 2 == 0));
-            if (!mx) {
+        string s; cin >> s;
+        vi c(3);
+        for (int i = 0; i < n; i++) c[s[i] - '0']++;
 
-            }
-            int can = (k * g) / mx;
-            if (mx * n >= k * g) cout << k * g;
-            else {
-                int rem = (k * g - (mx * (n - 1))) % g;
-                int del;
-                if (rem <= mx) del = rem;
-                else del = -(g - rem);
-                int ans = mx * (n - 1) + del;
-                cout << ans;
-            }
-            cout << endl;
-        }
+        for (int i = 0; i < n && c[0] < n / 3; i++)
+            if (s[i] == '2' && c[2] > n / 3) s[i] = '0', c[0]++, c[2]--;
+            else if (s[i] == '1' && c[1] > n / 3) s[i] = '0', c[0]++, c[1]--;
+
+        for (int i = 0; i < n && c[1] < n / 3; i++) if (s[i] == '2' && c[2] > n / 3) s[i] = '1', c[1]++, c[2]--;
+
+        for (int i = n - 1; i >= 0 && c[2] < n / 3; i--)
+            if (s[i] == '0' && c[0] > n / 3) s[i] = '2', c[2]++, c[0]--;
+            else if (s[i] == '1' && c[1] > n / 3) s[i] = '2', c[2]++, c[1]--;
+
+        for (int i = n - 1; i >= 0 && c[1] < n / 3; i--) if (s[i] == '0' && c[0] > n / 3) s[i] = '1', c[1]++, c[0]--;
+
+        cout << s;
     }
     return 0;
 }
@@ -126,6 +123,5 @@ int32_t main()
 */
 
 /* Analysis
-    if there's only 1 person -> k * g
-    if there's 2 people ->
+
 */
