@@ -100,20 +100,23 @@ int32_t main()
         // ans *= 2;
         // ans += n;
         // cout << ans;
-        int maxn = 125;
+        string t = s; sort(all(t)); t.erase(unique(all(t)), t.end());
+        auto c = [&](char c) { return lb(all(t), c) - t.begin(); };
+        vi a(n); rep(i, 0, n) a[i] = c(s[i]);
+        int maxn = sz(t);
         vvi pre(maxn, vi(n + 1));
         vvi suf(maxn, vi(n + 2));
         for (int i = 1; i <= n; i++) {
-            pre[s[i - 1]][i]++;
+            pre[a[i - 1]][i]++;
             for (int j = 0; j < maxn; j++) pre[j][i] += pre[j][i - 1];
         }
         for (int i = n; i >= 1; i--) {
-            suf[s[i - 1]][i]++;
+            suf[a[i - 1]][i]++;
             for (int j = 0; j < maxn; j++) suf[j][i] += suf[j][i + 1];
         }
         int ans = n;
         for (int i = 1; i <= n; i++) {
-            ans += pre[s[i - 1]][i - 1] + suf[s[i - 1]][i + 1];
+            ans += pre[a[i - 1]][i - 1] + suf[a[i - 1]][i + 1];
         }
         cout << ans;
     }
