@@ -3,8 +3,7 @@ using namespace std;
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n;
-    if (!(cin >> n)) return 0;
+    int n; cin >> n;
     long long sx = 0, sy = 0;
     vector<pair<long long, long long>> obs(n), clues(n);
     for (int i = 0; i < n; ++i) {
