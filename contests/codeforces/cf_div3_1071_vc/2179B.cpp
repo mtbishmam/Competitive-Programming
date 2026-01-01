@@ -102,7 +102,7 @@ int32_t main()
             int del = cur - abs(a[i - 1] - a[i + 1]);
             if (del >= mx) mx = del;
         }
-        cout << min({ s1, s2, s3 - mx }) << endl;
+        std::cout << min({ s1, s2, s3 - mx }) << endl;
     }
     return 0;
 }
