@@ -115,7 +115,7 @@ int32_t main()
             mxs.push_back(cmx);
             mp[cmn].insert(cmx);
         }
-        int ans5 = 0;
+        int ans = 0;
         sort(all(mns));
         sort(all(mxs));
         sort(all(ranges));
@@ -130,10 +130,10 @@ int32_t main()
             auto it = lower_bound(all(mns), L);
             if (it != mns.end()) {
                 int start = *it;
-                ans5 += (2 * n - *mp[start].begin() + 1);
+                ans += (2 * n - *mp[start].begin() + 1);
             }
         }
-        cout << ans5 << endl;
+        cout << ans << endl;
     }
     return 0;
 }
