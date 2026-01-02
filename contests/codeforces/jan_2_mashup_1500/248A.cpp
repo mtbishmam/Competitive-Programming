@@ -91,8 +91,7 @@ int32_t main()
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        vi a(n);
-        vi b(n);
+        vi a(n), b(n);
         for (int i = 0; i < n; i++) {
             cin >> a[i] >> b[i];
         }
