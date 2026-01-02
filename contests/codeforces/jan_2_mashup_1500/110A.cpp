@@ -91,13 +91,11 @@ int32_t main()
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int f = 0, s = 0, l = 0;
+        int l = 0;
         int x = n;
         while (x) {
             int d = x % 10;
             if (d == 4 or d == 7) l++;
-            if (d == 4) f++;
-            else if (d == 7) s++;
             x /= 10;
         }
         if (!l) {
