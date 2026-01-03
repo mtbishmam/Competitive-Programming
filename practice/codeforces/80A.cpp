@@ -92,13 +92,15 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         int m; cin >> m;
+        vi primes;
         auto c = [&](int x) {
             for (int i = 2; i * i <= x; i++) {
                 if (x % i == 0) return false;
             }
             return true;
             };
-        cout << (c(n) && c(m) ? "YES" : "NO") << '\n';
+        for (int i = 2; i <= 100; i++) if (c(i)) primes.push_back(i);
+        cout << (c(n) && c(m) && *upper_bound(all(primes), n) == m ? "YES" : "NO") << '\n';
     }
     return 0;
 }
