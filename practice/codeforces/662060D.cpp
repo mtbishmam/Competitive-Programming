@@ -87,12 +87,36 @@ int32_t main()
     cin.tie(NULL);
     // cout.tie(NULL);
 
+    auto brute = [](int n) {
+        n++;
+        vi a(n); iota(all(a), 0);
+        vi b = a; int mx = 0;
+        vi ans;
+        cerr << n - 1 << '\n';
+        do {
+            int cur = 0;
+            for (int i = 0; i < n; i++) cur += a[i] | b[i];
+            if (cur > mx) {
+                mx = cur;
+            }
+        } while (next_permutation(all(a)));
+
+        sort(all(a));
+        do {
+            int cur = 0;
+            for (int i = 0; i < n; i++) cur += a[i] | b[i];
+            if (cur == mx) {
+                cerr << a << '\n';
+            }
+        } while (next_permutation(all(a)));
+        debug();
+        };
+    rep(i, 2, 11) brute(i);
     int T(1);
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        vi a(n); cin >> a;
-        string s; cin >> s;
+        int l, r; cin >> l >> r;
+
     }
     return 0;
 }
