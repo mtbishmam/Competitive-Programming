@@ -91,21 +91,8 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int lim, l, r; cin >> lim >> l >> r;
         vi a(n); cin >> a;
-        map<int, int> mp1, mp2; int ans = 0;
-        for (int i = 0, j = 0, k = 0; i < n; i++) {
-            while (j < n && sz(mp1) < lim) mp1[a[j++]]++;
-            while (k < n && (mp2.count(a[k]) or sz(mp2) < lim)) mp2[a[k++]]++;
-            int L = i + l, R = i + r;
-            int add = max(0ll, min(k, R) - max(j, L) + 1);
-            if (sz(mp1) == lim && sz(mp2) == lim) ans += add;
-            mp1[a[i]]--;
-            if (!mp1[a[i]]) mp1.erase(a[i]);
-            mp2[a[i]]--;
-            if (!mp2[a[i]]) mp2.erase(a[i]);
-        }
-        cout << ans << endl;
+        string s; cin >> s;
     }
     return 0;
 }

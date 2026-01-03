@@ -91,21 +91,58 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        int lim, l, r; cin >> lim >> l >> r;
-        vi a(n); cin >> a;
-        map<int, int> mp1, mp2; int ans = 0;
-        for (int i = 0, j = 0, k = 0; i < n; i++) {
-            while (j < n && sz(mp1) < lim) mp1[a[j++]]++;
-            while (k < n && (mp2.count(a[k]) or sz(mp2) < lim)) mp2[a[k++]]++;
-            int L = i + l, R = i + r;
-            int add = max(0ll, min(k, R) - max(j, L) + 1);
-            if (sz(mp1) == lim && sz(mp2) == lim) ans += add;
-            mp1[a[i]]--;
-            if (!mp1[a[i]]) mp1.erase(a[i]);
-            mp2[a[i]]--;
-            if (!mp2[a[i]]) mp2.erase(a[i]);
+        string s; cin >> s;
+        string t; V<string> ts;
+        for (int i = 0; i < sz(s); i++) {
+            if (s[i] == '0') {
+                t += s[i];
+            }
+            else {
+                if (i + 1 < sz(s) && s[i + 1] == '1') {
+                    t += '1';
+                    ts.push_back(t);
+                    t = '1';
+                    int j = i + 1;
+                    while (j < sz(s) && s[j] == '1') j++;
+                    i = j - 1;
+                }
+                else t += s[i];
+            }
         }
-        cout << ans << endl;
+        if (sz(t)) ts.push_back(t);
+        auto chk = [&](string& cur) -> int {
+            // base cases
+            if (sz(cur) == 0) return 1;
+            if (count(all(cur), '1') == sz(cur)) return 1;
+            if (count(all(cur), '0') == sz(cur)) return 1;
+
+            // trailing zero case
+            if (cur.front() == '0' or cur.back() == '0') return 1;
+
+            // now only 10...01...01 cases remain
+            // perfect alternating
+            bool pa = 1; char c = cur.front();
+            for (int i = 0; i < sz(cur); i++) {
+                if (cur[i] == c) {
+                    c = (c == '0' ? '1' : '0');
+                }
+                else pa = 0;
+            }
+            if (pa) {
+                int cnt = 0;
+                for (int i = 0; i < sz(cur); i++) {
+                    if (s[i] == '0' && i + 2 < sz(cur) && s[i + 1] == '1' && s[i + 2] == '0') {
+                        cnt++;
+                    }
+                }
+                return (cnt & 1);
+            }
+            return 1;
+            };
+
+        bool f = 1;
+        for (auto& cur : ts) f &= chk(cur);
+        cout << (f ? "YES\n" : "NO\n");
     }
     return 0;
 }
@@ -113,6 +150,9 @@ int32_t main()
 //
 
 /* Lemmas
+    1. Divide each of them into subproblems
+    2. Only the first and last one can have trailing zeros
+    3. Which means the rest of them will be of the form - 10..010..01
 
 */
 
@@ -120,6 +160,6 @@ int32_t main()
 
 */
 
-/* Analysis
-
+/* Gains
+    Should've tried to divide the problem into smaller subproblems
 */
