@@ -1,5 +1,21 @@
 // author: mtbishmam
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <set>
+#include <unordered_map>
+#include <stack>
+#include <queue>
+#include <bitset>
+#include <algorithm>
+#include <numeric>
+#include <math.h>
+#include <iomanip>
+#include <cstring>
+#include <cassert>
+#include <functional>
+#include <chrono>
+#include <climits>
 using namespace std;
 
 #define endl "\n"
@@ -75,11 +91,9 @@ int32_t main()
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
         vi a(n); cin >> a;
-        auto [mn, mx] = minmax_element(all(a));
-        int pmx, pmn;
-        for (int i = 0; i < n; i++) if (a[i] == *mx) { pmx = i; break; }
-        for (int i = n - 1; i >= 0; i--) if (a[i] == *mn) { pmn = i; break; }
-        cout << pmx + (n - 1 - pmn) - (pmx > pmn);
+        long double p = 0;
+        for (int i = 0; i < n; ++i) if (a[i]) p += (1.0 * a[i]) / (100.0);
+        cout << setprecision(10) << (p / n) * 100.0 << endl;
     }
     return 0;
 }
