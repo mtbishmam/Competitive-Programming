@@ -88,11 +88,22 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    cin >> T;
+    // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        int n; cin >> n;
-        vi a(n); cin >> a;
-        string s; cin >> s;
+        int a, b, c, d; cin >> a >> b >> c >> d;
+        int N; cin >> N;
+        vi arr = { a, b, c, d }; int ans = 0, n = 4;
+        // rep(i, 0, n) ans += N / arr[i];
+        // rep(i, 0, n) rep(j, i + 1, n) ans -= N / lcm(arr[i], arr[j]);
+        // rep(i, 0, n) rep(j, i + 1, n) rep(k, j + 1, n) ans += N / lcm(arr[i], lcm(arr[j], arr[k]));
+        // rep(i, 0, n) rep(j, i + 1, n) rep(k, j + 1, n) rep(l, k + 1, n) ans -= N / lcm(arr[i], lcm(arr[j], lcm(arr[k], arr[l])));
+        rep(mask, 1, 1 << n) {
+            int l = 1; // identity element for lcm is 1
+            rep(i, 0, n) if (mask & (1 << i)) l = lcm(l, arr[i]);
+            if (__builtin_popcount(mask) & 1) ans += N / l;
+            else ans -= N / l;
+        }
+        cout << ans;
     }
     return 0;
 }
