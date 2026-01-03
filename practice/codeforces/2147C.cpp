@@ -110,35 +110,37 @@ int32_t main()
             }
         }
         if (sz(t)) ts.push_back(t);
-        auto chk = [&](string& cur) -> int {
-            // base cases
-            if (sz(cur) == 0) return 1;
-            if (count(all(cur), '1') == sz(cur)) return 1;
-            if (count(all(cur), '0') == sz(cur)) return 1;
+        {
+            auto chk = [](string& s) -> int {
+                // base cases
+                if (sz(s) == 0) return 1;
+                if (count(all(s), '1') == sz(s)) return 1;
+                if (count(all(s), '0') == sz(s)) return 1;
 
-            // trailing zero case
-            if (cur.front() == '0' or cur.back() == '0') return 1;
+                // trailing zero case
+                if (s.front() == '0' or s.back() == '0') return 1;
 
-            // now only 10...01...01 cases remain
-            // perfect alternating
-            bool pa = 1; char c = cur.front();
-            for (int i = 0; i < sz(cur); i++) {
-                if (cur[i] == c) {
-                    c = (c == '0' ? '1' : '0');
-                }
-                else pa = 0;
-            }
-            if (pa) {
-                int cnt = 0;
-                for (int i = 0; i < sz(cur); i++) {
-                    if (s[i] == '0' && i + 2 < sz(cur) && s[i + 1] == '1' && s[i + 2] == '0') {
-                        cnt++;
+                // now only 10...01...01 cases remain
+                // perfect alternating
+                bool pa = 1; char c = s.front();
+                for (int i = 0; i < sz(s); i++) {
+                    if (s[i] == c) {
+                        c = (c == '0' ? '1' : '0');
                     }
+                    else pa = 0;
                 }
-                return (cnt & 1);
-            }
-            return 1;
-            };
+                if (pa) {
+                    int cnt = 0;
+                    for (int i = 0; i < sz(s); i++) {
+                        if (s[i] == '1' && i + 2 < sz(s) && s[i + 1] == '0' && s[i + 2] == '1') {
+                            cnt++;
+                        }
+                    }
+                    return (cnt % 2 == 0);
+                }
+                return 1;
+                };
+        }
 
         bool f = 1;
         for (auto& cur : ts) f &= chk(cur);
