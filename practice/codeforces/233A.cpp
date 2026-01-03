@@ -90,15 +90,13 @@ int32_t main()
     int T(1);
     // cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
-        string s; cin >> s;
-        string t; cin >> t;
-        string ans; int n = sz(s);
-        for (int i = 0; i < n; i++) {
-            int x = s[i] - '0';
-            int y = t[i] - '0';
-            ans += '0' + (x ^ y);
+        int n; cin >> n;
+        if (n & 1) cout << -1 << endl;
+        else {
+            for (int i = 1; i <= n; i += 2) {
+                cout << i + 1 << " " << i << " ";
+            }
         }
-        cout << ans;
     }
     return 0;
 }

@@ -88,17 +88,11 @@ int32_t main()
     // cout.tie(NULL);
 
     int T(1);
-    // cin >> T;
+    cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
+        int n; cin >> n;
+        vi a(n); cin >> a;
         string s; cin >> s;
-        string t; cin >> t;
-        string ans; int n = sz(s);
-        for (int i = 0; i < n; i++) {
-            int x = s[i] - '0';
-            int y = t[i] - '0';
-            ans += '0' + (x ^ y);
-        }
-        cout << ans;
     }
     return 0;
 }
