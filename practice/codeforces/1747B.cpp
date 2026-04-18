@@ -91,8 +91,14 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        vi a(n); cin >> a;
-        string s; cin >> s;
+        vpii ans;
+        for (int i = 2, j = 3 * n; i < j; i += 3) {
+            ans.push_back({ i, j });
+            j--;
+            if (j % 3 == 1) j--;
+        }
+        cout << sz(ans) << '\n';
+        for (auto& [x, y] : ans) cout << x << ' ' << y << '\n';
     }
     return 0;
 }

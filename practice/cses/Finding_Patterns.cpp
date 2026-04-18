@@ -21,24 +21,12 @@ struct TrieNode {
 // Function to insert a pattern into the trie
 void insertPattern(string pattern, int index)
 {
-    // Start at the root node
     int node = 1;
-
-    // Traverse the pattern character by character
     for (int i = 0; i < pattern.size(); i++) {
-
-        // If the current character's child node doesn't
-        // exist, create it
         if (trie[node].child[pattern[i] - 'a'] == 0)
-            trie[node].child[pattern[i] - 'a']
-            = ++nodeIndex;
-
-        // Move to the child node
+            trie[node].child[pattern[i] - 'a'] = ++nodeIndex;
         node = trie[node].child[pattern[i] - 'a'];
     }
-
-    // After traversing the pattern, add the pattern index
-    // to the current node
     trie[node].patternIndices.pb(index);
 }
 
