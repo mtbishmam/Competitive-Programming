@@ -122,13 +122,4 @@ int32_t main()
 //
 
 /* Lemmas
-
-*/
-
-/* Solutions
-
-*/
-
-/* Analysis
-
 */
