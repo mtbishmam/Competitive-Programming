@@ -118,25 +118,34 @@ int32_t main()
         if (kk > 1) facts.push_back(kk);
 
         vvi ans(n, vi(m));
-        for (auto& f : facts) {
+
+        if (n * m == k) {
+            vi pat(k);
+            for (int i = 0, p = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    ans[i][j] = pat[p++];
+                }
+            }
+        }
+        else for (auto& f : facts) {
             if (n % f == 0) {
                 int x = 0;
-                vi pat(f); iota(all(pat), 1);
+                vi pat(k); iota(all(pat), 1);
                 for (int j = 0, s = 0; j < m; j++, s++) {
                     x = s;
                     for (int i = 0; i < n; i++) {
-                        ans[i][j] = pat[x++ % f];
+                        ans[i][j] = pat[x++ % k];
                     }
                 }
                 break;
             }
             if (m % f == 0) {
                 int x = 0;
-                vi pat(f); iota(all(pat), 1);
+                vi pat(k); iota(all(pat), 1);
                 for (int i = 0, s = 0; i < n; i++, s++) {
                     x = s;
                     for (int j = 0; j < m; j++) {
-                        ans[i][j] = pat[x++ % f];
+                        ans[i][j] = pat[x++ % k];
                     }
                 }
                 break;
