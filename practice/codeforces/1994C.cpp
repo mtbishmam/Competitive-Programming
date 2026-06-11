@@ -91,8 +91,25 @@ int32_t main()
     cin >> T;
     for (int Ti = 1; Ti <= T; Ti++) {
         int n; cin >> n;
-        vi a(n); cin >> a;
-        string s; cin >> s;
+        int x; cin >> x;
+        vi a(n + 1), pre(n + 1);
+        for (int i = 1; i <= n; i++) cin >> a[i], pre[i] = pre[i - 1] + a[i];
+        vi dp(n + 5); int ans = 0;
+        for (int i = n; i >= 1; i--) {
+            int l = i, r = n, cur = -1;
+            while (l <= r) {
+                int mid = (l + r) >> 1;
+                if (pre[mid] - pre[i - 1] <= x) {
+                    cur = mid;
+                    l = mid + 1;
+                }
+                else r = mid - 1;
+            }
+            if (~cur) dp[i] = (cur - i + 1) + dp[cur + 2];
+            else dp[i] = dp[i + 1];
+            ans += dp[i];
+        }
+        cout << ans << endl;
     }
     return 0;
 }

@@ -95,16 +95,16 @@ int32_t main()
         vi d(n); for (auto& i : d) cin >> i;
 
         int ans = 4e18;
-        int cur = 0;
+        int cur = 0, cur2 = 0;
         string s = to_string(a);
         string t; for (int i = 0; i < n; i++) t += (char)(d[i] + '0');
         for (int i = 0; i < sz(s); i++) {
             auto it = upper_bound(all(d), s[i] - '0');
-            int mn = 4e18;
+            int mn = 4e18, mn2 = 4e18;
             if (it != d.end()) mn = abs(*it - (s[i] - '0'));
             if (it != d.begin()) {
                 it--;
-                mn = min(mn, abs(*it - (s[i] - '0')));
+                mn2 = abs(*it - (s[i] - '0'));
             }
             cur = cur * 10 + mn;
         }
