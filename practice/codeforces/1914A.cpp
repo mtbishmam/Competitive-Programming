@@ -105,17 +105,3 @@ int32_t main()
     }
     return 0;
 }
-
-//
-
-/* Lemmas
-
-*/
-
-/* Solutions
-
-*/
-
-/* Analysis
-
-*/
