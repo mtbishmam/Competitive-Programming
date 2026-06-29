@@ -1,6 +1,6 @@
 const ll MOD = 1e9 + 7; // Verify
 struct mint {
-  ll x; mint(ll xx) : x(xx) {}
+  ll x; mint(ll x) : x(x) {}
   mint operator+(mint b) { return mint((x + b.x) % MOD); }
   mint operator-(mint b) { return mint((x - b.x + MOD) % MOD); }
   mint operator*(mint b) { return mint((x * b.x) % MOD); }
