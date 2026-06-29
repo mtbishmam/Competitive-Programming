@@ -2,8 +2,8 @@
 using namespace std;
 
 #ifndef DeBuG
-#define dbg(...)
-#define TT template <typename T
+	#define dbg(...)
+	#define TT template <typename T
 #endif
 
 #define int int64_t
@@ -16,12 +16,13 @@ TT> using V = vector<T>; using vi = V<int>;
 using ll = long long; using pii=pair<int,int>;
 using vb = V<bool>; using vvi = V<vi>;
 void solve(int cs) {
+    cout << "Hello World 5" << endl;
 }
 signed main() {
-    cin.tie(0)->sync_with_stdio(0);
-    int tc = 1;
-    // #ifdef DeBuG
-    cin >> tc;
-    // #endif
-    for (int cs = 1; cs <= tc; cs++) solve(cs);
+	cin.tie(0)->sync_with_stdio(0);
+	int tc = 1;
+// #ifdef DeBuG
+	cin >> tc;
+// #endif
+	for (int cs = 1; cs <= tc; cs++) solve(cs);
 }

@@ -16,6 +16,14 @@ TT> using V = vector<T>; using vi = V<int>;
 using ll = long long; using pii=pair<int,int>;
 using vb = V<bool>; using vvi = V<vi>;
 void solve(int cs) {
+    int n, k; cin >> n >> k;
+    vi a(n); 
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+    if (k > 1) cout << "YES";
+    else cout << (is_sorted(all(a)) ? "YES" : "NO");
+    cout << endl;
 }
 signed main() {
     cin.tie(0)->sync_with_stdio(0);
