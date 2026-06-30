@@ -22,6 +22,19 @@ using vb = V<bool>; using vvi = V<vi>;
 template <class T> using V = vector<T>;
 // template <typename T> using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 void solve(int cs) {
+    int n; cin >> n;
+    vi a(n); map<int, int> mp;
+    rep (i, 0, n) {
+        cin >> a[i]; mp[a[i]]++;
+    }
+    if (sz(mp) == 1) cout << "YES";
+    else if (sz(mp) == 2) {
+        auto [x, c1] = *mp.begin();
+        auto [y, c2] = *mp.rbegin();
+        if (abs(c1 - c2) <= 1) cout << "YES";
+        else cout << "NO";
+    } else cout << "NO";
+    cout << endl;
 }
 signed main() {
     cin.tie(0)->sync_with_stdio(0);

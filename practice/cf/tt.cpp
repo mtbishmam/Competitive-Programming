@@ -1,8 +1,5 @@
 #include "bits/stdc++.h"
 using namespace std;
-// 	#include <ext/pb_ds/assoc_container.hpp>
-//	#include <ext/pb_ds/tree_policy.hpp>
-//	using namespace __gnu_pbds;
 
 #ifndef DeBuG
 #define dbg(...)
@@ -13,14 +10,11 @@ using namespace std;
 #define endl '\n'
 #define sz(x) (int) (x).size()
 #define all(x) begin(x), end(x)
-#define rep(i,a,b) for (int i = a; i < (b); ++i)
 TT, class U> bool chmin(T&a,U b){return a>b?(a=b,1):0;}
 TT, class U> bool chmax(T&a,U b){return a<b?(a=b,1):0;}
 TT> using V = vector<T>; using vi = V<int>;
 using ll = long long; using pii=pair<int,int>;
 using vb = V<bool>; using vvi = V<vi>;
-template <class T> using V = vector<T>;
-// template <typename T> using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 void solve(int cs) {
 }
 signed main() {
